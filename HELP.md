@@ -1,3 +1,6 @@
+# ERD
+https://drive.google.com/file/d/1ZnXb0v32DSmM887Irp1iT2BN2gT8ebQj/view?usp=sharing
+
 # Getting Started
 
 ### Reference Documentation
