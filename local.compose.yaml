@@ -15,9 +15,9 @@ services:
     ports:
       - "5432:5432"
 
-networks:
-  backend:
-  frontend:
-
-volumes:
-  base-api-postgres-data:
+#networks:
+#  backend:
+#  frontend:
+#
+#volumes:
+#  base-api-postgres-data:
