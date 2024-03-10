@@ -9,15 +9,15 @@ services:
       POSTGRES_DB: base
     volumes:
       - base-api-postgres-data:/var/lib/postgresql/data
-#      - ./init-db-scripts:/docker-entrypoint-initdb.d
-    networks:
-      - backend
+      - ./init-db-scripts:/docker-entrypoint-initdb.d
+#    networks:
+#      - backend
     ports:
       - "5432:5432"
 
 #networks:
 #  backend:
 #  frontend:
-#
-#volumes:
-#  base-api-postgres-data:
+
+volumes:
+  base-api-postgres-data:
