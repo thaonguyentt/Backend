@@ -38,7 +38,7 @@ public class User {
   @Column(name = "last_name")
   private String lastName;
 
-  @Column(name = "birthdate")
+  @Column(name = "birth_date")
   private LocalDate birthdate;
 
   @Column(name = "created_date")
