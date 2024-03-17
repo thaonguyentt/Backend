@@ -64,7 +64,7 @@ public class SecurityConfig {
             .authenticated()
             .requestMatchers("/api/test/**").permitAll()
             .anyRequest()
-            .authenticated();
+            .permitAll(); // TODO authenticated()
         })
       .addFilterBefore(jwtAuthenticationFilter, BasicAuthenticationFilter.class)
       .exceptionHandling(exceptionHandling

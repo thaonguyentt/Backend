@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -54,9 +56,11 @@ public class Book {
   @Column(name = "size", length = Integer.MAX_VALUE)
   private String size;
 
+  @CreatedDate
   @Column(name = "created_date")
   private LocalDate createdDate;
 
+  @LastModifiedDate
   @Column(name = "updated_date")
   private LocalDate updatedDate;
 
