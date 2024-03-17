@@ -40,27 +40,27 @@ public class UserService {
     this.jwtService = jwtService;
   }
 
-  public UserDTO getUserById(Long userId) {
+  public UserDto getUserById(Long userId) {
     User user = userRepository.getReferenceById(userId);
-    UserDTO userDTO = userMapper.userDTOFromUser(user);
+    UserDto userDTO = userMapper.userDTOFromUser(user);
     return userDTO;
   }
 
   @Transactional
-  public UserDTO createUser(UserDTO userDTO) {
+  public UserDto createUser(UserDto userDTO) {
     // TODO validate input
     User user = userMapper.userFromUserDTO(userDTO);
     User savedUser = userRepository.save(user);
     String encodedPassword = passwordEncoder.encode(userDTO.password());
     UserPassword userPassword = new UserPassword(null, savedUser.getId(), encodedPassword);
     userPasswordRepository.save(userPassword);
-    UserDTO savedUserDTO = userMapper.userDTOFromUser(savedUser);
-    return savedUserDTO;
+    UserDto savedUserDto = userMapper.userDTOFromUser(savedUser);
+    return savedUserDto;
   }
 
   // Authorize user edit his own data, and admins
   @Transactional
-  public UserDTO editUser(UserDTO userDTO) {
+  public UserDto editUser(UserDto userDTO) {
     // validate input ??
     User editingUser = userMapper.userFromUserDTO(userDTO);
     User editedUser = userRepository.saveAndFlush(editingUser);

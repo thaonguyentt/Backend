@@ -1,9 +1,9 @@
 package base.api.user.internal.mapper;
 
+import base.api.user.UserDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
-import base.api.user.UserDTO;
 import base.api.user.internal.entity.User;
 
 @Mapper(
@@ -12,7 +12,7 @@ import base.api.user.internal.entity.User;
 public interface UserMapper {
 
 //  @Mapping(target = "password", ignore = true)
-  UserDTO userDTOFromUser(User user);
+  UserDto userDTOFromUser(User user);
 
-  User userFromUserDTO(UserDTO userDTO);
+  User userFromUserDTO(UserDto userDTO);
 }

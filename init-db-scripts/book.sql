@@ -6916,6 +6916,8 @@ create table LISTING
 (
     id           BIGSERIAL primary key,
     copy_id      bigserial references COPY (id),
+    quantity     integer,
+    address      text,
     expiry_date  date,
     description  text,
     created_date date default now(),

@@ -6,10 +6,6 @@ import base.api.common.internal.mapper.AreaMapper;
 import base.api.common.internal.repository.AreaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import base.api.common.internal.entity.Area;
-import base.api.common.internal.entity.AreaType;
-import base.api.common.internal.mapper.AreaMapper;
-import base.api.common.internal.repository.AreaRepository;
 
 import java.util.List;
 
@@ -21,21 +17,21 @@ public class AreaService {
   @Autowired
   AreaMapper areaMapper;
 
-  public List<AreaDTO> getAllProvinces() {
+  public List<AreaDto> getAllProvinces() {
     List<Area> provinceEntities = areaRepository.findAllByType(AreaType.PROVINCE.getCode());
     var dtoList = areaMapper.toDto(provinceEntities);
     return dtoList;
   }
 
-  public List<AreaDTO> getAllDistrictsOfProvince(String provinceCode) {
+  public List<AreaDto> getAllDistrictsOfProvince(String provinceCode) {
     return areaMapper.toDto(areaRepository.listDistrictsByProvinceCode(provinceCode));
   }
 
-  public List<AreaDTO> getAllPrecinctOfProvinceOfDistrict(String provinceCode, String districtCode) {
+  public List<AreaDto> getAllPrecinctOfProvinceOfDistrict(String provinceCode, String districtCode) {
     return areaMapper.toDto(areaRepository.listPrecinctByProvinceCodeAndDistrictCode(provinceCode, districtCode));
   }
 
-  public AreaDTO getAreaByCode(String code) {
+  public AreaDto getAreaByCode(String code) {
     return areaMapper.toDto(areaRepository.getByCode(code));
   }
 

@@ -40,6 +40,7 @@ dependencies {
 	implementation 'io.micrometer:micrometer-tracing-bridge-brave'
 //	implementation 'org.liquibase:liquibase-core'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+	implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.7.3'
 	implementation 'org.springframework.modulith:spring-modulith-starter-core'
 	implementation "org.mapstruct:mapstruct:${mapstructVersion}"
 	implementation "org.apache.commons:commons-lang3:${commonLang3Version}"

@@ -2,7 +2,7 @@ package base.api.user;
 
 import java.time.LocalDate;
 
-public record UserDTO (
+public record UserDto(
   Long id,
   String username,
   String firstName,

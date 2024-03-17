@@ -1,6 +1,6 @@
 package base.api.user.internal.controller;
 
-import base.api.user.UserDTO;
+import base.api.user.UserDto;
 import base.api.user.UserService;
 import base.api.user.internal.dto.LoginRequest;
 import base.api.user.internal.dto.LoginResponse;
@@ -23,14 +23,14 @@ public class UserController {
   private Logger log = LoggerFactory.getLogger(UserController.class);
 
   @GetMapping("/{id}")
-  UserDTO getUserInfo(@PathVariable("id") Long id) {
+  UserDto getUserInfo(@PathVariable("id") Long id) {
     // TODO implement
     return null;
   }
 
   // Upsert
   @PostMapping("/{id}")
-  UserDTO updateUserInfo(@PathVariable("id") Long id) {
+  UserDto updateUserInfo(@PathVariable("id") Long id) {
     // TODO implement
     return null;
   }
@@ -43,10 +43,10 @@ public class UserController {
   }
 
   @PostMapping("/register")
-  UserDTO createUser(@RequestBody UserDTO newUserDTO) {
-    UserDTO createdUser = null;
+  UserDto createUser(@RequestBody UserDto newUserDto) {
+    UserDto createdUser = null;
     try {
-      createdUser = userService.createUser(newUserDTO);
+      createdUser = userService.createUser(newUserDto);
     } catch (Exception e) {
       e.printStackTrace();
       log.error("Error creating new user");

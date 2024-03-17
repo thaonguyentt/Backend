@@ -9,10 +9,10 @@ import java.util.List;
 /**
  * A DTO for the {@link Area} entity
  */
-public record AreaDTO(
+public record AreaDto(
   Integer id,
   @NotNull String code,
   String name,
   Integer type,
-  List<AreaDTO> ancestor
+  List<AreaDto> ancestor
 ) implements Serializable {}
