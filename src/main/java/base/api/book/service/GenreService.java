@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -35,7 +36,7 @@ public class GenreService {
   }
 
   public List<GenreDto> getAllGenres() {
-    return genreRepository.findAll().stream().map(genreMapper::toDto).toList();
+    return genreRepository.findAll().stream().map(genreMapper::toDto).collect(Collectors.toList());
   }
 
   public GenreDto updateGenre(GenreDto newGenreDto) {
