@@ -122,6 +122,7 @@ VALUES
     (101,'dev99','Kristoffer_Braun49@hotmail.com','334543678','Kristoffer','Braun','2017-03-14','https://loremflickr.com/640/480/cats?lock=95137','santa monica, california, usa')
 ;
 
+alter sequence user_user_id_seq restart with 1000;
 
 
 drop table if exists user_password;
@@ -237,6 +238,7 @@ VALUES
     (100,100,'$2a$10$oO1SJWlHYNK4KTIZvxDuXu2iCaDLuKiEMLNzNK8Yv5bJVsemCT7j6'),
     (101,101,'$2a$10$oO1SJWlHYNK4KTIZvxDuXu2iCaDLuKiEMLNzNK8Yv5bJVsemCT7j6');
 
+alter sequence user_password_id_seq restart with 1000;
 
 
 
