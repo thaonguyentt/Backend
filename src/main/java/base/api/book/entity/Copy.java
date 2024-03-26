@@ -29,6 +29,10 @@ public class Copy {
   @Column(name = "owner_id", nullable = false)
   private Long ownerId;
 
+  @NotNull
+  @Column(name = "quantity ", nullable = false)
+  private Long quantity;
+
   @Column(name = "image_link", length = Integer.MAX_VALUE)
   private String imageLink;
 

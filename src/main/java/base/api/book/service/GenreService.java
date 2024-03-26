@@ -5,7 +5,6 @@ import base.api.book.entity.Genre;
 import base.api.book.mapper.GenreMapper;
 import base.api.book.repository.GenreRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

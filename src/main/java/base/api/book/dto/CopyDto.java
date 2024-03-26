@@ -10,7 +10,7 @@ import java.time.LocalDate;
 /**
  * DTO for {@link Copy}
  */
-public record CopyDto(Long id, Long bookBookId, @NotNull Long ownerId, String imageLink, BigDecimal price,
-                      BigDecimal damagePercent, BigDecimal deposit, BigDecimal penaltyFee, LocalDate createdDate,
+public record CopyDto(Long id, Long bookBookId, @NotNull Long ownerId, Integer quantity,String imageLink,
+                      BigDecimal damagePercent, LocalDate createdDate,
                       LocalDate updatedDate, LocalDate deletedDate) implements Serializable {
 }

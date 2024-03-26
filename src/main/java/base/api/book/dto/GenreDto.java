@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+
 /**
  * DTO for {@link base.api.book.entity.Genre}
  */
