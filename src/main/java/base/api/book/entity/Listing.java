@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.w3c.dom.Text;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -33,7 +34,7 @@ public class Listing {
   private Long quantity;
 
   @Column(name = "address", nullable = false)
-  private Long address;
+  private String address;
 
   @Column(name = "expiry_date")
   private LocalDate expiryDate;

@@ -29,12 +29,12 @@ public class BookController {
         return ResponseEntity.ok(bookDto);
     }
 
-//    @GetMapping("/{title}")
-//    public ResponseEntity<List<BookDto>> getBookByName (@PathVariable String title) {
-//        List<BookDto> bookDto = bookservice.getAllBookByTitle(title);
-//        if (bookDto == null) {return ResponseEntity.notFound().build();}
-//        return ResponseEntity.ok(bookDto);
-//    }
+    @GetMapping("/search/{title}")
+    public ResponseEntity<List<BookDto>> getBookByName (@PathVariable String title) {
+        List<BookDto> bookDto = bookservice.getAllBookByTitle(title);
+        if (bookDto == null) {return ResponseEntity.notFound().build();}
+        return ResponseEntity.ok(bookDto);
+    }
 
     @PostMapping
     public ResponseEntity<BookDto> createBook (@RequestBody BookDto bookDto) {

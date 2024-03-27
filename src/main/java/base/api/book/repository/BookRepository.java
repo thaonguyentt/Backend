@@ -8,5 +8,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BookRepository extends JpaRepository<Book, Long>, JpaSpecificationExecutor<Book> {
-    public Optional<Book> findByTitleContaining(String title);
+    public List<Book> findByTitleContaining(String title);
 }

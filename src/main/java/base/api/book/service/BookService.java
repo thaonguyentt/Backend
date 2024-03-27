@@ -30,20 +30,24 @@ public class BookService {
     }
 
     public BookDto getBookById (Long id) {
-        Optional<Book> optionalBook= bookRepository.findById(id);
+        Optional<Book> optionalBook = bookRepository.findById(id);
         return optionalBook.map(bookMapper::toDto).orElse(null);
     }
 
     public List<BookDto> getAllBooks () {
-        return bookRepository.findAll().stream().map(bookMapper::toDto).collect(Collectors.toList());
+        return bookRepository.findAll()
+                .stream()
+                .map(bookMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-//    public List<BookDto> getAllBookByTitle(String title) {
-//        return bookRepository.findByTitleContaining(title)
-//                .stream()
-//                .map(bookMapper::toDto)
-//                .collect(Collectors.toList());
-//    }
+    public List<BookDto> getAllBookByTitle(String title) {
+        List<Book> books = bookRepository.findByTitleContaining(title);
+        return books
+                .stream()
+                .map(bookMapper::toDto)
+                .collect(Collectors.toList());
+    }
 
     public BookDto updateBook (BookDto newBookDTO) {
         Long id = newBookDTO.id();

@@ -1,6 +1,7 @@
 package base.api.book.dto;
 
 import jakarta.validation.constraints.NotNull;
+import org.w3c.dom.Text;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
