@@ -51,6 +51,7 @@ values (1, 'Academic', 'Học thuật', '2024-03-01'),
        (39, 'Textbooks', 'Sách giáo khoa', '2024-03-01'),
        (40, 'Thriller', 'Giật gân', '2024-03-01');
 
+alter sequence genre_id_seq restart with 100;
 
 -- Book
 drop table if exists BOOK cascade;
@@ -3890,6 +3891,7 @@ VALUES (3, '195153448', 'Wallis', '{Anne Edwards}', 'en', '{Historical,Historica
        (3928, '8850200005', 'All She Wants', '{Jonathan Harvey}', 'en',
         '{Fiction,Womens Fiction,Chick Lit,Humor,Comedy,Humor,Contemporary,LGBT,Gay}', 'Oxford University Press',
         '2012/08/16', 251, '15.5x20.5');
+alter sequence book_id_seq restart with 5000;
 
 -- Copies
 drop table if exists COPY cascade;
@@ -4906,7 +4908,9 @@ VALUES
     (997,2818,1,10,'http://books.google.com/books/content?id=1RnC-1kUUZgC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api',0.0),
     (998,2819,1,9,'http://books.google.com/books/content?id=4jp_PwAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api',3.0),
     (999,2820,1,1,'http://books.google.com/books/content?id=UZMKAAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api',2.0),
-    (1000,2821,1,7,'http://books.google.com/books/content?id=tFlKjDAYSpkC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api',1.0),
+    (1000,2821,1,7,'http://books.google.com/books/content?id=tFlKjDAYSpkC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api',1.0);
+alter sequence copy_id_seq restart with 2000;
+
 
 -- Listing
 drop table if exists LISTING;
@@ -7850,4 +7854,4 @@ Sarah Kelling and her husband, Max Bittersohn, have joined the rest of the Kelli
     (1000,1000,1,7,'123 Nguyễn Trọng Tuyển, phường 12, quận Bình Thạnh',2300.0,190600.0,2100.0,'She never expected it would come to this Desperation and an empty stomach forced Fiona Lachlan to agree to a plan that ended up luring the wickedly notorious Duke of Holburn into trouble. Everything went terribly wrong, and now she has found herself posing as his ward! And while she swore nothing could make her desire a scoundrel, even if he was a duke, she is now drawing ever closer to the one man she cannot have . . . "Beware of innocence!" The Duke of Holburn had spent years heeding this warning, and in doing so, managed to avoid the virginal young ladies who had been put in his path. But now his wild ways have gotten him into real danger. There are killers at the door and a temptingly beautiful woman in his arms. He is about to find himself seduced . . . and he isn''t quite sure he wants to resist this time.She never expected it would come to this.Desperation and an empty stomach forced Fiona Lachlan to agree to a plan that ended up luring the wickedly notorious Duke of Holburn into trouble. Everything went terribly wrong, and now she has found herself posing as his ward. And while she swore nothing could make her desire a scoundrel, even if he was a duke, she is now drawing
 She never expected it would come to this.Desperation and an empty stomach forced Fiona Lachlan to agree to a plan that ended up luring the wickedly notorious Duke of Holburn into trouble. Everything went terribly wrong, and now she has found herself posing as his ward. And while she swore nothing could make her desire a scoundrel, even if he was a duke, she is now drawing ever closer to the one man she cannot have."Beware of Innocence!"Beware of innocence: The Duke of Holburn had spent years heeding this warning, and in doing so, managed to avoid the virginal young ladies who had been put in his path. But now his wild ways have gotten him into real danger. There are killers at the door and a temptingly beautiful woman in his arms. He is about to find himself seduced...and he isn''t quite sure he wants to resist this time.
 ...more');
-
+alter sequence listing_id_seq restart with 2000;
