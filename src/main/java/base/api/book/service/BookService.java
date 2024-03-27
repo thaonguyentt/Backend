@@ -38,12 +38,12 @@ public class BookService {
         return bookRepository.findAll().stream().map(bookMapper::toDto).collect(Collectors.toList());
     }
 
-    public List<BookDto> getAllBookByTitle(String title) {
-        return bookRepository.findByTitleContaining(title)
-                .stream()
-                .map(bookMapper::toDto)
-                .collect(Collectors.toList());
-    }
+//    public List<BookDto> getAllBookByTitle(String title) {
+//        return bookRepository.findByTitleContaining(title)
+//                .stream()
+//                .map(bookMapper::toDto)
+//                .collect(Collectors.toList());
+//    }
 
     public BookDto updateBook (BookDto newBookDTO) {
         Long id = newBookDTO.id();

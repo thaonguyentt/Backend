@@ -12,7 +12,7 @@ import java.util.List;
 @RequestMapping("/api/book")
 public class BookController {
 
-    public final BookService bookservice;
+    private final BookService bookservice;
 
     public BookController(BookService bookservice) {
         this.bookservice = bookservice;
@@ -29,12 +29,12 @@ public class BookController {
         return ResponseEntity.ok(bookDto);
     }
 
-    @GetMapping("/{name}")
-    public ResponseEntity<List<BookDto>> getBookByName (@PathVariable String title) {
-        List<BookDto> bookDto = bookservice.getAllBookByTitle(title);
-        if (bookDto == null) {return ResponseEntity.notFound().build();}
-        return ResponseEntity.ok(bookDto);
-    }
+//    @GetMapping("/{title}")
+//    public ResponseEntity<List<BookDto>> getBookByName (@PathVariable String title) {
+//        List<BookDto> bookDto = bookservice.getAllBookByTitle(title);
+//        if (bookDto == null) {return ResponseEntity.notFound().build();}
+//        return ResponseEntity.ok(bookDto);
+//    }
 
     @PostMapping
     public ResponseEntity<BookDto> createBook (@RequestBody BookDto bookDto) {
