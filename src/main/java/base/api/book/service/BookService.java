@@ -38,8 +38,8 @@ public class BookService {
         return bookRepository.findAll().stream().map(bookMapper::toDto).collect(Collectors.toList());
     }
 
-    public List<BookDto> getBookByName(String name) {
-        return bookRepository.findAllByNameContaining(name)
+    public List<BookDto> getAllBookByTitle(String title) {
+        return bookRepository.findByTitleContaining(title)
                 .stream()
                 .map(bookMapper::toDto)
                 .collect(Collectors.toList());
