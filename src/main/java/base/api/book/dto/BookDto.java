@@ -11,6 +11,6 @@ import java.util.List;
  * DTO for {@link Book}
  */
 public record BookDto(Long id, @NotNull String isbn, @NotNull String title, List<String> authors,
-                      String languageLanguageCode, List<String> genre, String publisher, LocalDate publishedDate,
+                      String languageCode, List<String> genre, String publisher, LocalDate publishedDate,
                       Integer pageCount, String size) implements Serializable {
 }

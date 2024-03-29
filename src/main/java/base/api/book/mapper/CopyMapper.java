@@ -6,13 +6,13 @@ import org.mapstruct.*;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CopyMapper {
-  @Mapping(source = "bookBookId", target = "book.id")
+  @Mapping(source = "bookId", target = "book.id")
   Copy toEntity(CopyDto copyDto);
 
-  @Mapping(source = "book.id", target = "bookBookId")
+  @Mapping(source = "book.id", target = "bookId")
   CopyDto toDto(Copy copy);
 
   @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-  @Mapping(source = "bookBookId", target = "book.id")
+  @Mapping(source = "bookId", target = "book.id")
   Copy partialUpdate(CopyDto copyDto, @MappingTarget Copy copy);
 }

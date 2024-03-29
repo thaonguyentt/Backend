@@ -16,7 +16,7 @@ import java.time.LocalDate;
 public class Copy {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "copy_id_gen")
-  @SequenceGenerator(name = "copy_id_gen", sequenceName = "copy_book_id_seq", allocationSize = 1)
+  @SequenceGenerator(name = "copy_id_gen", sequenceName = "copy_id_seq", allocationSize = 1)
   @Column(name = "id", nullable = false)
   private Long id;
 

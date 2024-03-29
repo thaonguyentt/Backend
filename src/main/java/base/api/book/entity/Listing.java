@@ -15,7 +15,7 @@ import java.time.LocalDate;
 public class Listing {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "listing_id_gen")
-  @SequenceGenerator(name = "listing_id_gen", sequenceName = "listing_copy_id_seq", allocationSize = 1)
+  @SequenceGenerator(name = "listing_id_gen", sequenceName = "listing_id_seq", allocationSize = 1)
   @Column(name = "id", nullable = false)
   private Long id;
 
