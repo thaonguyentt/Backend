@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import org.w3c.dom.Text;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -51,13 +50,13 @@ public class Listing {
   @Column(name = "description", length = Integer.MAX_VALUE)
   private String description;
 
-  @Column(name = "created_date")
-  private LocalDate createdDate;
-
-  @Column(name = "updated_date")
-  private LocalDate updatedDate;
-
-  @Column(name = "deleted_date")
-  private LocalDate deletedDate;
+//  @Column(name = "created_date")
+//  private LocalDate createdDate;
+//
+//  @Column(name = "updated_date")
+//  private LocalDate updatedDate;
+//
+//  @Column(name = "deleted_date")
+//  private LocalDate deletedDate;
 
 }

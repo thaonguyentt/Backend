@@ -36,25 +36,25 @@ public class Copy {
   @Column(name = "image_link", length = Integer.MAX_VALUE)
   private String imageLink;
 
-  @Column(name = "price", precision = 10, scale = 2)
-  private BigDecimal price;
+//  @Column(name = "price", precision = 10, scale = 2)
+//  private BigDecimal price;
 
   @Column(name = "damage_percent")
   private BigDecimal damagePercent;
 
-  @Column(name = "deposit", precision = 10, scale = 2)
-  private BigDecimal deposit;
+//  @Column(name = "deposit", precision = 10, scale = 2)
+//  private BigDecimal deposit;
+//
+//  @Column(name = "penalty_fee", precision = 10, scale = 2)
+//  private BigDecimal penaltyFee;
 
-  @Column(name = "penalty_fee", precision = 10, scale = 2)
-  private BigDecimal penaltyFee;
-
-  @Column(name = "created_date")
-  private LocalDate createdDate;
-
-  @Column(name = "updated_date")
-  private LocalDate updatedDate;
-
-  @Column(name = "deleted_date")
-  private LocalDate deletedDate;
+//  @Column(name = "created_date")
+//  private LocalDate createdDate;
+//
+//  @Column(name = "updated_date")
+//  private LocalDate updatedDate;
+//
+//  @Column(name = "deleted_date")
+//  private LocalDate deletedDate;
 
 }
