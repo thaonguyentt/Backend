@@ -5,6 +5,7 @@ create table LEASE (
     lessor_id           bigserial not null,
     lessee_id           bigserial not null,
     listing_id          bigserial,
+    status_id           bigserial,
     created_date        date default now(),
     from_date           date, --ngày thuê đăng kí
     to_date             date, --ngày trả đăng kí (bấm trả sách, gia hạn thì sẽ cập nhật lại ngày này)
@@ -19,15 +20,19 @@ create table LEASE (
     quantity            integer,
     payment_method      integer, -- 1: cod, 2: chuyen khoan, 3. vnpay
     link_img            text, -- anh chuyen khoan , anh chuyen tien cod
-    payment_deposit_id  bigserial,
-    payment_refund_id   bigserial, -- trả lại tiền thừa cho người thuê
-    payment_pay_owner_id bigserial -- trả tiền thuê sách cho chủ thuê
+    payment_deposit_id  integer,
+    payment_refund_id   integer, -- trả lại tiền thừa cho người thuê
+    payment_pay_owner_id integer -- trả tiền thuê sách cho chủ thuê
 );
--- insert into LEASE (lessor_id,lessee_id,copy_id,status_id,created_date,from_date,to_date,receive_date,
---     return_date,book_name,lessor_address,lessee_address,price,penalty_fee,deposit,quantity,
---     payment_method,link_img,payment_deposit_id,payment_refund_id,payment_pay_owner_id)
--- values
+insert into LEASE (lessor_id,lessee_id,listing_id,status_id,from_date,to_date,receive_date,
+                   return_date,book_name,lessor_address,lessee_address,price,penalty_fee,deposit,quantity,
+                   payment_method,link_img,payment_deposit_id,payment_refund_id,payment_pay_owner_id)
+values (1,2,1,1,'2024/04/01','2024/05/01',null,null,'Wallis','Đường Kim Giang, Phường Kim Giang, Quận Thanh Xuân, Hà Nội',
+        'Đường Hoàng Quốc Việt, Phường Nghĩa Đô, Quận Cầu Giấy, Hà Nội',300.00,2400.00,224100,1,1,null,null,null,null),
+       (2,1,2,1,'2024/04/01','2024/05/01',null,null,'From Potter''s Field','Đường Hoàng Quốc Việt, Phường Nghĩa Đô, Quận Cầu Giấy, Hà Nội',
+        'Đường Kim Giang, Phường Kim Giang, Quận Thanh Xuân, Hà Nội',2800.00,4600.00,414800.00,1,1,null,null,null,null);
 
+alter sequence genre_id_seq restart with 3;
 drop table if exists status_order;
 CREATE TABLE status_order(
                              id 				bigserial PRIMARY KEY,

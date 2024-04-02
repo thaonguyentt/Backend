@@ -1,2 +1,4 @@
-package base.api.lease.repository;public interface LeaseRepository {
+package base.api.lease.repository;
+
+public interface LeaseRepository {
 }
