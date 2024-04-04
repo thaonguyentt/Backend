@@ -30,7 +30,7 @@ public class Copy {
   private Long ownerId;
 
   @NotNull
-  @Column(name = "quantity ", nullable = false)
+  @Column(name = "quantity", nullable = false)
   private Long quantity;
 
   @Column(name = "image_link", length = Integer.MAX_VALUE)
@@ -42,11 +42,7 @@ public class Copy {
   @Column(name = "damage_percent")
   private BigDecimal damagePercent;
 
-//  @Column(name = "deposit", precision = 10, scale = 2)
-//  private BigDecimal deposit;
-//
-//  @Column(name = "penalty_fee", precision = 10, scale = 2)
-//  private BigDecimal penaltyFee;
+
 
 //  @Column(name = "created_date")
 //  private LocalDate createdDate;

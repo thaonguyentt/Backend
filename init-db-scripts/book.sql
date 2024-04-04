@@ -3898,8 +3898,8 @@ drop table if exists COPY cascade;
 create table COPY
 (
     id              BIGSERIAL PRIMARY KEY,
-    book_id         BIGSERIAL REFERENCES BOOK (id) NOT NULL,
-    owner_id        BIGSERIAL,
+    book_id         bigint REFERENCES BOOK (id) NOT NULL,
+    owner_id        bigint,
     quantity        integer,
     image_link      text,
     damage_percent  NUMERIC,
@@ -4917,20 +4917,20 @@ drop table if exists LISTING;
 create table LISTING
 (
     id           BIGSERIAL primary key,
-    copy_id      bigserial references COPY (id),
-    owner_id     bigserial,
+    copy_id      bigint references COPY (id),
+    owner_id     bigint,
     quantity     integer,
     address      text,
     expiry_date  date,
-    price          DECIMAL(10, 2),
-    deposit        DECIMAL(10, 2),
-    penalty_fee    DECIMAL(10, 2),
+    lease_rate          DECIMAL(10, 2),
+    deposit_fee        DECIMAL(10, 2),
+    penalty_rate    DECIMAL(10, 2),
     description  text,
     created_date date default now(),
     updated_date date,
     deleted_date date
 );
-INSERT INTO LISTING (id,copy_id,owner_id,quantity,address,price,deposit,penalty_fee,description)
+INSERT INTO LISTING (id,copy_id,owner_id,quantity,address,lease_rate,deposit_fee,penalty_rate,description)
 VALUES
     (1,1,1,8,'123 Nguyễn Trọng Tuyển, phường 12, quận Bình Thạnh',300.0,224100.0,2400.0,'Wallis Warfield Spencer Simpson retains her pride and courage through an unhappy childhood, secures money and status through her lovers, and finds fame as the Duchess of WindsorBorn as a poor relation to the wealthy Warfield family, Wallis married at 18. When she met Ernest Simpson it was as if he was sent to save her from her past. But marriage to him led her to an extraordinary future.'),
     (2,2,2,2,'123 Nguyễn Trọng Tuyển, phường 12, quận Bình Thạnh',2800.0,414800.0,4600.0,'Dr. Kay Scarpetta matches wits with a sadistic killer who infiltrates the FBI''s top-secret artificial intelligence system and closes in on Scarpetta herself.Christmas has never been a particularly good time for Dr Kay Scarpetta. Although a holiday for most, the festivities always seem to heighten the alienation felt by society&aposs violent fringe; and that usually means more work for Scarpetta, Virginia&aposs Chief Medical Examiner and consulting forensic pathologist for the FBI.The body was naked, female, and found propped against a
