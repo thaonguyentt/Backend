@@ -38,14 +38,14 @@ public class Listing {
   @Column(name = "expiry_date")
   private LocalDate expiryDate;
 
-  @Column(name = "price", precision = 10, scale = 2)
-  private BigDecimal price;
+  @Column(name = "lease_rate", precision = 10, scale = 2)
+  private BigDecimal leaseRate;
 
-  @Column(name = "deposit", precision = 10, scale = 2)
-  private BigDecimal deposit;
+  @Column(name = "deposit_fee", precision = 10, scale = 2)
+  private BigDecimal depositFee;
 
-  @Column(name = "penalty_fee", precision = 10, scale = 2)
-  private BigDecimal penaltyFee;
+  @Column(name = "penalty_rate", precision = 10, scale = 2)
+  private BigDecimal penaltyRate;
 
   @Column(name = "description", length = Integer.MAX_VALUE)
   private String description;

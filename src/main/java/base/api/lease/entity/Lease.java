@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-@Entity
+//@Entity
 @Table(name = "lease")
 public class Lease {
     @Id
@@ -24,6 +24,12 @@ public class Lease {
 
     @Column(name = "lessor_id",nullable = false)
     private Long lessee_id;
+
+    @Column(name = "lessor_address")
+    private String lessor_address;
+
+    @Column(name = "lessee_address ")
+    private String lessee_address;
 
     @Column(name = "listing_id")
     private Long listing_id;
@@ -48,12 +54,6 @@ public class Lease {
 
     @Column(name = "book_name")
     private String book_name;
-
-    @Column(name = "lessor_address")
-    private String lessor_address;
-
-    @Column(name = "lessee_address ")
-    private String lessee_address;
 
     @Column(name = "price", precision = 10, scale = 2)
     private BigDecimal price;
