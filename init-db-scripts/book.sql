@@ -3903,6 +3903,7 @@ create table COPY
     quantity        integer,
     image_link      text,
     damage_percent  NUMERIC,
+    status          text not null default 'UNLISTED',
     created_date    date default now(),
     updated_date    date,
     deleted_date    date

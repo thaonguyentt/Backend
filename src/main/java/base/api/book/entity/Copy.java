@@ -1,6 +1,7 @@
 package base.api.book.entity;
 
 import base.api.book.entity.Book;
+import base.api.book.entity.support.CopyStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -42,7 +43,9 @@ public class Copy {
   @Column(name = "damage_percent")
   private BigDecimal damagePercent;
 
-
+  @Enumerated(EnumType.STRING)
+  @Column(name = "status")
+  private CopyStatus copyStatus;
 
 //  @Column(name = "created_date")
 //  private LocalDate createdDate;
