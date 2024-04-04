@@ -22,7 +22,7 @@ public class Lease {
     @Column(name = "lessor_id",nullable = false)
     private Long lessor_id;
 
-    @Column(name = "lessor_id",nullable = false)
+    @Column(name = "lessee_id",nullable = false)
     private Long lessee_id;
 
     @Column(name = "listing_id")

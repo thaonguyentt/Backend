@@ -50,6 +50,7 @@ public class Listing {
   @Column(name = "description", length = Integer.MAX_VALUE)
   private String description;
 
+
 //  @Column(name = "created_date")
 //  private LocalDate createdDate;
 //
