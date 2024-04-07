@@ -1,5 +1,6 @@
 package base.api.book.entity;
 
+import base.api.user.internal.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -24,9 +25,9 @@ public class Listing {
   @JoinColumn(name = "copy_id", nullable = false)
   private Copy copy;
 
-  @NotNull
-  @Column(name = "owner_id", nullable = false)
-  private Long ownerId;
+  @OneToOne(orphanRemoval = true)
+  @JoinColumn(name = "owner_id")
+  private User owner;
 
   @NotNull
   @Column(name = "quantity", nullable = false)

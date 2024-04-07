@@ -2,6 +2,8 @@ package base.api.book.controller;
 
 import base.api.book.dto.CopyDto;
 import base.api.book.service.CopyService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +29,11 @@ public class CopyController {
     @GetMapping("/search/{id}")
     public ResponseEntity<List<CopyDto>> getCopyByOwnerId (@PathVariable Long id) {
         return ResponseEntity.ok(copyService.getCopyByOwnerId(id));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<CopyDto>> findAllCopies(Pageable pageable) {
+        return ResponseEntity.ok().body(copyService.findAllCopies(pageable));
     }
 
     @GetMapping

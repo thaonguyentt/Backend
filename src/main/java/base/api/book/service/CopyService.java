@@ -4,6 +4,9 @@ import base.api.book.dto.CopyDto;
 import base.api.book.entity.Copy;
 import base.api.book.mapper.CopyMapper;
 import base.api.book.repository.CopyRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +41,10 @@ public class CopyService {
                 .stream()
                 .map(copyMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    public Page<CopyDto> findAllCopies(Pageable pageable) {
+        return copyRepository.findAll(pageable).map(copyMapper::toDto);
     }
 
     public List<CopyDto> getCopyByOwnerId (Long ownerId) {

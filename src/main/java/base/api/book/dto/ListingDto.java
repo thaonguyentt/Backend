@@ -10,7 +10,15 @@ import java.time.LocalDate;
 /**
  * DTO for {@link base.api.book.entity.Listing}
  */
-public record ListingDto(Long id, Long copyId, @NotNull Long ownerId, Integer quantity, String address, LocalDate expiryDate, BigDecimal leaseRate,
-                         BigDecimal depositFee, BigDecimal penaltyRate, String description, LocalDate createdDate,
-                         LocalDate updatedDate, LocalDate deletedDate) implements Serializable {
-}
+public record ListingDto(
+  Long id,
+  Long copyId,
+  @NotNull Long ownerId,
+  Integer quantity,
+  String address,
+  LocalDate expiryDate,
+  BigDecimal leaseRate,
+  BigDecimal depositFee,
+  BigDecimal penaltyRate,
+  String description
+) implements Serializable {}

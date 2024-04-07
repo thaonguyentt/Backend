@@ -1,7 +1,10 @@
 package base.api.book.controller;
 
 import base.api.book.dto.ListingDto;
+import base.api.book.dto.search.ListingSearchDto;
 import base.api.book.service.ListingService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +29,11 @@ public class ListingController {
     @GetMapping
     public ResponseEntity<List<ListingDto>> getAllListing () {
         return ResponseEntity.ok(listingService.getAllListing());
+    }
+
+    @GetMapping("/search")
+    public Page<ListingDto> test(Pageable pageable, ListingSearchDto searchDto) {
+        return listingService.findListings(pageable, searchDto);
     }
 
     @GetMapping ("/search/{ownerId}")
