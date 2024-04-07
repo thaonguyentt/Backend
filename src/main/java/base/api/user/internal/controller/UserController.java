@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.ErrorResponseException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -56,16 +57,16 @@ public class UserController {
   }
 
   @PostMapping("/register")
-  UserDto createUser(@RequestBody UserDto newUserDto) {
+  ResponseEntity createUser(@RequestBody UserDto newUserDto) {
     UserDto createdUser = null;
     try {
       createdUser = userService.createUser(newUserDto);
     } catch (Exception e) {
       e.printStackTrace();
       log.error("Error creating new user");
-      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity("Error creating new user because reasons", HttpStatus.CONFLICT);
     }
-    return createdUser;
+    return ResponseEntity.ok(createdUser);
   }
 
   @PostMapping("/login")
