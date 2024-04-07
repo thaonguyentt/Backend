@@ -8,6 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -28,6 +31,14 @@ public class UserController {
   UserDto getUserInfo(@PathVariable("id") Long id) {
     // TODO implement
     return null;
+  }
+
+  @GetMapping("/myInfo")
+  ResponseEntity<UserDto> getMyUserInfo(Authentication auth) {
+    if (auth == null) return new ResponseEntity<>(null, HttpStatusCode.valueOf(403));
+    Long userId = Long.valueOf( (String) auth.getPrincipal());
+
+    return ResponseEntity.ok(userService.getUserById(userId));
   }
 
   // Upsert
