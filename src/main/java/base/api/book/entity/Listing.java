@@ -1,5 +1,7 @@
 package base.api.book.entity;
 
+import base.api.book.entity.support.CopyStatus;
+import base.api.book.entity.support.ListingStatus;
 import base.api.user.internal.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -51,6 +53,9 @@ public class Listing {
   @Column(name = "description", length = Integer.MAX_VALUE)
   private String description;
 
+  @Enumerated(EnumType.STRING)
+  @Column(name = "status")
+  private ListingStatus listingStatus;
 
 //  @Column(name = "created_date")
 //  private LocalDate createdDate;

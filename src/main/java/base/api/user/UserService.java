@@ -62,7 +62,9 @@ public class UserService {
   @Transactional
   public UserDto editUser(UserDto userDTO) {
     // validate input ??
+    Long id = userDTO.id();
     User editingUser = userMapper.userFromUserDTO(userDTO);
+    editingUser.setId(id);
     User editedUser = userRepository.saveAndFlush(editingUser);
     return userMapper.userDTOFromUser(editedUser);
   }
@@ -107,5 +109,7 @@ public class UserService {
     var o3 = o2.map(user -> jwtService.makeTokenWithUserIdAndRoles(user.getId(), Collections.singleton("NONE")));
     return o3;
   }
+
+
 
 }

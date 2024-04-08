@@ -1,5 +1,11 @@
 package base.api.book.dto;
 
-public class BookDetailDto {
+import java.io.Serializable;
 
-}
+public record BookDetailDto (
+    ListingDto listingDto,
+    BookDto bookDto,
+    CopyDto copyDto
+
+) implements Serializable
+        {}

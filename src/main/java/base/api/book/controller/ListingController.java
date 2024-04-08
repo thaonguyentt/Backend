@@ -1,6 +1,7 @@
 package base.api.book.controller;
 
 import base.api.book.dto.ListingDto;
+import base.api.book.dto.ListingExtendedDto;
 import base.api.book.dto.search.ListingSearchDto;
 import base.api.book.service.ListingService;
 import org.springframework.data.domain.Page;
@@ -37,8 +38,8 @@ public class ListingController {
     }
 
     @GetMapping ("/search/{ownerId}")
-    public ResponseEntity<List<ListingDto>> getListingByOwnerId (@PathVariable Long ownerId) {
-        List<ListingDto> listListing = listingService.getListingByOwnerId(ownerId);
+    public ResponseEntity<List<ListingExtendedDto>> getListingByOwnerId (@PathVariable Long ownerId) {
+        List<ListingExtendedDto> listListing = listingService.getListingByOwnerId(ownerId);
         if (listListing.isEmpty()) {return ResponseEntity.noContent().build();}
         return ResponseEntity.ok(listListing);
     }
