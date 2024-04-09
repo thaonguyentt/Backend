@@ -44,9 +44,8 @@ public class UserController {
 
   // Upsert
   @PostMapping("/{id}")
-  UserDto updateUserInfo(@PathVariable("id") Long id) {
-    // TODO implement
-    return null;
+  UserDto updateUserInfo(@PathVariable("id") Long id, @RequestBody UserDto userDto) {
+    return userService.editUser(userDto);
   }
 
   // Delete delete (soft delete ?)

@@ -2,9 +2,16 @@ package base.api.book.service;
 
 
 import base.api.book.dto.ListingDto;
+import base.api.book.dto.ListingExtendedDto;
 import base.api.book.dto.search.ListingSearchDto;
+import base.api.book.entity.Book;
+import base.api.book.entity.Copy;
 import base.api.book.entity.Listing;
+import base.api.book.mapper.BookMapper;
+import base.api.book.mapper.CopyMapper;
 import base.api.book.mapper.ListingMapper;
+import base.api.book.repository.BookRepository;
+import base.api.book.repository.CopyRepository;
 import base.api.book.repository.ListingRepository;
 import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
@@ -12,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,9 +30,16 @@ public class ListingService {
     private final ListingMapper listingMapper;
     private final ListingRepository listingRepository;
 
-    public ListingService(ListingMapper listingMapper, ListingRepository listingRepository) {
+    private final BookMapper bookMapper;
+
+    private final CopyMapper copyMapper;
+
+
+    public ListingService(ListingMapper listingMapper, ListingRepository listingRepository, BookMapper bookMapper, CopyMapper copyMapper) {
         this.listingMapper = listingMapper;
         this.listingRepository = listingRepository;
+        this.bookMapper = bookMapper;
+        this.copyMapper = copyMapper;
     }
 
     public ListingDto createListing (ListingDto listingDto) {
@@ -38,12 +53,16 @@ public class ListingService {
         return optionalListing.map(listingMapper::toDto).orElse(null);
     }
 
-    public List<ListingDto> getListingByOwnerId (Long id) {
-        List<Listing> listing = listingRepository.findByOwnerId(id);
-        return listing
-                .stream()
-                .map(listingMapper::toDto)
-                .toList();
+    public List<ListingExtendedDto> getListingByOwnerId (Long id) {
+        List<ListingExtendedDto> listingExtendedDtoList = new ArrayList<>();
+        List<Listing> listListing = listingRepository.findByOwnerId(id);
+        for (Listing listing : listListing) {
+            ListingExtendedDto listingExtendedDto = new ListingExtendedDto(listing.getId(),listing.getOwner().getId(),listing.getQuantity().intValue(),
+                    listing.getAddress(),listing.getExpiryDate(),listing.getLeaseRate(),listing.getDepositFee(),listing.getPenaltyRate(),
+                    listing.getDescription(),copyMapper.toDto(listing.getCopy()),bookMapper.toDto(listing.getCopy().getBook()));
+            listingExtendedDtoList.add(listingExtendedDto);
+        }
+        return listingExtendedDtoList;
     }
 
     public List<ListingDto> getAllListing () {
