@@ -34,12 +34,12 @@ public class ListingController {
         return ResponseEntity.ok(listingService.getAllListing());
     }
 
-    @PostMapping("/search")
-    public Page<ListingDto> test(Pageable pageable, @RequestBody ListingSearchDto searchDto) {
+    @GetMapping("/search")
+    public Page<ListingDto> test(Pageable pageable, ListingSearchDto searchDto) {
         return listingService.findListings(pageable, searchDto);
     }
 
-    @GetMapping ("/search/{ownerId}")
+    @GetMapping ("/search/byOwnerId/{ownerId}")
     public ResponseEntity<List<ListingExtendedDto>> getListingByOwnerId (Pageable pageable, @PathVariable Long ownerId) {
         List<ListingExtendedDto> listListing = listingService.getListingByOwnerId(pageable,ownerId);
         if (listListing.isEmpty()) {return ResponseEntity.noContent().build();}
