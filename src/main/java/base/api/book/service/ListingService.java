@@ -82,7 +82,7 @@ public class ListingService {
         } else if (StringUtils.isBlank(searchDto.getTitle()) && StringUtils.isNotBlank(searchDto.getGenre())) {
             result = listingRepository.findByGenre(pageable, searchDto.getGenre());
         } else {
-            result = Page.empty();
+            result = listingRepository.findAll(pageable);
         }
 
         return result.map(listingMapper::toDto);
