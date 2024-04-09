@@ -12,7 +12,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface ListingRepository extends JpaRepository<Listing, Long>, JpaSpecificationExecutor<Listing> {
-    List<Listing> findByOwnerId(Long id);
+    List<Listing> findByOwnerId(Pageable pageable, Long id);
 
     Page<Listing> findByCopyIdIn(Pageable pageable, List<Long> copyId);
 

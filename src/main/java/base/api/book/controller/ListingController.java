@@ -32,14 +32,14 @@ public class ListingController {
         return ResponseEntity.ok(listingService.getAllListing());
     }
 
-    @GetMapping("/search")
-    public Page<ListingDto> test(Pageable pageable, ListingSearchDto searchDto) {
+    @PostMapping("/search")
+    public Page<ListingDto> test(Pageable pageable, @RequestBody ListingSearchDto searchDto) {
         return listingService.findListings(pageable, searchDto);
     }
 
     @GetMapping ("/search/{ownerId}")
-    public ResponseEntity<List<ListingExtendedDto>> getListingByOwnerId (@PathVariable Long ownerId) {
-        List<ListingExtendedDto> listListing = listingService.getListingByOwnerId(ownerId);
+    public ResponseEntity<List<ListingExtendedDto>> getListingByOwnerId (Pageable pageable, @PathVariable Long ownerId) {
+        List<ListingExtendedDto> listListing = listingService.getListingByOwnerId(pageable,ownerId);
         if (listListing.isEmpty()) {return ResponseEntity.noContent().build();}
         return ResponseEntity.ok(listListing);
     }
