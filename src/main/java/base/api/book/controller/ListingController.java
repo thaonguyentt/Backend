@@ -35,8 +35,14 @@ public class ListingController {
     }
 
     @GetMapping("/search")
-    public Page<ListingDto> test(Pageable pageable, ListingSearchDto searchDto) {
-        return listingService.findListings(pageable, searchDto);
+    public Page<ListingDto> test(
+            Pageable pageable,
+            @RequestParam(name="title", required = false) String title,
+            @RequestParam(name="genre", required = false) String genre) {
+        ListingSearchDto listingSearchDto = new ListingSearchDto();
+        listingSearchDto.setTitle(title);
+        listingSearchDto.setGenre(genre);
+        return listingService.findListings(pageable, listingSearchDto);
     }
 
     @GetMapping ("/search/{ownerId}")
