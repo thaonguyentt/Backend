@@ -53,16 +53,16 @@ public class ListingService {
         return optionalListing.map(listingMapper::toDto).orElse(null);
     }
 
-    public List<ListingExtendedDto> getListingByOwnerId (Pageable pageable, Long id) {
-        List<ListingExtendedDto> listingExtendedDtoList = new ArrayList<>();
-        List<Listing> listListing = listingRepository.findByOwnerId(pageable,id);
-        for (Listing listing : listListing) {
-            ListingExtendedDto listingExtendedDto = new ListingExtendedDto(listing.getId(),listing.getOwner().getId(),listing.getQuantity().intValue(),
-                    listing.getAddress(),listing.getExpiryDate(),listing.getLeaseRate(),listing.getDepositFee(),listing.getPenaltyRate(),
-                    listing.getDescription(),copyMapper.toDto(listing.getCopy()),bookMapper.toDto(listing.getCopy().getBook()));
-            listingExtendedDtoList.add(listingExtendedDto);
-        }
-        return listingExtendedDtoList;
+    public Page<ListingDto> getListingByOwnerId (Pageable pageable, Long id) {
+//        List<ListingExtendedDto> listingExtendedDtoList = new ArrayList<>();
+        Page<Listing> listing = listingRepository.findByOwnerId(pageable,id);
+//        for (Listing listing : listListing) {
+//            ListingExtendedDto listingExtendedDto = new ListingExtendedDto(listing.getId(),listing.getOwner().getId(),listing.getQuantity().intValue(),
+//                    listing.getAddress(),listing.getExpiryDate(),listing.getLeaseRate(),listing.getDepositFee(),listing.getPenaltyRate(),
+//                    listing.getDescription(),copyMapper.toDto(listing.getCopy()),bookMapper.toDto(listing.getCopy().getBook()));
+//            listingExtendedDtoList.add(listingExtendedDto);
+//        }
+        return listing.map(listingMapper::toDto);
     }
 
     public List<ListingDto> getAllListing () {

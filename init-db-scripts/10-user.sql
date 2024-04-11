@@ -19,7 +19,7 @@ CREATE TABLE USER_USER
 );
 INSERT INTO user_user (id,username,email,phone_number,first_name,last_name,birth_date,avatar_url,address)
 VALUES
-    (1,'dev','dev@app.local','334543678','Dev','Developer','2017-03-14','https://loremflickr.com/640/480/cats?lock=72704','Đường Hoàng Quốc Việt, Phường Nghĩa Đô, Quận Cầu Giấy, Hà Nội'),
+    (1,'dev','dev@app.local','334543678','Dev','Developer','2017-03-14','https://loremflickr.com/640/480/cats?lock=72704','123 Nguyễn Trọng Tuyển, phường 12, quận Bình Thạnh'),
     (2,'dev0','Tracy47@yahoo.com','334543678','Tracy','Braun','2017-03-14','https://loremflickr.com/640/480/cats?lock=72704','Đường Kim Giang, Phường Kim Giang, Quận Thanh Xuân, Hà Nội'),
     (3,'dev1','Nigel11@gmail.com','334543678','Nigel','Romaguera','2017-03-14','https://loremflickr.com/640/480/cats?lock=51706','phố minh khai, Phường Minh Khai, Quận Hai Bà Trưng, Hà Nội'),
     (4,'dev2','Giovani_Kertzmann1@yahoo.com','334543678','Giovani','Kertzmann','2017-03-14','https://loremflickr.com/640/480/cats?lock=61548','Đường Võng Thị, Phường Thụy Khuê, Quận Tây Hồ, Hà Nội'),
