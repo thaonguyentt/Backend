@@ -1,5 +1,6 @@
 package base.api.book.entity;
 
+import base.api.lease.entity.Review;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

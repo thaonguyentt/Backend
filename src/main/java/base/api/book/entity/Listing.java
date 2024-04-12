@@ -57,13 +57,6 @@ public class Listing {
   @Column(name = "status")
   private ListingStatus listingStatus;
 
-//  @Column(name = "created_date")
-//  private LocalDate createdDate;
-//
-//  @Column(name = "updated_date")
-//  private LocalDate updatedDate;
-//
-//  @Column(name = "deleted_date")
-//  private LocalDate deletedDate;
+
 
 }

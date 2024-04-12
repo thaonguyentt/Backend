@@ -1,7 +1,7 @@
 package base.api.book.dto;
 
 import base.api.book.entity.LeaseOrderDetail;
-import base.api.book.entity.Review;
+import base.api.lease.entity.Review;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;

@@ -1,5 +1,7 @@
-package base.api.book.entity;
+package base.api.lease.entity;
 
+import base.api.book.entity.LeaseOrder;
+import base.api.user.internal.entity.User;
 import io.hypersistence.utils.hibernate.type.array.StringArrayType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -17,7 +19,7 @@ import java.time.LocalDate;
 public class Review {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "review_id_gen")
-  @SequenceGenerator(name = "review_id_gen", sequenceName = "genre_id_seq", allocationSize = 1)
+  @SequenceGenerator(name = "review_id_gen", sequenceName = "review_id_seq", allocationSize = 1)
   @Column(name = "id", nullable = false)
   private Long id;
 
@@ -37,11 +39,16 @@ public class Review {
   private LeaseOrder leaseOrder;
 
   @NotNull
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @Column(name = "user_id", nullable = false)
-  private Long userId;
+  private User user;
+
+  @NotNull
+  @Column(name = "listing_id", nullable = false)
+  private Long listingId;
 
   @Column(name = "created_date")
-  private Instant createdDate;
+  private LocalDate createdDate;
 
   @Column(name = "updated_date")
   private LocalDate updatedDate;

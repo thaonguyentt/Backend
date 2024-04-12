@@ -1,6 +1,7 @@
 package base.api.book.service;
 
 
+import base.api.book.dto.ListingDetailDto;
 import base.api.book.dto.ListingDto;
 import base.api.book.dto.ListingExtendedDto;
 import base.api.book.dto.search.ListingSearchDto;
@@ -53,15 +54,13 @@ public class ListingService {
         return optionalListing.map(listingMapper::toDto).orElse(null);
     }
 
+    public ListingDetailDto getListingDetailDtoById(Long id) {
+        Optional<Listing> optionalListing = listingRepository.findById(id);
+        return null;
+    }
+
     public Page<ListingDto> getListingByOwnerId (Pageable pageable, Long id) {
-//        List<ListingExtendedDto> listingExtendedDtoList = new ArrayList<>();
         Page<Listing> listing = listingRepository.findByOwnerId(pageable,id);
-//        for (Listing listing : listListing) {
-//            ListingExtendedDto listingExtendedDto = new ListingExtendedDto(listing.getId(),listing.getOwner().getId(),listing.getQuantity().intValue(),
-//                    listing.getAddress(),listing.getExpiryDate(),listing.getLeaseRate(),listing.getDepositFee(),listing.getPenaltyRate(),
-//                    listing.getDescription(),copyMapper.toDto(listing.getCopy()),bookMapper.toDto(listing.getCopy().getBook()));
-//            listingExtendedDtoList.add(listingExtendedDto);
-//        }
         return listing.map(listingMapper::toDto);
     }
 
