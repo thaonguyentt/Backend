@@ -1,6 +1,5 @@
 package base.api.book.dto;
 
-import base.api.lease.dto.ReviewDto;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;

@@ -13,9 +13,10 @@ public class LeaseOrderService {
 
   public LeaseOrderDto createLeaseOrder(LeaseOrderDto leaseOrderDto) {
     if (leaseOrderDto.id() != null) {
-      throw new IllegalArgumentException("id should be null");
+      throw new IllegalArgumentException("id should be blank");
     }
     // TODO verify argument
+
 
     // TODO do stuff here
 

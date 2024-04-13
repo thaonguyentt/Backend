@@ -1,7 +1,7 @@
-package base.api.lease.controller;
+package base.api.book.controller;
 
-import base.api.lease.dto.ReviewDto;
-import base.api.lease.service.ReviewService;
+import base.api.book.dto.ReviewDto;
+import base.api.book.service.ReviewService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

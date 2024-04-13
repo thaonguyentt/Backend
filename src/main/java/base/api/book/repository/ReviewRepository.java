@@ -1,11 +1,11 @@
-package base.api.lease.repository;
+package base.api.book.repository;
 
-import base.api.lease.entity.Review;
+import base.api.book.entity.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Long>, JpaSpecificationExecutor<Review> {
-    List<Review> findByOwnerId (Long ownerId);
+    List<Review> findByUserId(Long userId);
 }

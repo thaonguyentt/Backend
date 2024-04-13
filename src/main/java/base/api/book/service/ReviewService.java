@@ -1,9 +1,9 @@
-package base.api.lease.service;
+package base.api.book.service;
 
-import base.api.lease.dto.ReviewDto;
-import base.api.lease.entity.Review;
-import base.api.lease.mapper.ReviewMapper;
-import base.api.lease.repository.ReviewRepository;
+import base.api.book.dto.ReviewDto;
+import base.api.book.entity.Review;
+import base.api.book.mapper.ReviewMapper;
+import base.api.book.repository.ReviewRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +22,7 @@ public class ReviewService {
     }
 
     public List<ReviewDto> getReviewByOwnerId (Long ownerId)  {
-        List<Review> reviews = reviewRepository.findByOwnerId(ownerId);
+        List<Review> reviews = reviewRepository.findByUserId(ownerId);
         return reviews.stream().map(reviewMapper::toDto).collect(Collectors.toList());
     }
 }
