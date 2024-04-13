@@ -2,6 +2,7 @@ package base.api.book.service;
 
 import base.api.book.dto.CopyDto;
 import base.api.book.entity.Copy;
+import base.api.book.entity.support.CopyStatus;
 import base.api.book.mapper.CopyMapper;
 import base.api.book.repository.CopyRepository;
 import org.springframework.data.domain.Page;
@@ -49,7 +50,7 @@ public class CopyService {
 
     public List<CopyDto> getCopyByOwnerId (Long ownerId) {
         return copyRepository
-                .findByOwnerId(ownerId)
+                .findByOwnerIdAndCopyStatus(ownerId, CopyStatus.UNLISTED)
                 .stream()
                 .map(copyMapper::toDto)
                 .collect(Collectors.toList());

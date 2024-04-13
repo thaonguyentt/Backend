@@ -1,5 +1,6 @@
 package base.api.book.dto;
 
+import base.api.book.entity.support.ListingStatus;
 import jakarta.validation.constraints.NotNull;
 import org.w3c.dom.Text;
 
@@ -20,5 +21,6 @@ public record ListingDto(
   BigDecimal leaseRate,
   BigDecimal depositFee,
   BigDecimal penaltyRate,
-  String description
+  String description,
+  ListingStatus listingStatus
 ) implements Serializable {}

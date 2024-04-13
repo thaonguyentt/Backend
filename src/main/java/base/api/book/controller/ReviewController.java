@@ -17,7 +17,7 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
-    @GetMapping("/{ownerId}")
+    @GetMapping("search/byUserId/{ownerId}")
     public List<ReviewDto> getReviewByOwnerId (@PathVariable Long ownerId) {
         return reviewService.getReviewByOwnerId(ownerId);
     }

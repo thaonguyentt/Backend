@@ -1,6 +1,7 @@
 package base.api.book.service;
 
 
+import base.api.book.dto.CopyDto;
 import base.api.book.dto.ListingDetailDto;
 import base.api.book.dto.ListingDto;
 import base.api.book.dto.ListingExtendedDto;
@@ -8,6 +9,8 @@ import base.api.book.dto.search.ListingSearchDto;
 import base.api.book.entity.Book;
 import base.api.book.entity.Copy;
 import base.api.book.entity.Listing;
+import base.api.book.entity.support.CopyStatus;
+import base.api.book.entity.support.ListingStatus;
 import base.api.book.mapper.BookMapper;
 import base.api.book.mapper.CopyMapper;
 import base.api.book.mapper.ListingMapper;
@@ -31,14 +34,20 @@ public class ListingService {
     private final ListingMapper listingMapper;
     private final ListingRepository listingRepository;
 
+    private final CopyService copyService;
+
+    private final CopyRepository copyRepository;
+
     private final BookMapper bookMapper;
 
     private final CopyMapper copyMapper;
 
 
-    public ListingService(ListingMapper listingMapper, ListingRepository listingRepository, BookMapper bookMapper, CopyMapper copyMapper) {
+    public ListingService(ListingMapper listingMapper, ListingRepository listingRepository, CopyService copyService, CopyRepository copyRepository, BookMapper bookMapper, CopyMapper copyMapper) {
         this.listingMapper = listingMapper;
         this.listingRepository = listingRepository;
+        this.copyService = copyService;
+        this.copyRepository = copyRepository;
         this.bookMapper = bookMapper;
         this.copyMapper = copyMapper;
     }
@@ -46,6 +55,10 @@ public class ListingService {
     public ListingDto createListing (ListingDto listingDto) {
         Listing listing = listingMapper.toEntity(listingDto);
         Listing createdListing = listingRepository.save(listing);
+        //update status copy
+//        Copy copy = createdListing.getCopy();
+//        copy.setCopyStatus(CopyStatus.LISTED);
+//        copyService.updateCopy(copyMapper.toDto(copy));
         return listingMapper.toDto(createdListing);
     }
 
@@ -81,7 +94,7 @@ public class ListingService {
         } else if (StringUtils.isBlank(searchDto.getTitle()) && StringUtils.isNotBlank(searchDto.getGenre())) {
             result = listingRepository.findByGenre(pageable, searchDto.getGenre());
         } else {
-            result = listingRepository.findAll(pageable);
+            result = listingRepository.findByListingStatus(pageable,ListingStatus.AVAILABLE);
         }
 
         return result.map(listingMapper::toDto);
