@@ -1,5 +1,6 @@
 package base.api.book.dto;
 
+import base.api.user.UserDto;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
@@ -9,20 +10,16 @@ import java.util.List;
 
 public record ListingDetailDto(
         Long id,
-        @NotNull Long ownerId,
+        @NotNull UserDto user,
         Integer quantity,
         String address,
-        LocalDate expiryDate,
         BigDecimal leaseRate,
         BigDecimal depositFee,
         BigDecimal penaltyRate,
         String description,
         CopyDto copy,
         BookDto book,
-        List<ReviewDto> review,
-        String FirstName,
-        String LastName,
-        String LinkImg
+        List<ReviewDto> review
 
 ) implements Serializable
         {}

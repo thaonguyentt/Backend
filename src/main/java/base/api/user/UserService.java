@@ -65,7 +65,8 @@ public class UserService {
     Long id = userDTO.id();
     User editingUser = userMapper.userFromUserDTO(userDTO);
     editingUser.setId(id);
-    User editedUser = userRepository.saveAndFlush(editingUser);
+//    User editedUser = userRepository.saveAndFlush(editingUser);
+    User editedUser = userRepository.save(editingUser);
     return userMapper.userDTOFromUser(editedUser);
   }
 

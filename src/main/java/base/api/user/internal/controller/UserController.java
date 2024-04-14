@@ -43,7 +43,7 @@ public class UserController {
   }
 
   // Upsert
-  @PostMapping("/{id}")
+  @PutMapping("/{id}")
   UserDto updateUserInfo(@PathVariable("id") Long id, @RequestBody UserDto userDto) {
     return userService.editUser(userDto);
   }

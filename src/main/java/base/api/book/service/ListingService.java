@@ -17,6 +17,7 @@ import base.api.book.mapper.ListingMapper;
 import base.api.book.repository.BookRepository;
 import base.api.book.repository.CopyRepository;
 import base.api.book.repository.ListingRepository;
+import base.api.user.UserService;
 import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
@@ -34,22 +35,16 @@ public class ListingService {
     private final ListingMapper listingMapper;
     private final ListingRepository listingRepository;
 
-    private final CopyService copyService;
+    private final ReviewService reviewService;
 
-    private final CopyRepository copyRepository;
-
-    private final BookMapper bookMapper;
-
-    private final CopyMapper copyMapper;
+    private final UserService userService;
 
 
-    public ListingService(ListingMapper listingMapper, ListingRepository listingRepository, CopyService copyService, CopyRepository copyRepository, BookMapper bookMapper, CopyMapper copyMapper) {
+    public ListingService(ListingMapper listingMapper, ListingRepository listingRepository, ReviewService reviewService, UserService userService) {
         this.listingMapper = listingMapper;
         this.listingRepository = listingRepository;
-        this.copyService = copyService;
-        this.copyRepository = copyRepository;
-        this.bookMapper = bookMapper;
-        this.copyMapper = copyMapper;
+        this.reviewService = reviewService;
+        this.userService = userService;
     }
 
     public ListingDto createListing (ListingDto listingDto) {
@@ -67,10 +62,26 @@ public class ListingService {
         return optionalListing.map(listingMapper::toDto).orElse(null);
     }
 
-    public ListingDetailDto getListingDetailDtoById(Long id) {
-        Optional<Listing> optionalListing = listingRepository.findById(id);
-        return null;
-    }
+//    public ListingDetailDto getListingDetailDtoById(Long id) {
+//        Optional<Listing> optionalListing = listingRepository.findById(id);
+//        ListingDto listingDto = optionalListing.map(listingMapper::toDto).orElse(null);
+//        Listing listing = listingMapper.toEntity(listingDto);
+//
+//        ListingDetailDto listingDetailDto = new ListingDetailDto(
+//                listing.getId(),
+//                listing.getOwner(),
+//                listing.getQuantity(),
+//                listing.getAddress(),
+//                listing.getLeaseRate(),
+//                listing.getDepositFee(),
+//                listing.getPenaltyRate(),
+//                listing.getDescription(),
+//                listing.getCopy(),
+//                listing.getCopy().getBook(),
+//                reviewService.getReviewByOwnerId(listing.getOwner().getId())
+//        );
+//        return null;
+//    }
 
     public Page<ListingDto> getListingByOwnerId (Pageable pageable, Long id) {
         Page<Listing> listing = listingRepository.findByOwnerId(pageable,id);

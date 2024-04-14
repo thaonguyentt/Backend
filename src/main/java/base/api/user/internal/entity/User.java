@@ -39,11 +39,17 @@ public class User {
   private String lastName;
 
   @Column(name = "birth_date")
-  private LocalDate birthdate;
+  private LocalDate birthDate;
 
-  @Column(name = "created_date")
-  private LocalDate createdDate;
+  @Column(name = "avatar_url")
+  private String avatarUrl;
 
-  @Column(name = "updated_date")
-  private LocalDate updatedDate;
+  @Column(name = "address")
+  private String address;
+
+//  @Column(name = "created_date")
+//  private LocalDate createdDate;
+//
+//  @Column(name = "updated_date")
+//  private LocalDate updatedDate;
 }

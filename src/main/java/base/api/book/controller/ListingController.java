@@ -1,13 +1,11 @@
 package base.api.book.controller;
 
-import base.api.book.dto.BookDto;
-import base.api.book.dto.CopyDto;
-import base.api.book.dto.ListingDto;
-import base.api.book.dto.ListingExtendedDto;
+import base.api.book.dto.*;
 import base.api.book.dto.search.ListingSearchDto;
 import base.api.book.service.BookService;
 import base.api.book.service.CopyService;
 import base.api.book.service.ListingService;
+import base.api.user.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +22,13 @@ public class ListingController {
     private final CopyService copyService;
     private final BookService bookService;
 
-    public ListingController(ListingService listingService, CopyService copyService, BookService bookService) {
+    private final UserService userService;
+
+    public ListingController(ListingService listingService, CopyService copyService, BookService bookService, UserService userService) {
         this.listingService = listingService;
         this.copyService = copyService;
         this.bookService = bookService;
+        this.userService = userService;
     }
 
     @GetMapping("/{id}")
@@ -38,6 +39,28 @@ public class ListingController {
         }
         return ResponseEntity.ok(listingDto);
     }
+
+//    @GetMapping("/detailListing/{id}")
+//    public ResponseEntity<ListingDetailDto> getListingById(@PathVariable Long id) {
+//        ListingDto listingDto = listingService.getListingById(id);
+//        if (listingDto == null) {
+//            return ResponseEntity.noContent().build();
+//        }
+//        ListingDetailDto listingDetailDto = new ListingDetailDto(
+//                listingDto.id(),
+//                userService.getUserById(listingDto.ownerId()),
+////                listing.getQuantity(),
+////                listing.getAddress(),
+////                listing.getLeaseRate(),
+////                listing.getDepositFee(),
+////                listing.getPenaltyRate(),
+////                listing.getDescription(),
+////                listing.getCopy(),
+////                listing.getCopy().getBook(),
+////                reviewService.getReviewByOwnerId(listing.getOwner().getId())
+//        );
+//        return ResponseEntity.ok(listingDto);
+//    }
 
     @GetMapping
     public ResponseEntity<List<ListingDto>> getAllListing() {
