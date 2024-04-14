@@ -1,5 +1,6 @@
 package base.api.book.entity;
 
+import base.api.book.entity.support.LeaseOrderStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -26,8 +27,8 @@ public class LeaseOrder {
   @Column(name = "listing_id")
   private Long listingId;
 
-  @Column(name = "status_id")
-  private Long statusId;
+  @Column(name = "status")
+  private LeaseOrderStatus status;
 
   @NotNull
   @Column(name = "lessor_id", nullable = false)
