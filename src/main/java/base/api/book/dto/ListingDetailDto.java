@@ -10,7 +10,8 @@ import java.util.List;
 
 public record ListingDetailDto(
         Long id,
-        @NotNull UserDto user,
+//        UserDto user,
+//        Long ownerId,
         Integer quantity,
         String address,
         BigDecimal leaseRate,
@@ -19,7 +20,9 @@ public record ListingDetailDto(
         String description,
         CopyDto copy,
         BookDto book,
-        List<ReviewDto> review
+        List<ReviewDto> review,
+        Long bookOwned,
+        Long bookLeasing
 
 ) implements Serializable
         {}

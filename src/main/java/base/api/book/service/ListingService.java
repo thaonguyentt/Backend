@@ -5,6 +5,7 @@ import base.api.book.dto.CopyDto;
 import base.api.book.dto.ListingDetailDto;
 import base.api.book.dto.ListingDto;
 import base.api.book.dto.ListingExtendedDto;
+import base.api.book.dto.search.ListingSearchByOwnerAndNameDto;
 import base.api.book.dto.search.ListingSearchDto;
 import base.api.book.entity.Book;
 import base.api.book.entity.Copy;
@@ -35,25 +36,28 @@ public class ListingService {
     private final ListingMapper listingMapper;
     private final ListingRepository listingRepository;
 
-    private final ReviewService reviewService;
+    private final CopyRepository copyRepository;
 
-    private final UserService userService;
+    private final CopyMapper copyMapper;
 
 
-    public ListingService(ListingMapper listingMapper, ListingRepository listingRepository, ReviewService reviewService, UserService userService) {
+    public ListingService(ListingMapper listingMapper, ListingRepository listingRepository, CopyRepository copyRepository, CopyMapper copyMapper) {
         this.listingMapper = listingMapper;
         this.listingRepository = listingRepository;
-        this.reviewService = reviewService;
-        this.userService = userService;
+        this.copyRepository = copyRepository;
+        this.copyMapper = copyMapper;
     }
 
     public ListingDto createListing (ListingDto listingDto) {
         Listing listing = listingMapper.toEntity(listingDto);
         Listing createdListing = listingRepository.save(listing);
-        //update status copy
-//        Copy copy = createdListing.getCopy();
-//        copy.setCopyStatus(CopyStatus.LISTED);
-//        copyService.updateCopy(copyMapper.toDto(copy));
+//        update status copy
+        Copy copy = createdListing.getCopy();
+        CopyDto copyDto = copyMapper.toDto(copy);
+        Copy newCopy = copyMapper.toEntity(copyDto);
+        newCopy.setId(listingDto.copyId());
+        newCopy.setCopyStatus(CopyStatus.LISTED);
+        copyRepository.save(newCopy);
         return listingMapper.toDto(createdListing);
     }
 
@@ -61,27 +65,6 @@ public class ListingService {
         Optional<Listing> optionalListing = listingRepository.findById(id);
         return optionalListing.map(listingMapper::toDto).orElse(null);
     }
-
-//    public ListingDetailDto getListingDetailDtoById(Long id) {
-//        Optional<Listing> optionalListing = listingRepository.findById(id);
-//        ListingDto listingDto = optionalListing.map(listingMapper::toDto).orElse(null);
-//        Listing listing = listingMapper.toEntity(listingDto);
-//
-//        ListingDetailDto listingDetailDto = new ListingDetailDto(
-//                listing.getId(),
-//                listing.getOwner(),
-//                listing.getQuantity(),
-//                listing.getAddress(),
-//                listing.getLeaseRate(),
-//                listing.getDepositFee(),
-//                listing.getPenaltyRate(),
-//                listing.getDescription(),
-//                listing.getCopy(),
-//                listing.getCopy().getBook(),
-//                reviewService.getReviewByOwnerId(listing.getOwner().getId())
-//        );
-//        return null;
-//    }
 
     public Page<ListingDto> getListingByOwnerId (Pageable pageable, Long id) {
         Page<Listing> listing = listingRepository.findByOwnerId(pageable,id);
@@ -122,4 +105,19 @@ public class ListingService {
     public void deleteListing (Long id) {
         listingRepository.deleteById(id);
     }
+
+    public Long countListingByOwner(Long ownerId) {
+        return listingRepository.countListingByOwnerId(ownerId);
+    }
+
+    public Long countListingByOwnerAndStatus(Long ownerId) {
+        return listingRepository.countListingByOwnerIdAndListingStatus(ownerId,ListingStatus.LEASED);
+    }
+
+    public Page<ListingDto> getListingByOwnerIdAndTitle (Pageable pageable,ListingSearchByOwnerAndNameDto listingSearch) {
+        Page<Listing> result = listingRepository.findByIdAndBookTitleContaining(pageable,listingSearch.getOwnerId(), listingSearch.getTitle());
+        return result.map(listingMapper::toDto);
+    }
+
+
 }

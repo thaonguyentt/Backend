@@ -1,10 +1,13 @@
 package base.api.book.controller;
 
 import base.api.book.dto.*;
+import base.api.book.dto.search.ListingSearchByOwnerAndNameDto;
 import base.api.book.dto.search.ListingSearchDto;
 import base.api.book.service.BookService;
 import base.api.book.service.CopyService;
 import base.api.book.service.ListingService;
+import base.api.book.service.ReviewService;
+import base.api.user.UserDto;
 import base.api.user.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,14 +24,16 @@ public class ListingController {
     private final ListingService listingService;
     private final CopyService copyService;
     private final BookService bookService;
-
     private final UserService userService;
 
-    public ListingController(ListingService listingService, CopyService copyService, BookService bookService, UserService userService) {
+    private final ReviewService reviewService;
+
+    public ListingController(ListingService listingService, CopyService copyService, BookService bookService, UserService userService, ReviewService reviewService) {
         this.listingService = listingService;
         this.copyService = copyService;
         this.bookService = bookService;
         this.userService = userService;
+        this.reviewService = reviewService;
     }
 
     @GetMapping("/{id}")
@@ -40,27 +45,36 @@ public class ListingController {
         return ResponseEntity.ok(listingDto);
     }
 
-//    @GetMapping("/detailListing/{id}")
-//    public ResponseEntity<ListingDetailDto> getListingById(@PathVariable Long id) {
-//        ListingDto listingDto = listingService.getListingById(id);
-//        if (listingDto == null) {
-//            return ResponseEntity.noContent().build();
-//        }
-//        ListingDetailDto listingDetailDto = new ListingDetailDto(
-//                listingDto.id(),
-//                userService.getUserById(listingDto.ownerId()),
-////                listing.getQuantity(),
-////                listing.getAddress(),
-////                listing.getLeaseRate(),
-////                listing.getDepositFee(),
-////                listing.getPenaltyRate(),
-////                listing.getDescription(),
-////                listing.getCopy(),
-////                listing.getCopy().getBook(),
-////                reviewService.getReviewByOwnerId(listing.getOwner().getId())
-//        );
-//        return ResponseEntity.ok(listingDto);
-//    }
+    @GetMapping("/detailListing/{id}")
+    public ResponseEntity<ListingDetailDto> getListingDetailById(@PathVariable Long id) {
+        ListingDto listingDto = listingService.getListingById(id);
+        if (listingDto == null) {
+            return ResponseEntity.noContent().build();
+        }
+        CopyDto copy = copyService.getCopyById(listingDto.copyId());
+        BookDto book = bookService.getBookById(copy.bookId());
+        List<ReviewDto> reviews = reviewService.getReviewByOwnerId(listingDto.ownerId());
+        Long bookOwned = listingService.countListingByOwner(listingDto.ownerId());
+        Long bookLeasing = listingService.countListingByOwnerAndStatus(listingDto.ownerId());
+//      UserDto user = userService.getUserById(listingDto.ownerId()).id();
+        ListingDetailDto listingDetailDto = new ListingDetailDto(
+                listingDto.id(),
+//               user,
+//                userService.getUserById(listingDto.ownerId()).id(),
+                listingDto.quantity(),
+                listingDto.address(),
+                listingDto.leaseRate(),
+                listingDto.depositFee(),
+                listingDto.penaltyRate(),
+                listingDto.description(),
+                copy,
+                book,
+                reviews,
+                bookOwned,
+                bookLeasing
+        );
+        return ResponseEntity.ok(listingDetailDto);
+    }
 
     @GetMapping
     public ResponseEntity<List<ListingDto>> getAllListing() {
@@ -115,6 +129,36 @@ public class ListingController {
                             bookDto
                     );
                 });
+    }
+
+    /////////đang làm
+    @GetMapping("/search/byOwnerIdAndName")
+    public Page<ListingExtendedDto> getListingByOwnerIdAndName (
+            Pageable pageable,
+            @RequestParam (name = "ownerId") Long ownerId,
+            @RequestParam (name = "title") String title
+        ) {
+        ListingSearchByOwnerAndNameDto listingSearch = new ListingSearchByOwnerAndNameDto();
+        listingSearch.setTitle(title);
+        listingSearch.setOwnerId(ownerId);
+        Page<ListingDto> listingDto = listingService.getListingByOwnerIdAndTitle(pageable,listingSearch);
+        return listingDto.map(dto->{
+            CopyDto copyDto = copyService.getCopyById(dto.copyId());
+            BookDto bookDto = bookService.getBookById(copyDto.bookId());
+            return new ListingExtendedDto(
+                    dto.id(),
+                    dto.ownerId(),
+                    dto.quantity(),
+                    dto.address(),
+                    dto.expiryDate(),
+                    dto.leaseRate(),
+                    dto.depositFee(),
+                    dto.penaltyRate(),
+                    dto.description(),
+                    copyDto,
+                    bookDto
+            );
+        });
     }
 
     @PostMapping

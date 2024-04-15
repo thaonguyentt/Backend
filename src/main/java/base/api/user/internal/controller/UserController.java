@@ -29,9 +29,10 @@ public class UserController {
   private Logger log = LoggerFactory.getLogger(UserController.class);
 
   @GetMapping("/{id}")
-  UserDto getUserInfo(@PathVariable("id") Long id) {
+  ResponseEntity<UserDto> getUserInfo(@PathVariable("id") Long id) {
+
     // TODO implement
-    return null;
+    return ResponseEntity.ok(userService.getUserById(id));
   }
 
   @GetMapping("/myInfo")

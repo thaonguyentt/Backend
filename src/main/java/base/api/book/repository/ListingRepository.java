@@ -77,4 +77,20 @@ public interface ListingRepository extends JpaRepository<Listing, Long>, JpaSpec
     )
     Page<Listing> findByTitleLikeAndGenre(Pageable pageable, @Param("title") String title, @Param("genre") String genre);
 
+    Long countListingByOwnerId(Long id);
+
+    Long countListingByOwnerIdAndListingStatus(Long id, ListingStatus listingStatus);
+
+
+    @Query(value = """ 
+            select l.* from listing l join copy c on l.copy_id = c.id join book b on c.book_id = b.id 
+            where b.title like :title and l.owner_id = :id
+            """,
+            nativeQuery = true,
+            countQuery = """
+            select count(*)from listing l join copy c on l.copy_id = c.id join book b on c.book_id = b.id
+            where b.title like :title and l.owner_id = id
+      """
+    )
+    Page<Listing> findByIdAndBookTitleContaining(Pageable pageable, Long id, String title);
 }

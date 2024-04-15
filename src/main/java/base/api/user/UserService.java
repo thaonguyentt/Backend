@@ -65,10 +65,10 @@ public class UserService {
     Long id = userDTO.id();
     User editingUser = userMapper.userFromUserDTO(userDTO);
     editingUser.setId(id);
-//    User editedUser = userRepository.saveAndFlush(editingUser);
-    User editedUser = userRepository.save(editingUser);
+    User editedUser = userRepository.saveAndFlush(editingUser);
     return userMapper.userDTOFromUser(editedUser);
   }
+
 
   private Optional<User> getUserByLoginName(String loginName) {
     if (StringUtils.isBlank(loginName)) {
