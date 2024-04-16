@@ -103,4 +103,11 @@ public class LeaseOrderService {
 
     return leaseOrderMapper.toDto(createdOrder);
   }
+
+  public List<LeaseOrderDto> getLeaseOrderByLessorId(Long id) {
+    return leaseOrderRepository.findLeaseOrderByLesseeId(id)
+            .stream()
+            .map(leaseOrderMapper::toDto)
+            .collect(Collectors.toList());
+  }
 }

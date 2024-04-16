@@ -34,6 +34,10 @@ public class GenreService {
     return optionalGenre.map(genreMapper::toDto).orElse(null);
   }
 
+  public GenreDto getGenreByNameVn (String nameVn) {
+    Optional<Genre> optionalGenre = genreRepository.findGenreByNameVn(nameVn);
+    return optionalGenre.map(genreMapper::toDto).orElse(null);
+  }
   public List<GenreDto> getAllGenres() {
     return genreRepository.findAll().stream().map(genreMapper::toDto).collect(Collectors.toList());
   }

@@ -3,10 +3,7 @@ package base.api.book.controller;
 import base.api.book.dto.*;
 import base.api.book.dto.search.ListingSearchByOwnerAndNameDto;
 import base.api.book.dto.search.ListingSearchDto;
-import base.api.book.service.BookService;
-import base.api.book.service.CopyService;
-import base.api.book.service.ListingService;
-import base.api.book.service.ReviewService;
+import base.api.book.service.*;
 import base.api.user.UserDto;
 import base.api.user.UserService;
 import org.springframework.data.domain.Page;
@@ -27,13 +24,21 @@ public class ListingController {
     private final UserService userService;
 
     private final ReviewService reviewService;
+    private final GenreService genreService;
 
-    public ListingController(ListingService listingService, CopyService copyService, BookService bookService, UserService userService, ReviewService reviewService) {
+    public ListingController(ListingService listingService,
+                             CopyService copyService,
+                             BookService bookService,
+                             UserService userService,
+                             ReviewService reviewService,
+                             GenreService genreService
+                             ) {
         this.listingService = listingService;
         this.copyService = copyService;
         this.bookService = bookService;
         this.userService = userService;
         this.reviewService = reviewService;
+        this.genreService = genreService;
     }
 
     @GetMapping("/{id}")
@@ -56,10 +61,10 @@ public class ListingController {
         List<ReviewDto> reviews = reviewService.getReviewByOwnerId(listingDto.ownerId());
         Long bookOwned = listingService.countListingByOwner(listingDto.ownerId());
         Long bookLeasing = listingService.countListingByOwnerAndStatus(listingDto.ownerId());
-//      UserDto user = userService.getUserById(listingDto.ownerId()).id();
+        UserDto user = userService.getUserById(listingDto.ownerId());
         ListingDetailDto listingDetailDto = new ListingDetailDto(
                 listingDto.id(),
-//               user,
+                user,
 //                userService.getUserById(listingDto.ownerId()).id(),
                 listingDto.quantity(),
                 listingDto.address(),
@@ -86,9 +91,10 @@ public class ListingController {
       Pageable pageable,
       @RequestParam(name = "title", required = false) String title,
       @RequestParam(name = "genre", required = false) String genre) {
+        GenreDto genreDto = genreService.getGenreByNameVn(genre);
         ListingSearchDto listingSearchDto = new ListingSearchDto();
         listingSearchDto.setTitle(title);
-        listingSearchDto.setGenre(genre);
+        listingSearchDto.setGenre(genreDto.name());
         return listingService.findListings(pageable, listingSearchDto)
           .map(dto -> {
               CopyDto copyDto = copyService.getCopyById(dto.copyId());

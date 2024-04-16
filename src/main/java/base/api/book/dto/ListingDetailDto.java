@@ -10,7 +10,7 @@ import java.util.List;
 
 public record ListingDetailDto(
         Long id,
-//        UserDto user,
+        UserDto user,
 //        Long ownerId,
         Integer quantity,
         String address,

@@ -8,10 +8,9 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class LeaseOrderController {
@@ -33,4 +32,9 @@ public class LeaseOrderController {
 //    obj.getDepositPaymentId();
     return new ResponseEntity<>(obj.toString(), HttpStatusCode.valueOf(200));
   }
+  @GetMapping("/api/leaseOrder/search/lessor/{id}")
+  public ResponseEntity<List<LeaseOrderDto>> getLeaseOrderByLessorId (@PathVariable Long id) {
+    return ResponseEntity.ok(leaseOrderService.getLeaseOrderByLessorId(id));
+  }
+
 }
