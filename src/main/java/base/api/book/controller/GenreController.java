@@ -47,4 +47,8 @@ public class GenreController {
     return ResponseEntity.noContent().build();
   }
 
+  @GetMapping("/nameVn")
+  public ResponseEntity<String> getGenreByNameVn(@RequestParam(name = "genre") String nameVn) {
+    return ResponseEntity.ok(genreService.getGenreByNameVn(nameVn).name());
+  }
 }
