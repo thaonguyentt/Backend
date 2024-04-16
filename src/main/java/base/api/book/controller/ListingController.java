@@ -6,6 +6,7 @@ import base.api.book.dto.search.ListingSearchDto;
 import base.api.book.service.*;
 import base.api.user.UserDto;
 import base.api.user.UserService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -94,7 +95,9 @@ public class ListingController {
         GenreDto genreDto = genreService.getGenreByNameVn(genre);
         ListingSearchDto listingSearchDto = new ListingSearchDto();
         listingSearchDto.setTitle(title);
-        listingSearchDto.setGenre(genreDto.name());
+        if (genreDto != null && StringUtils.isNoneBlank(genreDto.name())) {
+            listingSearchDto.setGenre(genreDto.name());
+        }
         return listingService.findListings(pageable, listingSearchDto)
           .map(dto -> {
               CopyDto copyDto = copyService.getCopyById(dto.copyId());
