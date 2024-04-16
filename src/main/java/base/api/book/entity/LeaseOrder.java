@@ -27,6 +27,7 @@ public class LeaseOrder {
   @Column(name = "listing_id")
   private Long listingId;
 
+  @Enumerated(EnumType.STRING)
   @Column(name = "status")
   private LeaseOrderStatus status;
 
