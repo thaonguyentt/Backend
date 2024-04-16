@@ -52,12 +52,12 @@ public class ListingService {
         Listing listing = listingMapper.toEntity(listingDto);
         Listing createdListing = listingRepository.save(listing);
 //        update status copy
-        Copy copy = createdListing.getCopy();
-        CopyDto copyDto = copyMapper.toDto(copy);
-        Copy newCopy = copyMapper.toEntity(copyDto);
-        newCopy.setId(listingDto.copyId());
-        newCopy.setCopyStatus(CopyStatus.LISTED);
-        copyRepository.save(newCopy);
+        Copy copy = copyRepository.getReferenceById(createdListing.getCopy().getId());
+//        CopyDto copyDto = copyMapper.toDto(copy);
+//        Copy newCopy = copyMapper.toEntity(copyDto);
+//        newCopy.setId(listingDto.copyId());
+        copy.setCopyStatus(CopyStatus.LISTED);
+        copyRepository.save(copy);
         return listingMapper.toDto(createdListing);
     }
 
