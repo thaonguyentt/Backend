@@ -34,9 +34,9 @@ public class GenreService {
     return optionalGenre.map(genreMapper::toDto).orElse(null);
   }
 
-  public GenreDto getGenreByNameVn (String nameVn) {
-    Optional<Genre> genre = genreRepository.findByNameVnContaining(nameVn);
-    return genre.map(genreMapper::toDto).orElse(null);
+  public List<GenreDto> getGenreByNameVn (String nameVn) {
+    List<Genre> genre = genreRepository.findByNameVnContaining(nameVn);
+    return genre.stream().map(genreMapper::toDto).collect(Collectors.toList());
   }
   public List<GenreDto> getAllGenres() {
     return genreRepository.findAll().stream().map(genreMapper::toDto).collect(Collectors.toList());

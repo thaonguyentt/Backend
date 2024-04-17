@@ -92,11 +92,11 @@ public class ListingController {
       Pageable pageable,
       @RequestParam(name = "title", required = false) String title,
       @RequestParam(name = "genre", required = false) String genre) {
-        GenreDto genreDto = genreService.getGenreByNameVn(genre);
+        List<GenreDto> genreDto = genreService.getGenreByNameVn(genre);
         ListingSearchDto listingSearchDto = new ListingSearchDto();
         listingSearchDto.setTitle(title);
-        if (genreDto != null && StringUtils.isNoneBlank(genreDto.name())) {
-            listingSearchDto.setGenre(genreDto.name());
+        if (!genreDto.isEmpty()) {
+            listingSearchDto.setGenre(genreDto.get(0).name());
         }
         return listingService.findListings(pageable, listingSearchDto)
           .map(dto -> {

@@ -9,5 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface GenreRepository extends JpaRepository<Genre, Long>, JpaSpecificationExecutor<Genre> {
-    public Optional<Genre> findByNameVnContaining  (String nameVn);
+    public  List<Genre> findByNameVnContaining  (String nameVn);
+
+
 }
