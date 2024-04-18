@@ -1,6 +1,7 @@
 package base.api.book.entity;
 
 import base.api.book.entity.support.LeaseOrderStatus;
+import base.api.payment.entity.PaymentMethod;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -68,8 +69,9 @@ public class LeaseOrder {
   @Column(name = "total_deposit", precision = 10, scale = 2)
   private BigDecimal totalDeposit;
 
+  @Enumerated(EnumType.ORDINAL)
   @Column(name = "payment_method")
-  private Integer paymentMethod;
+  private PaymentMethod paymentMethod;
 
   @Column(name = "image_link", length = Integer.MAX_VALUE)
   private String imageLink;
@@ -92,10 +94,10 @@ public class LeaseOrder {
   @Column(name = "deleted_date")
   private LocalDate deletedDate;
 
-  @OneToMany(mappedBy = "leaseOrder")
+  @OneToMany(mappedBy = "leaseOrder", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   private Set<LeaseOrderDetail> leaseOrderDetails = new LinkedHashSet<>();
 
-  @OneToMany(mappedBy = "leaseOrder")
+  @OneToMany(mappedBy = "leaseOrder", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   private Set<Review> reviews = new LinkedHashSet<>();
 
 }
