@@ -1,5 +1,6 @@
 package base.api.book.controller;
 
+import base.api.book.dto.LeaseOrderCreateRequest;
 import base.api.book.dto.LeaseOrderDto;
 import base.api.book.repository.LeaseOrderRepository;
 import base.api.book.service.LeaseOrderService;
@@ -24,6 +25,12 @@ public class LeaseOrderController {
   public LeaseOrderDto createLeaseOrder(@RequestBody LeaseOrderDto leaseOrderDto) {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     return leaseOrderService.createLeaseOrder(auth, leaseOrderDto);
+  }
+
+  @PostMapping("/api/leaseOrder2")
+  public LeaseOrderDto createLeaseOrder2(@RequestBody LeaseOrderCreateRequest request) {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    return leaseOrderService.createLeaseOrder2(auth, request);
   }
 
   @GetMapping("/api/leaseOrder")

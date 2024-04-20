@@ -3,6 +3,9 @@ package base.api.book.dto;
 import base.api.book.entity.LeaseOrderDetail;
 import base.api.book.entity.Review;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
+import lombok.With;
+import lombok.experimental.Wither;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -12,10 +15,12 @@ import java.util.Set;
 /**
  * DTO for {@link base.api.book.entity.LeaseOrder}
  */
+@Builder
+@With
 public record LeaseOrderDto(
   Long id,
   Long listingId,
-  Long statusId,
+  String status,
   @NotNull Long lessorId,
   @NotNull Long lesseeId,
   @NotNull String lessorAddress,
@@ -27,7 +32,7 @@ public record LeaseOrderDto(
   @NotNull BigDecimal totalLeaseFee,
   @NotNull BigDecimal totalPenaltyRate,
   @NotNull BigDecimal totalDeposit,
-  Integer paymentMethod,
+  String paymentMethod,
   String imageLink,
   Integer depositPaymentId,
   Integer refundPaymentId,

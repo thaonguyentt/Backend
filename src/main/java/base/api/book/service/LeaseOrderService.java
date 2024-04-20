@@ -3,6 +3,7 @@ package base.api.book.service;
 import base.api.authorization.UnauthorizedException;
 import base.api.book.dto.LeaseOrderDetailDto;
 import base.api.book.dto.LeaseOrderDto;
+import base.api.book.dto.LeaseOrderCreateRequest;
 import base.api.book.entity.Copy;
 import base.api.book.entity.LeaseOrder;
 import base.api.book.entity.LeaseOrderDetail;
@@ -16,10 +17,13 @@ import base.api.book.mapper.LeaseOrderMapper;
 import base.api.book.repository.CopyRepository;
 import base.api.book.repository.LeaseOrderRepository;
 import base.api.book.repository.ListingRepository;
+import base.api.payment.entity.PaymentMethod;
 import jakarta.transaction.Transactional;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
@@ -104,11 +108,76 @@ public class LeaseOrderService {
     return leaseOrderMapper.toDto(createdOrder);
   }
 
+
   public List<LeaseOrderDto> getLeaseOrderByLessorId(Long id) {
     return leaseOrderRepository.findLeaseOrderByLesseeId(id)
-            .stream()
-            .map(leaseOrderMapper::toDto)
-            .collect(Collectors.toList());
+      .stream()
+      .map(leaseOrderMapper::toDto)
+      .collect(Collectors.toList());
+  }
+
+  public LeaseOrderDto createLeaseOrder2(Authentication auth, LeaseOrderCreateRequest requestDto) {
+    if (auth == null) {
+      throw new UnauthorizedException("Unauthorized access");
+    }
+    // TODO tạo service handle anonymous user
+    // FIXME anonymous user => auth.getPrincipal == "anonymousUser" => parse số => lỗi
+    Long userId = Long.valueOf((String)auth.getPrincipal());
+
+    Listing listing = listingRepository.findById(requestDto.listingId()).get();
+    if (! ListingStatus.AVAILABLE.equals(listing.getListingStatus())) {
+      throw new ListingNotAvailableException("Listing " + requestDto.listingId() + " is not available.");
+    }
+
+    Long lessorId = listing.getOwner().getId();
+    listing.setListingStatus(ListingStatus.LEASED);
+    Copy copy = listing.getCopy();
+    copy.setCopyStatus(CopyStatus.LEASED);
+
+    Listing updatedListing = listingRepository.save(listing);
+    Copy updatedCopy = copyRepository.save(copy);
+
+    // Tính các loại phí
+    BigDecimal totalLeaseFee = listing.getLeaseRate()
+      .multiply(BigDecimal.valueOf(Duration.between(
+        requestDto.fromDate().atStartOfDay(),
+        requestDto.toDate().atStartOfDay())
+        .toDays()));
+    BigDecimal totalDeposit = listing.getDepositFee();
+    BigDecimal totalPenaltyRate = listing.getPenaltyRate();
+
+    LeaseOrder newLeaseOrder = new LeaseOrder();
+    newLeaseOrder.setListingId(updatedListing.getId());
+    newLeaseOrder.setStatus(LeaseOrderStatus.ORDERED_PAYMENT_PENDING);
+    newLeaseOrder.setLessorId(lessorId);
+    newLeaseOrder.setLessorAddress(listing.getAddress());
+    newLeaseOrder.setLesseeId(userId);
+    newLeaseOrder.setLesseeAddress(requestDto.lesseeAddress());
+    newLeaseOrder.setFromDate(requestDto.fromDate());
+    newLeaseOrder.setToDate(requestDto.toDate());
+    newLeaseOrder.setTotalLeaseFee(totalLeaseFee);
+    newLeaseOrder.setTotalDeposit(totalDeposit);
+    newLeaseOrder.setTotalPenaltyRate(totalPenaltyRate);
+    newLeaseOrder.setPaymentMethod(PaymentMethod.COD);
+    newLeaseOrder.setLeaseOrderDetails(
+      // Tạo lease order detail
+      Set.of(LeaseOrderDetail.builder()
+          .leaseOrder(newLeaseOrder)
+          .listing(listing)
+          .copy(listing.getCopy())
+          .leaseRate(listing.getLeaseRate())
+          .depositFee(listing.getDepositFee())
+          .penaltyRate(listing.getDepositFee())
+        .build()
+      )
+    );
+
+    var createdLO = leaseOrderRepository.save(newLeaseOrder);
+
+    var newLeaseOrderDto = leaseOrderMapper.toDto(createdLO);
+    // Add more info
+
+    return newLeaseOrderDto;
   }
 
 }
