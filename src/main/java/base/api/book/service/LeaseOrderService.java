@@ -109,12 +109,36 @@ public class LeaseOrderService {
   }
 
 
-  public List<LeaseOrderDto> getLeaseOrderByLessorId(Long id) {
+  public List<LeaseOrderDto> getLeaseOrderByLesseeId(Long id) {
     return leaseOrderRepository.findLeaseOrderByLesseeId(id)
       .stream()
       .map(leaseOrderMapper::toDto)
       .collect(Collectors.toList());
   }
+
+  public List<LeaseOrderDto> getLeaseOrderByLesseeIdAndStatus(Long id, List<LeaseOrderStatus> leaseOrderStatus) {
+    return leaseOrderRepository.findByLesseeIdAndStatusIn(id, leaseOrderStatus)
+            .stream()
+            .map(leaseOrderMapper::toDto)
+            .collect(Collectors.toList());
+  }
+
+  public List<LeaseOrderDto> getLeaseOrderByLessorIdAndStatus(Long id, List<LeaseOrderStatus> leaseOrderStatus) {
+    return leaseOrderRepository.findByLessorIdAndStatusIn(id, leaseOrderStatus)
+            .stream()
+            .map(leaseOrderMapper::toDto)
+            .collect(Collectors.toList());
+  }
+
+
+  public List<LeaseOrderDto> getLeaseOrderByLessorId (Long id) {
+    return leaseOrderRepository.findLeseOrderByLessorId(id)
+            .stream()
+            .map(leaseOrderMapper::toDto)
+            .collect(Collectors.toList());
+  }
+
+
 
   public LeaseOrderDto createLeaseOrder2(Authentication auth, LeaseOrderCreateRequest requestDto) {
     if (auth == null) {

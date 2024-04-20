@@ -2,6 +2,8 @@ package base.api.book.controller;
 
 import base.api.book.dto.LeaseOrderCreateRequest;
 import base.api.book.dto.LeaseOrderDto;
+import base.api.book.entity.support.LeaseOrderStatus;
+import base.api.book.entity.support.ListingStatus;
 import base.api.book.repository.LeaseOrderRepository;
 import base.api.book.service.LeaseOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +13,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 public class LeaseOrderController {
@@ -20,6 +24,7 @@ public class LeaseOrderController {
 
   @Autowired
   LeaseOrderService leaseOrderService;
+
 
   @PostMapping("/api/leaseOrder")
   public LeaseOrderDto createLeaseOrder(@RequestBody LeaseOrderDto leaseOrderDto) {
@@ -43,5 +48,52 @@ public class LeaseOrderController {
   public ResponseEntity<List<LeaseOrderDto>> getLeaseOrderByLessorId (@PathVariable Long id) {
     return ResponseEntity.ok(leaseOrderService.getLeaseOrderByLessorId(id));
   }
+
+  @GetMapping("/api/leaseOrder/search/lessee/{id}")
+  public ResponseEntity<List<LeaseOrderDto>> getLeaseOrderByLesseeId (@PathVariable Long id) {
+    return ResponseEntity.ok(leaseOrderService.getLeaseOrderByLesseeId(id));
+  }
+
+  @GetMapping ("/api/leaseOrder/search/lessor/status/{id}")
+  public ResponseEntity<List<LeaseOrderDto>> getLeaseOrderByLessorIdAndStatus (@PathVariable Long id, @RequestParam(name="status") Long status) {
+    List<LeaseOrderStatus> leaseOrderStatus = new ArrayList<>();
+    if (status == 1) {
+      leaseOrderStatus.add(LeaseOrderStatus.ORDERED_PAYMENT_PENDING);
+      leaseOrderStatus.add(LeaseOrderStatus.PAYMENT_SUCCESS);
+    } else if (status == 2) {
+      leaseOrderStatus.add(LeaseOrderStatus.DELIVERED);
+      leaseOrderStatus.add(LeaseOrderStatus.RETURNING);
+    } else if (status == 3) {
+      leaseOrderStatus.add(LeaseOrderStatus.LATE_RETURN);
+    } else {
+      leaseOrderStatus.add(LeaseOrderStatus.RETURNED);
+      leaseOrderStatus.add(LeaseOrderStatus.DEPOSIT_RETURNED);
+      leaseOrderStatus.add(LeaseOrderStatus.PAID_OWNER);
+    }
+    return ResponseEntity.ok(leaseOrderService.getLeaseOrderByLessorIdAndStatus(id,leaseOrderStatus));
+
+  }
+
+  @GetMapping ("/api/leaseOrder/search/lessee/status/{id}")
+  public ResponseEntity<List<LeaseOrderDto>> getLeaseOrderByLesseeIdAndStatus (@PathVariable Long id, @RequestParam(name="status") Long status) {
+    List<LeaseOrderStatus> leaseOrderStatus = new ArrayList<>();
+    if (status == 1) {
+      leaseOrderStatus.add(LeaseOrderStatus.ORDERED_PAYMENT_PENDING);
+      leaseOrderStatus.add(LeaseOrderStatus.PAYMENT_SUCCESS);
+    } else if (status == 2) {
+      leaseOrderStatus.add(LeaseOrderStatus.DELIVERED);
+      leaseOrderStatus.add(LeaseOrderStatus.RETURNING);
+    } else if (status == 3) {
+      leaseOrderStatus.add(LeaseOrderStatus.LATE_RETURN);
+    } else {
+      leaseOrderStatus.add(LeaseOrderStatus.RETURNED);
+      leaseOrderStatus.add(LeaseOrderStatus.DEPOSIT_RETURNED);
+      leaseOrderStatus.add(LeaseOrderStatus.PAID_OWNER);
+    }
+    return ResponseEntity.ok(leaseOrderService.getLeaseOrderByLesseeIdAndStatus(id,leaseOrderStatus));
+
+  }
+
+
 
 }
