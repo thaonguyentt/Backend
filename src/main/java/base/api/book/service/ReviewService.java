@@ -25,4 +25,10 @@ public class ReviewService {
         List<Review> reviews = reviewRepository.findByUserId(ownerId);
         return reviews.stream().map(reviewMapper::toDto).collect(Collectors.toList());
     }
+
+    public ReviewDto createReview (ReviewDto reviewDto) {
+        Review review = reviewMapper.toEntity(reviewDto);
+        Review createdReview = reviewRepository.save(review);
+        return reviewMapper.toDto(createdReview);
+    }
 }

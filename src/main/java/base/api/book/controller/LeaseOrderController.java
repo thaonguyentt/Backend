@@ -74,6 +74,11 @@ public class LeaseOrderController {
 
   }
 
+  @GetMapping ("/api/leaseOrder/edit/status")
+  public ResponseEntity<LeaseOrderDto> updateStatus (@RequestParam(name="id") Long id, @RequestParam(name="status") LeaseOrderStatus status) {
+    return ResponseEntity.ok(leaseOrderService.updateLeaseOrderStatus(id, status));
+  }
+
   @GetMapping ("/api/leaseOrder/search/lessee/status/{id}")
   public ResponseEntity<List<LeaseOrderDto>> getLeaseOrderByLesseeIdAndStatus (@PathVariable Long id, @RequestParam(name="status") Long status) {
     List<LeaseOrderStatus> leaseOrderStatus = new ArrayList<>();

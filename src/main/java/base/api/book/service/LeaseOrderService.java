@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -121,6 +122,13 @@ public class LeaseOrderService {
             .stream()
             .map(leaseOrderMapper::toDto)
             .collect(Collectors.toList());
+  }
+
+  public LeaseOrderDto updateLeaseOrderStatus (Long id, LeaseOrderStatus leaseOrderStatus) {
+    LeaseOrder leaseOrder = leaseOrderRepository.findById(id).get();
+    leaseOrder.setStatus(leaseOrderStatus);
+    LeaseOrder savedLeaseOrder = leaseOrderRepository.save(leaseOrder);
+    return leaseOrderMapper.toDto(savedLeaseOrder);
   }
 
   public List<LeaseOrderDto> getLeaseOrderByLessorIdAndStatus(Long id, List<LeaseOrderStatus> leaseOrderStatus) {
