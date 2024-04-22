@@ -26,13 +26,13 @@ public class LeaseOrderController {
   LeaseOrderService leaseOrderService;
 
 
-  @PostMapping("/api/leaseOrder")
-  public LeaseOrderDto createLeaseOrder(@RequestBody LeaseOrderDto leaseOrderDto) {
-    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-    return leaseOrderService.createLeaseOrder(auth, leaseOrderDto);
-  }
+//  @PostMapping("/api/leaseOrder")
+//  public LeaseOrderDto createLeaseOrder(@RequestBody LeaseOrderDto leaseOrderDto) {
+//    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//    return leaseOrderService.createLeaseOrder(auth, leaseOrderDto);
+//  }
 
-  @PostMapping("/api/leaseOrder2")
+  @PostMapping("/api/leaseOrder")
   public LeaseOrderDto createLeaseOrder2(@RequestBody LeaseOrderCreateRequest request) {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     return leaseOrderService.createLeaseOrder2(auth, request);
