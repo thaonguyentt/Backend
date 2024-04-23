@@ -36,13 +36,13 @@ public interface ListingRepository extends JpaRepository<Listing, Long>, JpaSpec
 
     @Query(value = """
         select l.* from listing l join copy c on l.copy_id = c.id join book b on c.book_id = b.id
-        where b.title like :title
+        where b.title like CONCAT('%',:title,'%')
         and l.status = 'AVAILABLE'
       """,
       nativeQuery = true,
       countQuery = """
         select count(*)from listing l join copy c on l.copy_id = c.id join book b on c.book_id = b.id
-        where b.title like :title
+        where b.title like CONCAT('%',:title,'%')
         and l.status = 'AVAILABLE'
       """
     )
@@ -63,14 +63,14 @@ public interface ListingRepository extends JpaRepository<Listing, Long>, JpaSpec
 
     @Query(value = """
         select l.* from listing l join copy c on l.copy_id = c.id join book b on c.book_id = b.id
-        where b.title like :title
+        where b.title like CONCAT('%',:title,'%')
         and exists (SELECT * FROM UNNEST (b.genre) genre WHERE genre LIKE :genre ) 
         and l.status = 'AVAILABLE'
       """,
         nativeQuery = true,
         countQuery = """
         select count(*) from listing l join copy c on l.copy_id = c.id join book b on c.book_id = b.id
-        where b.title like :title
+        where b.title like CONCAT('%',:title,'%')
         and exists (SELECT * FROM UNNEST (b.genre) genre WHERE genre LIKE :genre ) 
         and l.status = 'AVAILABLE'
       """
@@ -84,12 +84,12 @@ public interface ListingRepository extends JpaRepository<Listing, Long>, JpaSpec
 
     @Query(value = """ 
             select l.* from listing l join copy c on l.copy_id = c.id join book b on c.book_id = b.id 
-            where b.title like :title and l.owner_id = :id
+            where b.title like CONCAT('%',:title,'%') and l.owner_id = :id
             """,
             nativeQuery = true,
             countQuery = """
             select count(*)from listing l join copy c on l.copy_id = c.id join book b on c.book_id = b.id
-            where b.title like :title and l.owner_id = id
+            where b.title like CONCAT('%',:title,'%') and l.owner_id = id
       """
     )
     Page<Listing> findByIdAndBookTitleContaining(Pageable pageable, Long id, String title);
