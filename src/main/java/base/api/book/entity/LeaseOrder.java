@@ -76,14 +76,14 @@ public class LeaseOrder {
   @Column(name = "image_link", length = Integer.MAX_VALUE)
   private String imageLink;
 
-  @Column(name = "deposit_payment_id")
-  private Integer depositPaymentId;
+  @Column(name = "lease_and_deposit_payment_id")
+  private Long leaseAndDepositPaymentId;
 
-  @Column(name = "refund_payment_id")
-  private Integer refundPaymentId;
+  @Column(name = "refund_deposit_payment_id")
+  private Long refundDepositPaymentId;
 
   @Column(name = "pay_owner_payment_id")
-  private Integer payOwnerPaymentId;
+  private Long payOwnerPaymentId;
 
   @Column(name = "created_date")
   private LocalDate createdDate;

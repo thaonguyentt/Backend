@@ -39,8 +39,8 @@ create table lease_order
     total_deposit        DECIMAL(10, 2),
     payment_method       integer,         -- 1: cod, 2: chuyen khoan, 3. vnpay
     image_link           text,            -- TODO review: anh chuyen khoan , anh chuyen tien cod
-    deposit_payment_id   integer,
-    refund_payment_id    integer,         -- trả lại tiền thừa cho người thuê
+    lease_and_deposit_payment_id   integer,
+    refund_deposit_payment_id    integer,         -- trả lại tiền thừa cho người thuê
     pay_owner_payment_id integer,         -- trả tiền thuê sách cho chủ thuê
 
     created_date         date default now(),
@@ -50,7 +50,7 @@ create table lease_order
 insert into lease_order (id,lessor_id, lessee_id, listing_id, status, from_date, to_date, receive_date,
                          return_date, lessor_address, lessee_address, total_lease_fee,
                          total_penalty_rate,total_deposit, payment_method, image_link,
-                         deposit_payment_id, refund_payment_id, pay_owner_payment_id)
+                         lease_and_deposit_payment_id, refund_deposit_payment_id, pay_owner_payment_id)
 values (1, 1, 2, 1, 'ORDERED_PAYMENT_PENDING', '2024/05/01', '2024/06/01', null, null,
         '123 Nguyễn Trọng Tuyển, phường 12, quận Bình Thạnh',
         'Đường Kim Giang, Phường Kim Giang, Quận Thanh Xuân, Hà Nội', 90000.00, 0.00, 224100.00, 1, null, null, null,
