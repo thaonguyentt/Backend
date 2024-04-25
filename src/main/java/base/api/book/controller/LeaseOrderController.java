@@ -2,6 +2,7 @@ package base.api.book.controller;
 
 import base.api.book.dto.LeaseOrderCreateRequest;
 import base.api.book.dto.LeaseOrderDto;
+import base.api.book.dto.LeaseOrderDtoDetail;
 import base.api.book.dto.search.LeaseOrderUpdateRequest;
 import base.api.book.entity.support.LeaseOrderStatus;
 import base.api.book.repository.LeaseOrderRepository;
@@ -112,15 +113,9 @@ public class LeaseOrderController {
   }
 
   @GetMapping ("/api/leaseOrder/{id}")
-  public ResponseEntity<LeaseOrderDto> getLeaseOrder (@PathVariable Long id) {
-    return ResponseEntity.ok(leaseOrderService.getLeaseOrderById(id));
+  public ResponseEntity<LeaseOrderDtoDetail> getLeaseOrder (@PathVariable Long id) {
+    return ResponseEntity.ok(leaseOrderService.getDetailLeaseOrderById(id));
   }
 
-  @DeleteMapping ("/api/leaseOrder/{id}")
-  public ResponseEntity<Void> deleteLeaseOrder (@PathVariable Long id) {
-    leaseOrderService.deleteByLeaseOrderId(id);
-    leaseOrderDetailService.deleteLeaseOrderDetailByLeaseOrderId(id);
-    return ResponseEntity.noContent().build();
-  }
 
 }

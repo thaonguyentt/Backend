@@ -1,8 +1,7 @@
 package base.api.book.service;
 
 import base.api.authorization.UnauthorizedException;
-import base.api.book.dto.LeaseOrderDto;
-import base.api.book.dto.LeaseOrderCreateRequest;
+import base.api.book.dto.*;
 import base.api.book.entity.Copy;
 import base.api.book.entity.LeaseOrder;
 import base.api.book.entity.LeaseOrderDetail;
@@ -19,13 +18,20 @@ import base.api.book.repository.ListingRepository;
 import base.api.payment.dto.PaymentDto;
 import base.api.payment.entity.PaymentMethod;
 import base.api.payment.service.PaymentService;
+import base.api.user.UserDto;
+import base.api.user.UserService;
+import base.api.user.internal.entity.User;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,7 +39,9 @@ import java.util.stream.Collectors;
 @Transactional
 public class LeaseOrderService {
 
+  @Autowired
   final LeaseOrderRepository leaseOrderRepository;
+
   final ListingRepository listingRepository;
 
   final LeaseOrderDetailMapper leaseOrderDetailMapper;
@@ -41,14 +49,30 @@ public class LeaseOrderService {
   private final CopyRepository copyRepository;
   private final PaymentService paymentService;
 
+  private final UserService userService;
+
+  private final ListingService listingService;
+
+  private final CopyService copyService;
+
+  private final BookService bookService;
+
+  private final ReviewService reviewService;
+
   public LeaseOrderService(LeaseOrderRepository leaseOrderRepository, ListingRepository listingRepository, LeaseOrderDetailMapper leaseOrderDetailMapper, LeaseOrderMapper leaseOrderMapper,
-                           CopyRepository copyRepository, PaymentService paymentService) {
+                           CopyRepository copyRepository, PaymentService paymentService, UserService userService, ListingService listingService, CopyService copyService,
+                            BookService bookService, ReviewService reviewService) {
     this.leaseOrderRepository = leaseOrderRepository;
       this.listingRepository = listingRepository;
       this.leaseOrderDetailMapper = leaseOrderDetailMapper;
       this.leaseOrderMapper = leaseOrderMapper;
       this.copyRepository = copyRepository;
       this.paymentService = paymentService;
+      this.userService = userService;
+      this.listingService = listingService;
+      this.copyService = copyService;
+      this.bookService = bookService;
+      this.reviewService = reviewService;
   }
 
 
@@ -138,6 +162,7 @@ public class LeaseOrderService {
     newLeaseOrder.setTotalDeposit(totalDeposit);
     newLeaseOrder.setTotalPenaltyRate(totalPenaltyRate);
     newLeaseOrder.setPaymentMethod(PaymentMethod.COD);
+    newLeaseOrder.setCreatedDate(LocalDate.now());
     newLeaseOrder.setLeaseOrderDetails(
       // Tạo lease order detail
       Set.of(LeaseOrderDetail.builder()
@@ -181,8 +206,40 @@ public class LeaseOrderService {
     return null;
   }
 
-  public void deleteByLeaseOrderId (Long id) {
-    leaseOrderRepository.deleteById(id);
+  public LeaseOrderDtoDetail getDetailLeaseOrderById (Long id) {
+    LeaseOrder leaseOrder = leaseOrderRepository.findById(id).get();
+    LeaseOrderDto leaseOrderDto = leaseOrderMapper.toDto(leaseOrder);
+    UserDto lessor = userService.getUserById(leaseOrder.getLessorId());
+    ListingDto listingDto = listingService.getListingById(leaseOrder.getListingId());
+    if (listingDto == null) {
+      return null;
+    }
+    CopyDto copy = copyService.getCopyById(listingDto.copyId());
+    BookDto book = bookService.getBookById(copy.bookId());
+    List<ReviewDto> reviews = reviewService.getReviewByOwnerId(listingDto.ownerId());
+    Long bookOwned = listingService.countListingByOwner(listingDto.ownerId());
+    Long bookLeasing = listingService.countListingByOwnerAndStatus(listingDto.ownerId());
+    UserDto user = userService.getUserById(listingDto.ownerId());
+    ListingDetailDto listing = new ListingDetailDto(
+            listingDto.id(),
+            user,
+//                userService.getUserById(listingDto.ownerId()).id(),
+            listingDto.quantity(),
+            listingDto.address(),
+            listingDto.leaseRate(),
+            listingDto.depositFee(),
+            listingDto.penaltyRate(),
+            listingDto.description(),
+            copy,
+            book,
+            reviews,
+            bookOwned,
+            bookLeasing
+    );
+    LeaseOrderDtoDetail result = new LeaseOrderDtoDetail(leaseOrderDto, listing, lessor);
+    return result;
   }
+
+
 
 }

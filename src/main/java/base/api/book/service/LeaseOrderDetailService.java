@@ -24,7 +24,4 @@ public class LeaseOrderDetailService {
         return leaseOrderDetailRepository.findLeaseOrderDetailByLeaseOrderId(leaseOrderId);
     }
 
-    public void deleteLeaseOrderDetailByLeaseOrderId (Long leaseOrderId) {
-        leaseOrderDetailRepository.deleteLeaseOrderDetailByLeaseOrderId(leaseOrderId);
-    }
 }
