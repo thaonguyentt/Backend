@@ -19,4 +19,4 @@ create table payment (
     payment_method text not null,
     description text,
     bank_transfer_img_url text
-)
+);

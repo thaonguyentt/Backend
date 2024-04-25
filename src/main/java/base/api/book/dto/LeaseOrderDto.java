@@ -1,11 +1,9 @@
 package base.api.book.dto;
 
-import base.api.book.entity.LeaseOrderDetail;
 import base.api.book.entity.Review;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.With;
-import lombok.experimental.Wither;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -34,9 +32,9 @@ public record LeaseOrderDto(
   @NotNull BigDecimal totalDeposit,
   String paymentMethod,
   String imageLink,
-  Integer depositPaymentId,
-  Integer refundPaymentId,
-  Integer payOwnerPaymentId,
+  Long leaseAndDepositPaymentId,
+  Long refundDepositPaymentId,
+  Long payOwnerPaymentId,
   LocalDate createdDate,
   LocalDate updatedDate,
   LocalDate deletedDate,

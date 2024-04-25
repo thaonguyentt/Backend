@@ -4,7 +4,6 @@ import base.api.book.dto.LeaseOrderCreateRequest;
 import base.api.book.dto.LeaseOrderDto;
 import base.api.book.dto.search.LeaseOrderUpdateRequest;
 import base.api.book.entity.support.LeaseOrderStatus;
-import base.api.book.entity.support.ListingStatus;
 import base.api.book.repository.LeaseOrderRepository;
 import base.api.book.service.LeaseOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8080"})
@@ -38,7 +36,7 @@ public class LeaseOrderController {
   @PostMapping("/api/leaseOrder")
   public LeaseOrderDto createLeaseOrder2(@RequestBody LeaseOrderCreateRequest request) {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-    return leaseOrderService.createLeaseOrder2(auth, request);
+    return leaseOrderService.createLeaseOrder(auth, request);
   }
 
   @GetMapping("/api/leaseOrder")
