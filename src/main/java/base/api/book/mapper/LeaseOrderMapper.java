@@ -7,7 +7,7 @@ import org.mapstruct.*;
 @Mapper(
   unmappedTargetPolicy = ReportingPolicy.IGNORE,
   componentModel = MappingConstants.ComponentModel.SPRING,
-  uses = LeaseOrderDetailMapper.class)
+  uses = {LeaseOrderDetailMapper.class, ReviewMapper.class})
 public interface LeaseOrderMapper {
     LeaseOrder toEntity(LeaseOrderDto leaseOrderDto);
 
