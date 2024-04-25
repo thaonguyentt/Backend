@@ -161,7 +161,7 @@ public class LeaseOrderService {
     newLeaseOrder.setTotalLeaseFee(totalLeaseFee);
     newLeaseOrder.setTotalDeposit(totalDeposit);
     newLeaseOrder.setTotalPenaltyRate(totalPenaltyRate);
-    newLeaseOrder.setPaymentMethod(PaymentMethod.COD);
+    newLeaseOrder.setPaymentMethod(requestDto.paymentMethod());
     newLeaseOrder.setCreatedDate(LocalDate.now());
     newLeaseOrder.setLeaseOrderDetails(
       // Tạo lease order detail
