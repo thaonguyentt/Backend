@@ -9,4 +9,6 @@ import java.util.Set;
 
 public interface LeaseOrderDetailRepository extends JpaRepository<LeaseOrderDetail, Long> {
     public Set<LeaseOrderDetail> findLeaseOrderDetailByLeaseOrderId (Long leaseOrderId);
+
+    public void deleteLeaseOrderDetailByLeaseOrderId (Long leaseOrderId);
 }

@@ -6,6 +6,7 @@ import base.api.book.dto.search.LeaseOrderUpdateRequest;
 import base.api.book.entity.support.LeaseOrderStatus;
 import base.api.book.entity.support.ListingStatus;
 import base.api.book.repository.LeaseOrderRepository;
+import base.api.book.service.LeaseOrderDetailService;
 import base.api.book.service.LeaseOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
@@ -25,6 +26,9 @@ public class LeaseOrderController {
 
   @Autowired
   LeaseOrderService leaseOrderService;
+
+  @Autowired
+  LeaseOrderDetailService leaseOrderDetailService;
 
 
 //  @PostMapping("/api/leaseOrder")
@@ -112,5 +116,11 @@ public class LeaseOrderController {
     return ResponseEntity.ok(leaseOrderService.getLeaseOrderById(id));
   }
 
+  @DeleteMapping ("/api/leaseOrder/{id}")
+  public ResponseEntity<Void> deleteLeaseOrder (@PathVariable Long id) {
+    leaseOrderService.deleteByLeaseOrderId(id);
+    leaseOrderDetailService.deleteLeaseOrderDetailByLeaseOrderId(id);
+    return ResponseEntity.noContent().build();
+  }
 
 }

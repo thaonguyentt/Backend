@@ -225,4 +225,8 @@ public class LeaseOrderService {
     return null;
   }
 
+  public void deleteByLeaseOrderId (Long id) {
+    leaseOrderRepository.deleteById(id);
+  }
+
 }
