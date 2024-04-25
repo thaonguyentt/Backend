@@ -11,6 +11,12 @@ create table receipt (
 drop table if exists payment;
 create table payment (
     id bigserial primary key not null ,
-    user_id bigint references user_user(id)
-
+    payment_status text not null,
+    payer_id bigint not null,
+    payee_id bigint not null,
+    currency text not null,
+    amount bigint not null,
+    payment_method text not null,
+    description text,
+    bank_transfer_img_url text
 )

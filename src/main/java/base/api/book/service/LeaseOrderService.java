@@ -146,6 +146,11 @@ public class LeaseOrderService {
             .collect(Collectors.toList());
   }
 
+  public LeaseOrderDto getLeaseOrderById (Long id) {
+    return leaseOrderRepository.findById(id)
+            .map(leaseOrderMapper::toDto).orElse(null);
+  }
+
 
 
   public LeaseOrderDto createLeaseOrder2(Authentication auth, LeaseOrderCreateRequest requestDto) {
@@ -210,6 +215,14 @@ public class LeaseOrderService {
     // Add more info
 
     return newLeaseOrderDto;
+  }
+
+  public LeaseOrderDto updateReceiveBook () {
+    return null;
+  }
+
+  public LeaseOrderDto updateReturnBook () {
+    return null;
   }
 
 }

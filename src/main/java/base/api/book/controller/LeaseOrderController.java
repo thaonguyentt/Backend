@@ -2,6 +2,7 @@ package base.api.book.controller;
 
 import base.api.book.dto.LeaseOrderCreateRequest;
 import base.api.book.dto.LeaseOrderDto;
+import base.api.book.dto.search.LeaseOrderUpdateRequest;
 import base.api.book.entity.support.LeaseOrderStatus;
 import base.api.book.entity.support.ListingStatus;
 import base.api.book.repository.LeaseOrderRepository;
@@ -100,7 +101,18 @@ public class LeaseOrderController {
     return ResponseEntity.ok(leaseOrderService.getLeaseOrderByLesseeIdAndStatus(id,leaseOrderStatus));
 
   }
+  
+  
+  
+  @PostMapping ("/api/leaseOrder/updateReceive")
+  public ResponseEntity<LeaseOrderDto> updateReceive (@RequestBody LeaseOrderUpdateRequest updateRequest) {
+    return null;
+  }
 
+  @GetMapping ("/api/leaseOrder/{id}")
+  public ResponseEntity<LeaseOrderDto> getLeaseOrder (@PathVariable Long id) {
+    return ResponseEntity.ok(leaseOrderService.getLeaseOrderById(id));
+  }
 
 
 }
