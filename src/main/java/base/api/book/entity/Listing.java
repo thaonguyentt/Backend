@@ -23,7 +23,8 @@ public class Listing {
   private Long id;
 
   @NotNull
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+//  @OneToOne(fetch = FetchType.LAZY, optional = false)
+  @OneToOne
   @JoinColumn(name = "copy_id", nullable = false)
   private Copy copy;
 

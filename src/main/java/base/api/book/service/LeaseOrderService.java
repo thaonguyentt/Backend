@@ -147,7 +147,7 @@ public class LeaseOrderService {
         requestDto.toDate().atStartOfDay())
         .toDays()));
     BigDecimal totalDeposit = listing.getDepositFee();
-    BigDecimal totalPenaltyRate = listing.getPenaltyRate();
+    BigDecimal totalPenaltyRate = BigDecimal.ZERO;
 
     LeaseOrder newLeaseOrder = new LeaseOrder();
     newLeaseOrder.setListingId(updatedListing.getId());
