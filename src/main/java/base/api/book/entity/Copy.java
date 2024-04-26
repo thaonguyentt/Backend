@@ -22,7 +22,8 @@ public class Copy {
   private Long id;
 
   @NotNull
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+//  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @ManyToOne
   @JoinColumn(name = "book_id", nullable = false)
   private Book book;
 

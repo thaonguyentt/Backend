@@ -21,6 +21,10 @@ public class LeaseOrderDetail {
   private Long id;
 
   @NotNull
+  @Column(name = "title", nullable = false, length = Integer.MAX_VALUE)
+  private String title;
+
+  @NotNull
   @ManyToOne(fetch = FetchType.EAGER, optional = false)
   @JoinColumn(name = "lease_order_id", nullable = false)
   private LeaseOrder leaseOrder;

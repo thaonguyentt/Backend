@@ -102,6 +102,7 @@ drop table if exists lease_order_detail;
 create table lease_order_detail
 (
     id             bigserial primary key,
+    title          text,
     lease_order_id bigint not null references lease_order (id),
     listing_id     bigint references listing (id),
     copy_id        bigint not null references copy (id),
@@ -109,18 +110,18 @@ create table lease_order_detail
     deposit_fee    decimal(10, 2), -- phí cọc
     penalty_rate   decimal(10, 2)  -- phí phạt trễ theo ngày (tổng = penalty_rate x số ngày trả trễ)
 );
-insert into lease_order_detail (lease_order_id, listing_id, copy_id, lease_rate, deposit_fee, penalty_rate)
-values (1,1,1, 300.00, 224100.00, 2400.00),
-       (2,2, 2, 2800.00, 414800.00, 4600.00),
-       (3, 3, 3, 1400.00, 46000.00, 2000.00),
-       (4, 3, 3, 1400.00, 46000.00, 2000.00),
-       (5, 4, 4, 2600.00, 383700.00, 4200.00),
-       (6, 5, 5, 1600.00, 376600.00, 4100.00),
-       (7, 6, 6, 1200.00, 105700.00, 1500.00),
-       (8, 7, 7, 2000.00, 120300.00, 2100.00),
-       (9, 8, 8, 1400.00, 76500.00, 1500.00),
-       (10, 9, 9, 800.00, 194200.00, 2100.00),
-       (11, 1, 1, 300.00, 224100, 2400.00);
+insert into lease_order_detail (title, lease_order_id, listing_id, copy_id, lease_rate, deposit_fee, penalty_rate)
+values ('Wallis',1,1,1, 300.00, 224100.00, 2400.00),
+       ('From Potter''s Field',2,2, 2, 2800.00, 414800.00, 4600.00),
+       ('Deep Waters',3, 3, 3, 1400.00, 46000.00, 2000.00),
+       ('Deep Waters',4, 3, 3, 1400.00, 46000.00, 2000.00),
+       ('Foundling',5, 4, 4, 2600.00, 383700.00, 4200.00),
+       ('Ice',6, 5, 5, 1600.00, 376600.00, 4100.00),
+       ('Daring Moves',7, 6, 6, 1200.00, 105700.00, 1500.00),
+       ('Alchemy and Academe',8, 7, 7, 2000.00, 120300.00, 2100.00),
+       ('Houses of Stone',9, 8, 8, 1400.00, 76500.00, 1500.00),
+       ('Nemesis',10, 9, 9, 800.00, 194200.00, 2100.00),
+       ('Wallis',11, 1, 1, 300.00, 224100, 2400.00);
 
 alter sequence lease_order_detail_id_seq restart with 12;
 

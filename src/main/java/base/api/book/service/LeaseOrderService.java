@@ -2,10 +2,7 @@ package base.api.book.service;
 
 import base.api.authorization.UnauthorizedException;
 import base.api.book.dto.*;
-import base.api.book.entity.Copy;
-import base.api.book.entity.LeaseOrder;
-import base.api.book.entity.LeaseOrderDetail;
-import base.api.book.entity.Listing;
+import base.api.book.entity.*;
 import base.api.book.entity.support.CopyStatus;
 import base.api.book.entity.support.LeaseOrderStatus;
 import base.api.book.entity.support.ListingStatus;
@@ -139,6 +136,7 @@ public class LeaseOrderService {
 
     Listing updatedListing = listingRepository.save(listing);
     Copy updatedCopy = copyRepository.save(copy);
+    Book book = copy.getBook();
 
     // Tính các loại phí
     BigDecimal totalLeaseFee = listing.getLeaseRate()
@@ -166,6 +164,7 @@ public class LeaseOrderService {
     newLeaseOrder.setLeaseOrderDetails(
       // Tạo lease order detail
       Set.of(LeaseOrderDetail.builder()
+              .title(book.getTitle())
           .leaseOrder(newLeaseOrder)
           .listing(listing)
           .copy(listing.getCopy())
