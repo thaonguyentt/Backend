@@ -99,14 +99,28 @@ public class LeaseOrderService {
         listing.setListingStatus(ListingStatus.AVAILABLE);
         Copy copy = listing.getCopy();
         copy.setCopyStatus(CopyStatus.LISTED);
-        LeaseOrder savedLeaseOrder = leaseOrderRepository.save(leaseOrder);
         leaseOrder.setStatus(leaseOrderStatus);
+        LeaseOrder savedLeaseOrder = leaseOrderRepository.save(leaseOrder);
         return leaseOrderMapper.toDto(savedLeaseOrder);
       } else {
-          throw new LeaseCanNotCancel("lease order can not cancel");
+        throw new LeaseCanNotCancel("lease order can not cancel");
       }
-    }
-    else {
+    } else if (leaseOrderStatus.equals(LeaseOrderStatus.RETURNING)) {
+      Listing listing = listingRepository.findById(leaseOrder.getListingId()).get();
+      if (leaseOrder.getToDate().isAfter(LocalDate.now())) {
+        leaseOrder.setToDate(LocalDate.now());
+        BigDecimal totalLeaseFee = listing.getLeaseRate()
+                .multiply(BigDecimal.valueOf(Duration.between(
+                                leaseOrder.getFromDate().atStartOfDay(),
+                                leaseOrder.getToDate().atStartOfDay())
+                        .toDays()));
+        leaseOrder.setTotalLeaseFee(totalLeaseFee);
+      }
+      leaseOrder.setStatus(leaseOrderStatus);
+      LeaseOrder savedLeaseOrder = leaseOrderRepository.save(leaseOrder);
+      return leaseOrderMapper.toDto(savedLeaseOrder);
+
+    } else {
       if (leaseOrderStatus.equals(LeaseOrderStatus.RETURNED) || leaseOrderStatus.equals(LeaseOrderStatus.LATE_RETURN)) {
         //update copy and listing
         Listing listing = listingRepository.findById(leaseOrder.getListingId()).get();
@@ -114,8 +128,8 @@ public class LeaseOrderService {
         Copy copy = listing.getCopy();
         copy.setCopyStatus(CopyStatus.LISTED);
       }
-      LeaseOrder savedLeaseOrder = leaseOrderRepository.save(leaseOrder);
       leaseOrder.setStatus(leaseOrderStatus);
+      LeaseOrder savedLeaseOrder = leaseOrderRepository.save(leaseOrder);
       return leaseOrderMapper.toDto(savedLeaseOrder);
     }
   }
