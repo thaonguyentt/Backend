@@ -131,6 +131,7 @@ public class LeaseOrderController {
     if (status == 1) {
       leaseOrderStatus.add(LeaseOrderStatus.ORDERED_PAYMENT_PENDING);
       leaseOrderStatus.add(LeaseOrderStatus.PAYMENT_SUCCESS);
+      leaseOrderStatus.add(LeaseOrderStatus.USER_PAID);
     } else if (status == 2) {
       leaseOrderStatus.add(LeaseOrderStatus.DELIVERED);
       leaseOrderStatus.add(LeaseOrderStatus.RETURNING);
@@ -182,6 +183,7 @@ public class LeaseOrderController {
     if (status == 1) {
       leaseOrderStatus.add(LeaseOrderStatus.ORDERED_PAYMENT_PENDING);
       leaseOrderStatus.add(LeaseOrderStatus.PAYMENT_SUCCESS);
+      leaseOrderStatus.add(LeaseOrderStatus.USER_PAID);
     } else if (status == 2) {
       leaseOrderStatus.add(LeaseOrderStatus.DELIVERED);
       leaseOrderStatus.add(LeaseOrderStatus.RETURNING);
@@ -234,6 +236,9 @@ public class LeaseOrderController {
   public ResponseEntity<LeaseOrderDtoDetail> getLeaseOrder (@PathVariable Long id) {
     return ResponseEntity.ok(leaseOrderService.getDetailLeaseOrderById(id));
   }
+
+
+
 
 
 }
