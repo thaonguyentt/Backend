@@ -6,6 +6,7 @@ import base.api.book.entity.*;
 import base.api.book.entity.support.CopyStatus;
 import base.api.book.entity.support.LeaseOrderStatus;
 import base.api.book.entity.support.ListingStatus;
+import base.api.book.exception.LeaseCanNotCancel;
 import base.api.book.exception.ListingNotAvailableException;
 import base.api.book.mapper.LeaseOrderDetailMapper;
 import base.api.book.mapper.LeaseOrderMapper;
@@ -89,9 +90,34 @@ public class LeaseOrderService {
 
   public LeaseOrderDto updateLeaseOrderStatus (Long id, LeaseOrderStatus leaseOrderStatus) {
     LeaseOrder leaseOrder = leaseOrderRepository.findById(id).get();
-    leaseOrder.setStatus(leaseOrderStatus);
-    LeaseOrder savedLeaseOrder = leaseOrderRepository.save(leaseOrder);
-    return leaseOrderMapper.toDto(savedLeaseOrder);
+
+    if (leaseOrderStatus.equals(LeaseOrderStatus.CANCELED)) {
+      if (leaseOrder.getStatus().equals(LeaseOrderStatus.ORDERED_PAYMENT_PENDING)
+              || leaseOrder.getStatus().equals(LeaseOrderStatus.PAYMENT_SUCCESS)
+      ) {
+        Listing listing = listingRepository.findById(leaseOrder.getListingId()).get();
+        listing.setListingStatus(ListingStatus.AVAILABLE);
+        Copy copy = listing.getCopy();
+        copy.setCopyStatus(CopyStatus.LISTED);
+        LeaseOrder savedLeaseOrder = leaseOrderRepository.save(leaseOrder);
+        leaseOrder.setStatus(leaseOrderStatus);
+        return leaseOrderMapper.toDto(savedLeaseOrder);
+      } else {
+          throw new LeaseCanNotCancel("lease order can not cancel");
+      }
+    }
+    else {
+      if (leaseOrderStatus.equals(LeaseOrderStatus.RETURNED) || leaseOrderStatus.equals(LeaseOrderStatus.LATE_RETURN)) {
+        //update copy and listing
+        Listing listing = listingRepository.findById(leaseOrder.getListingId()).get();
+        listing.setListingStatus(ListingStatus.AVAILABLE);
+        Copy copy = listing.getCopy();
+        copy.setCopyStatus(CopyStatus.LISTED);
+      }
+      LeaseOrder savedLeaseOrder = leaseOrderRepository.save(leaseOrder);
+      leaseOrder.setStatus(leaseOrderStatus);
+      return leaseOrderMapper.toDto(savedLeaseOrder);
+    }
   }
 
   public List<LeaseOrderDto> getLeaseOrderByLessorIdAndStatus(Long id, List<LeaseOrderStatus> leaseOrderStatus) {

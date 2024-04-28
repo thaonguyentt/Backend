@@ -187,7 +187,8 @@ public class LeaseOrderController {
       leaseOrderStatus.add(LeaseOrderStatus.RETURNING);
     } else if (status == 3) {
       leaseOrderStatus.add(LeaseOrderStatus.LATE_RETURN);
-    } else {
+    }
+    else {
       leaseOrderStatus.add(LeaseOrderStatus.RETURNED);
       leaseOrderStatus.add(LeaseOrderStatus.DEPOSIT_RETURNED);
       leaseOrderStatus.add(LeaseOrderStatus.PAID_OWNER);
