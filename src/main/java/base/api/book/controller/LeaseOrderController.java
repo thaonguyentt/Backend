@@ -1,13 +1,12 @@
 package base.api.book.controller;
 
-import base.api.book.dto.LeaseOrderCreateRequest;
-import base.api.book.dto.LeaseOrderDto;
-import base.api.book.dto.LeaseOrderDtoDetail;
+import base.api.book.dto.*;
 import base.api.book.dto.search.LeaseOrderUpdateRequest;
 import base.api.book.entity.support.LeaseOrderStatus;
 import base.api.book.repository.LeaseOrderRepository;
-import base.api.book.service.LeaseOrderDetailService;
-import base.api.book.service.LeaseOrderService;
+import base.api.book.service.*;
+import base.api.user.UserDto;
+import base.api.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8080"})
@@ -30,6 +30,18 @@ public class LeaseOrderController {
 
   @Autowired
   LeaseOrderDetailService leaseOrderDetailService;
+
+  @Autowired
+  UserService userService;
+  @Autowired
+  CopyService copyService;
+  @Autowired
+  ListingService listingService;
+  @Autowired
+  BookService bookService;
+  @Autowired
+  ReviewService reviewService;
+
 
 
 //  @PostMapping("/api/leaseOrder")
@@ -51,17 +63,70 @@ public class LeaseOrderController {
     return new ResponseEntity<>(obj.toString(), HttpStatusCode.valueOf(200));
   }
   @GetMapping("/api/leaseOrder/search/lessor/{id}")
-  public ResponseEntity<List<LeaseOrderDto>> getLeaseOrderByLessorId (@PathVariable Long id) {
-    return ResponseEntity.ok(leaseOrderService.getLeaseOrderByLessorId(id));
+  public ResponseEntity<List<LeaseOrderDtoDetail>> getLeaseOrderByLessorId (@PathVariable Long id) {
+    List<LeaseOrderDto> leaseOrderDto = leaseOrderService.getLeaseOrderByLessorId(id);
+    return ResponseEntity.ok(leaseOrderDto.stream().map(dto->{
+      UserDto lessor = userService.getUserById(dto.lessorId());
+      ListingDto listingDto = listingService.getListingById(dto.listingId());
+      CopyDto copy = copyService.getCopyById(listingDto.copyId());
+      BookDto book = bookService.getBookById(copy.bookId());
+      List<ReviewDto> reviews = reviewService.getReviewByOwnerId(listingDto.ownerId());
+      Long bookOwned = listingService.countListingByOwner(listingDto.ownerId());
+      Long bookLeasing = listingService.countListingByOwnerAndStatus(listingDto.ownerId());
+      UserDto user = userService.getUserById(listingDto.ownerId());
+      ListingDetailDto listing = new ListingDetailDto(
+              listingDto.id(),
+              user,
+              listingDto.quantity(),
+              listingDto.address(),
+              listingDto.leaseRate(),
+              listingDto.depositFee(),
+              listingDto.penaltyRate(),
+              listingDto.description(),
+              copy,
+              book,
+              reviews,
+              bookOwned,
+              bookLeasing
+      );
+      return new LeaseOrderDtoDetail(dto, listing, lessor);
+    }).collect(Collectors.toList()));
+//            ResponseEntity.ok(leaseOrderService.getLeaseOrderByLessorId(id));
   }
 
   @GetMapping("/api/leaseOrder/search/lessee/{id}")
-  public ResponseEntity<List<LeaseOrderDto>> getLeaseOrderByLesseeId (@PathVariable Long id) {
-    return ResponseEntity.ok(leaseOrderService.getLeaseOrderByLesseeId(id));
+  public ResponseEntity<List<LeaseOrderDtoDetail>> getLeaseOrderByLesseeId (@PathVariable Long id) {
+    List<LeaseOrderDto> leaseOrderDto = leaseOrderService.getLeaseOrderByLesseeId(id);
+    return ResponseEntity.ok(leaseOrderDto.stream().map(dto->{
+      UserDto lessor = userService.getUserById(dto.lessorId());
+      ListingDto listingDto = listingService.getListingById(dto.listingId());
+      CopyDto copy = copyService.getCopyById(listingDto.copyId());
+      BookDto book = bookService.getBookById(copy.bookId());
+      List<ReviewDto> reviews = reviewService.getReviewByOwnerId(listingDto.ownerId());
+      Long bookOwned = listingService.countListingByOwner(listingDto.ownerId());
+      Long bookLeasing = listingService.countListingByOwnerAndStatus(listingDto.ownerId());
+      UserDto user = userService.getUserById(listingDto.ownerId());
+      ListingDetailDto listing = new ListingDetailDto(
+              listingDto.id(),
+              user,
+              listingDto.quantity(),
+              listingDto.address(),
+              listingDto.leaseRate(),
+              listingDto.depositFee(),
+              listingDto.penaltyRate(),
+              listingDto.description(),
+              copy,
+              book,
+              reviews,
+              bookOwned,
+              bookLeasing
+      );
+      return new LeaseOrderDtoDetail(dto, listing, lessor);
+    }).collect(Collectors.toList()));
   }
 
   @GetMapping ("/api/leaseOrder/search/lessor/status/{id}")
-  public ResponseEntity<List<LeaseOrderDto>> getLeaseOrderByLessorIdAndStatus (@PathVariable Long id, @RequestParam(name="status") Long status) {
+  public ResponseEntity<List<LeaseOrderDtoDetail>> getLeaseOrderByLessorIdAndStatus (@PathVariable Long id, @RequestParam(name="status") Long status) {
     List<LeaseOrderStatus> leaseOrderStatus = new ArrayList<>();
     if (status == 1) {
       leaseOrderStatus.add(LeaseOrderStatus.ORDERED_PAYMENT_PENDING);
@@ -76,7 +141,33 @@ public class LeaseOrderController {
       leaseOrderStatus.add(LeaseOrderStatus.DEPOSIT_RETURNED);
       leaseOrderStatus.add(LeaseOrderStatus.PAID_OWNER);
     }
-    return ResponseEntity.ok(leaseOrderService.getLeaseOrderByLessorIdAndStatus(id,leaseOrderStatus));
+    List<LeaseOrderDto> leaseOrderDto = leaseOrderService.getLeaseOrderByLessorIdAndStatus(id,leaseOrderStatus);
+    return ResponseEntity.ok(leaseOrderDto.stream().map(dto->{
+      UserDto lessor = userService.getUserById(dto.lessorId());
+      ListingDto listingDto = listingService.getListingById(dto.listingId());
+      CopyDto copy = copyService.getCopyById(listingDto.copyId());
+      BookDto book = bookService.getBookById(copy.bookId());
+      List<ReviewDto> reviews = reviewService.getReviewByOwnerId(listingDto.ownerId());
+      Long bookOwned = listingService.countListingByOwner(listingDto.ownerId());
+      Long bookLeasing = listingService.countListingByOwnerAndStatus(listingDto.ownerId());
+      UserDto user = userService.getUserById(listingDto.ownerId());
+      ListingDetailDto listing = new ListingDetailDto(
+              listingDto.id(),
+              user,
+              listingDto.quantity(),
+              listingDto.address(),
+              listingDto.leaseRate(),
+              listingDto.depositFee(),
+              listingDto.penaltyRate(),
+              listingDto.description(),
+              copy,
+              book,
+              reviews,
+              bookOwned,
+              bookLeasing
+      );
+      return new LeaseOrderDtoDetail(dto, listing, lessor);
+    }).collect(Collectors.toList()));
 
   }
 
@@ -86,7 +177,7 @@ public class LeaseOrderController {
   }
 
   @GetMapping ("/api/leaseOrder/search/lessee/status/{id}")
-  public ResponseEntity<List<LeaseOrderDto>> getLeaseOrderByLesseeIdAndStatus (@PathVariable Long id, @RequestParam(name="status") Long status) {
+  public ResponseEntity<List<LeaseOrderDtoDetail>> getLeaseOrderByLesseeIdAndStatus (@PathVariable Long id, @RequestParam(name="status") Long status) {
     List<LeaseOrderStatus> leaseOrderStatus = new ArrayList<>();
     if (status == 1) {
       leaseOrderStatus.add(LeaseOrderStatus.ORDERED_PAYMENT_PENDING);
@@ -101,7 +192,33 @@ public class LeaseOrderController {
       leaseOrderStatus.add(LeaseOrderStatus.DEPOSIT_RETURNED);
       leaseOrderStatus.add(LeaseOrderStatus.PAID_OWNER);
     }
-    return ResponseEntity.ok(leaseOrderService.getLeaseOrderByLesseeIdAndStatus(id,leaseOrderStatus));
+    List<LeaseOrderDto> leaseOrderDto = leaseOrderService.getLeaseOrderByLesseeIdAndStatus(id,leaseOrderStatus);
+    return ResponseEntity.ok(leaseOrderDto.stream().map(dto->{
+      UserDto lessor = userService.getUserById(dto.lessorId());
+      ListingDto listingDto = listingService.getListingById(dto.listingId());
+      CopyDto copy = copyService.getCopyById(listingDto.copyId());
+      BookDto book = bookService.getBookById(copy.bookId());
+      List<ReviewDto> reviews = reviewService.getReviewByOwnerId(listingDto.ownerId());
+      Long bookOwned = listingService.countListingByOwner(listingDto.ownerId());
+      Long bookLeasing = listingService.countListingByOwnerAndStatus(listingDto.ownerId());
+      UserDto user = userService.getUserById(listingDto.ownerId());
+      ListingDetailDto listing = new ListingDetailDto(
+              listingDto.id(),
+              user,
+              listingDto.quantity(),
+              listingDto.address(),
+              listingDto.leaseRate(),
+              listingDto.depositFee(),
+              listingDto.penaltyRate(),
+              listingDto.description(),
+              copy,
+              book,
+              reviews,
+              bookOwned,
+              bookLeasing
+      );
+      return new LeaseOrderDtoDetail(dto, listing, lessor);
+    }).collect(Collectors.toList()));
 
   }
   
