@@ -92,9 +92,7 @@ public class LeaseOrderService {
     LeaseOrder leaseOrder = leaseOrderRepository.findById(id).get();
 
     if (leaseOrderStatus.equals(LeaseOrderStatus.CANCELED)) {
-      if (leaseOrder.getStatus().equals(LeaseOrderStatus.ORDERED_PAYMENT_PENDING)
-              || leaseOrder.getStatus().equals(LeaseOrderStatus.PAYMENT_SUCCESS)
-      ) {
+      if (leaseOrder.getStatus().equals(LeaseOrderStatus.ORDERED_PAYMENT_PENDING)) {
         Listing listing = listingRepository.findById(leaseOrder.getListingId()).get();
         listing.setListingStatus(ListingStatus.AVAILABLE);
         Copy copy = listing.getCopy();

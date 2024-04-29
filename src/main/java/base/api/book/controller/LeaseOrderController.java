@@ -137,6 +137,8 @@ public class LeaseOrderController {
       leaseOrderStatus.add(LeaseOrderStatus.RETURNING);
     } else if (status == 3) {
       leaseOrderStatus.add(LeaseOrderStatus.LATE_RETURN);
+    } else if (status == 5) {
+      leaseOrderStatus.add(LeaseOrderStatus.CANCELED);
     } else {
       leaseOrderStatus.add(LeaseOrderStatus.RETURNED);
       leaseOrderStatus.add(LeaseOrderStatus.DEPOSIT_RETURNED);
@@ -189,6 +191,8 @@ public class LeaseOrderController {
       leaseOrderStatus.add(LeaseOrderStatus.RETURNING);
     } else if (status == 3) {
       leaseOrderStatus.add(LeaseOrderStatus.LATE_RETURN);
+    } else if (status == 5) {
+      leaseOrderStatus.add(LeaseOrderStatus.CANCELED);
     }
     else {
       leaseOrderStatus.add(LeaseOrderStatus.RETURNED);
