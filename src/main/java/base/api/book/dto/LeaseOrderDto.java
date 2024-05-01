@@ -39,5 +39,5 @@ public record LeaseOrderDto(
   LocalDate updatedDate,
   LocalDate deletedDate,
   Set<LeaseOrderDetailDto> leaseOrderDetails,
-  Set<Review> reviews
+  Set<ReviewDto> reviews
 ) implements Serializable {}
