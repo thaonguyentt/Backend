@@ -277,6 +277,15 @@ public class LeaseOrderService {
     return result;
   }
 
+  public void setStatusOnLateReturnOrder() {
+    List<LeaseOrder> lateLeaseOrders = leaseOrderRepository.findLateReturnLeaseOrder();
+    lateLeaseOrders.forEach(order -> order.setStatus(LeaseOrderStatus.LATE_RETURN));
+    leaseOrderRepository.saveAll(lateLeaseOrders);
+  }
 
-
+  public void cancelOrderOnLatePayment() {
+    List<LeaseOrder> latePaymentOrders = leaseOrderRepository.findLatePaymentLeaseOrder();
+    latePaymentOrders.forEach(order -> order.setStatus(LeaseOrderStatus.CANCELED));
+    leaseOrderRepository.saveAll(latePaymentOrders);
+  }
 }
