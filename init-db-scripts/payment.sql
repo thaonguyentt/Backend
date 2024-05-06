@@ -20,3 +20,6 @@ create table payment (
     description text,
     bank_transfer_img_url text
 );
+
+-- insert into payment (id, payment_status, payer_id, payee_id, currency, amount, payment_method)
+-- values (1, 'PAYMENT_PENDING', 1, 2, 224100.00, 1);

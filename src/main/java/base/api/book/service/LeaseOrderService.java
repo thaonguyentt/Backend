@@ -105,7 +105,8 @@ public class LeaseOrderService {
       }
     } else if (leaseOrderStatus.equals(LeaseOrderStatus.RETURNING)) {
       Listing listing = listingRepository.findById(leaseOrder.getListingId()).get();
-      if (leaseOrder.getToDate().isAfter(LocalDate.now())) {
+      if (leaseOrder.getToDate().isAfter(LocalDate.now())
+              && leaseOrder.getFromDate().isBefore(LocalDate.now())) {
         leaseOrder.setToDate(LocalDate.now());
         BigDecimal totalLeaseFee = listing.getLeaseRate()
                 .multiply(BigDecimal.valueOf(Duration.between(
@@ -113,10 +114,19 @@ public class LeaseOrderService {
                                 leaseOrder.getToDate().atStartOfDay())
                         .toDays()));
         leaseOrder.setTotalLeaseFee(totalLeaseFee);
+        leaseOrder.setStatus(leaseOrderStatus);
+        LeaseOrder savedLeaseOrder = leaseOrderRepository.save(leaseOrder);
+        return leaseOrderMapper.toDto(savedLeaseOrder);
       }
-      leaseOrder.setStatus(leaseOrderStatus);
-      LeaseOrder savedLeaseOrder = leaseOrderRepository.save(leaseOrder);
-      return leaseOrderMapper.toDto(savedLeaseOrder);
+      else if ((leaseOrder.getFromDate().isEqual(LocalDate.now()))) {
+        leaseOrder.setToDate(LocalDate.now());
+        leaseOrder.setTotalLeaseFee(listing.getLeaseRate());
+        leaseOrder.setStatus(leaseOrderStatus);
+        LeaseOrder savedLeaseOrder = leaseOrderRepository.save(leaseOrder);
+        return leaseOrderMapper.toDto(savedLeaseOrder);
+      } else {
+        throw new LeaseCanNotCancel("lease order can not return");
+      }
 
     } else {
       if (leaseOrderStatus.equals(LeaseOrderStatus.RETURNED) || leaseOrderStatus.equals(LeaseOrderStatus.LATE_RETURN)) {
@@ -233,14 +243,6 @@ public class LeaseOrderService {
     // Add more info
 
     return newLeaseOrderDto;
-  }
-
-  public LeaseOrderDto updateReceiveBook () {
-    return null;
-  }
-
-  public LeaseOrderDto updateReturnBook () {
-    return null;
   }
 
   public LeaseOrderDtoDetail getDetailLeaseOrderById (Long id) {
