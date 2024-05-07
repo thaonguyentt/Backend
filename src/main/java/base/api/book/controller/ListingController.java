@@ -150,7 +150,7 @@ public class ListingController {
         ListingSearchByOwnerAndNameDto listingSearch = new ListingSearchByOwnerAndNameDto();
         listingSearch.setTitle(title);
         listingSearch.setOwnerId(ownerId);
-        Page<ListingDto> listingDto = listingService.getListingByOwnerIdAndTitle(pageable,listingSearch);
+        Page<ListingDto> listingDto = listingService.getListingByOwnerIdAndTitleContainer(pageable,listingSearch);
         return listingDto.map(dto->{
             CopyDto copyDto = copyService.getCopyById(dto.copyId());
             BookDto bookDto = bookService.getBookById(copyDto.bookId());
