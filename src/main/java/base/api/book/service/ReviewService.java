@@ -7,6 +7,8 @@ import base.api.book.repository.ReviewRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,12 +24,13 @@ public class ReviewService {
     }
 
     public List<ReviewDto> getReviewByOwnerId (Long ownerId)  {
-        List<Review> reviews = reviewRepository.findByUserId(ownerId);
+        List<Review> reviews = reviewRepository.findReviewByUserId(ownerId);
         return reviews.stream().map(reviewMapper::toDto).collect(Collectors.toList());
     }
 
     public ReviewDto createReview (ReviewDto reviewDto) {
         Review review = reviewMapper.toEntity(reviewDto);
+        review.setCreatedDate(Instant.now());
         Review createdReview = reviewRepository.save(review);
         return reviewMapper.toDto(createdReview);
     }
