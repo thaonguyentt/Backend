@@ -8,6 +8,7 @@ import base.api.book.service.*;
 import base.api.user.UserDto;
 import base.api.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -176,6 +177,11 @@ public class LeaseOrderController {
 
   @GetMapping ("/api/leaseOrder/edit/status")
   public ResponseEntity<LeaseOrderDto> updateStatus (@RequestParam(name="id") Long id, @RequestParam(name="status") LeaseOrderStatus status) {
+    try {
+      leaseOrderService.updateLeaseOrderStatus(id, status);
+    } catch (Exception e) {
+      return new ResponseEntity("Error update status", HttpStatus.LOCKED);
+    }
     return ResponseEntity.ok(leaseOrderService.updateLeaseOrderStatus(id, status));
   }
 

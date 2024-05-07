@@ -124,7 +124,10 @@ public class LeaseOrderService {
         leaseOrder.setStatus(leaseOrderStatus);
         LeaseOrder savedLeaseOrder = leaseOrderRepository.save(leaseOrder);
         return leaseOrderMapper.toDto(savedLeaseOrder);
-      } else {
+      } else if (leaseOrder.getFromDate().isEqual(LocalDate.now())) {
+          return null;
+      }
+        else {
         throw new LeaseCanNotCancel("lease order can not return");
       }
 
@@ -289,5 +292,15 @@ public class LeaseOrderService {
     List<LeaseOrder> latePaymentOrders = leaseOrderRepository.findLatePaymentLeaseOrder();
     latePaymentOrders.forEach(order -> order.setStatus(LeaseOrderStatus.CANCELED));
     leaseOrderRepository.saveAll(latePaymentOrders);
+  }
+
+  public void chargeLateFees () {
+    List<LeaseOrder> listReturnLate = leaseOrderRepository.findLeaseOrderByStatus(LeaseOrderStatus.LATE_RETURN);
+    listReturnLate.forEach(order -> {
+      BigDecimal totalPenaltyRate = order.getTotalPenaltyRate();
+      BigDecimal leaseOrderPenaltyRate = order.getLeaseOrderDetails().stream().findFirst().get().getPenaltyRate();
+      order.setTotalPenaltyRate(totalPenaltyRate.add(leaseOrderPenaltyRate));
+    }
+      );
   }
 }

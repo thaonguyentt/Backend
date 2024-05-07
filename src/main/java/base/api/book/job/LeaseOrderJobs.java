@@ -22,4 +22,8 @@ public class LeaseOrderJobs {
     public void cancelLatePaymentOrders() {
         leaseOrderService.cancelOrderOnLatePayment();
     }
+
+
+    @Scheduled(cron = "0 */1 * * * ?")
+    public void chargeLateFees () {leaseOrderService.chargeLateFees();}
 }

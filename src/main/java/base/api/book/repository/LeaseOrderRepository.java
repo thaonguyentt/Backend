@@ -20,10 +20,9 @@ public interface LeaseOrderRepository extends JpaRepository<LeaseOrder, Long> {
     @Query(
       value = """
         select * from lease_order
-        where return_date < now()
-        and (status = 'PAYMENT_SUCCESS'
-            or status = 'DELIVERED'
-            or status = 'RETURNING'
+        where (return_date < now() and (status = 'PAYMENT_SUCCESS' or status = 'DELIVERED'))
+            or ( date_add(to_date, '14 day') > now() 
+            status = 'RETURNING'
             )
       """,
       nativeQuery = true
@@ -39,4 +38,6 @@ public interface LeaseOrderRepository extends JpaRepository<LeaseOrder, Long> {
       nativeQuery = true
     )
     List<LeaseOrder> findLatePaymentLeaseOrder();
+
+    List<LeaseOrder> findLeaseOrderByStatus(LeaseOrderStatus leaseOrderStatus);
 }
