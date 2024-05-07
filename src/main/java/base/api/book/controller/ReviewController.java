@@ -3,9 +3,11 @@ package base.api.book.controller;
 import base.api.book.dto.ReviewDto;
 import base.api.book.service.ReviewService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.List;
 @RestController
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8080"})
 @RequestMapping("/api/review")
 public class ReviewController {
     private final ReviewService reviewService;
