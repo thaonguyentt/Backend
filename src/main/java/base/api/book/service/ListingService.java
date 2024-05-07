@@ -114,7 +114,7 @@ public class ListingService {
         return listingRepository.countListingByOwnerIdAndListingStatus(ownerId,ListingStatus.LEASED);
     }
 
-    public Page<ListingDto> getListingByOwnerIdAndTitle (Pageable pageable,ListingSearchByOwnerAndNameDto listingSearch) {
+    public Page<ListingDto> getListingByOwnerIdAndTitleContainer (Pageable pageable,ListingSearchByOwnerAndNameDto listingSearch) {
         Page<Listing> result = listingRepository.findByIdAndBookTitleContaining(pageable,listingSearch.getOwnerId(), listingSearch.getTitle());
         return result.map(listingMapper::toDto);
     }
