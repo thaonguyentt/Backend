@@ -59,7 +59,7 @@ public class ListingController {
         }
         CopyDto copy = copyService.getCopyById(listingDto.copyId());
         BookDto book = bookService.getBookById(copy.bookId());
-        List<ReviewDto> reviews = reviewService.getReviewByOwnerId(listingDto.ownerId());
+        List<ReviewDto> reviews = reviewService.getReviewByListingId(listingDto.id());
         Long bookOwned = listingService.countListingByOwner(listingDto.ownerId());
         Long bookLeasing = listingService.countListingByOwnerAndStatus(listingDto.ownerId());
         UserDto user = userService.getUserById(listingDto.ownerId());

@@ -28,6 +28,12 @@ public class ReviewService {
         return reviews.stream().map(reviewMapper::toDto).collect(Collectors.toList());
     }
 
+
+    public List<ReviewDto> getReviewByListingId (Long id)  {
+        List<Review> reviews = reviewRepository.findReviewByListingId(id);
+        return reviews.stream().map(reviewMapper::toDto).collect(Collectors.toList());
+    }
+
     public ReviewDto createReview (ReviewDto reviewDto) {
         Review review = reviewMapper.toEntity(reviewDto);
         review.setCreatedDate(Instant.now());
