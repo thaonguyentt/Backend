@@ -284,7 +284,9 @@ public class LeaseOrderService {
 
   public void setStatusOnLateReturnOrder() {
     List<LeaseOrder> lateLeaseOrders = leaseOrderRepository.findLateReturnLeaseOrder();
-    lateLeaseOrders.forEach(order -> order.setStatus(LeaseOrderStatus.LATE_RETURN));
+    lateLeaseOrders.forEach(order -> {
+      order.setStatus(LeaseOrderStatus.LATE_RETURN);
+    });
     leaseOrderRepository.saveAll(lateLeaseOrders);
   }
 
