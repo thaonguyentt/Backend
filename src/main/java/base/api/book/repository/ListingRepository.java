@@ -14,7 +14,14 @@ import java.util.List;
 
 public interface ListingRepository extends JpaRepository<Listing, Long>, JpaSpecificationExecutor<Listing> {
 
-    Page<Listing> findByOwnerId(Pageable pageable, Long id);
+    @Query(
+            value = """
+        select * from listing l
+        where l.owner_id = :id
+      """,
+            nativeQuery = true
+    )
+    Page<Listing> findListingByOwnerId(Pageable pageable, Long id);
     Page<Listing> findByListingStatus(Pageable pageable, ListingStatus listingStatus);
 
     Page<Listing> findByCopyIdIn(Pageable pageable, List<Long> copyId);

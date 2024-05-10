@@ -140,7 +140,7 @@ public class ListingController {
                 });
     }
 
-    /////////đang làm
+
     @GetMapping("/search/byOwnerIdAndName")
     public Page<ListingExtendedDto> getListingByOwnerIdAndName (
             Pageable pageable,
@@ -180,7 +180,7 @@ public class ListingController {
         return ResponseEntity.ok(listingService.updateListing(listingDto));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("delete/{id}")
     public ResponseEntity<Void> deleteListing(@PathVariable Long id) {
         listingService.deleteListing(id);
         return ResponseEntity.noContent().build();

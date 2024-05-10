@@ -67,7 +67,7 @@ public class ListingService {
     }
 
     public Page<ListingDto> getListingByOwnerId (Pageable pageable, Long id) {
-        Page<Listing> listing = listingRepository.findByOwnerId(pageable,id);
+        Page<Listing> listing = listingRepository.findListingByOwnerId(pageable,id);
         return listing.map(listingMapper::toDto);
     }
 
