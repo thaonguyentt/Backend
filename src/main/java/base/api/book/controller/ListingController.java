@@ -182,7 +182,9 @@ public class ListingController {
 
     @DeleteMapping("delete/{id}")
     public ResponseEntity<Void> deleteListing(@PathVariable Long id) {
+        Long copyId = listingService.getListingById(id).copyId();
         listingService.deleteListing(id);
+        copyService.deleteCopy(copyId);
         return ResponseEntity.noContent().build();
     }
 
