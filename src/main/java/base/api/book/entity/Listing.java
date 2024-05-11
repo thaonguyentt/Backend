@@ -24,11 +24,11 @@ public class Listing {
 
   @NotNull
 //  @OneToOne(fetch = FetchType.LAZY, optional = false)
-  @OneToOne
+  @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
   @JoinColumn(name = "copy_id", nullable = false)
   private Copy copy;
 
-  @OneToOne(orphanRemoval = true)
+  @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
   @JoinColumn(name = "owner_id")
   private User owner;
 
