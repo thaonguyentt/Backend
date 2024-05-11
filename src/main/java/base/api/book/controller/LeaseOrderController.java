@@ -68,6 +68,7 @@ public class LeaseOrderController {
     List<LeaseOrderDto> leaseOrderDto = leaseOrderService.getLeaseOrderByLessorId(id);
     return ResponseEntity.ok(leaseOrderDto.stream().map(dto->{
       UserDto lessor = userService.getUserById(dto.lessorId());
+      UserDto lessee = userService.getUserById(dto.lesseeId());
       ListingDto listingDto = listingService.getListingById(dto.listingId());
       CopyDto copy = copyService.getCopyById(listingDto.copyId());
       BookDto book = bookService.getBookById(copy.bookId());
@@ -90,7 +91,7 @@ public class LeaseOrderController {
               bookOwned,
               bookLeasing
       );
-      return new LeaseOrderDtoDetail(dto, listing, lessor);
+      return new LeaseOrderDtoDetail(dto, listing, lessor, lessee);
     }).collect(Collectors.toList()));
 //            ResponseEntity.ok(leaseOrderService.getLeaseOrderByLessorId(id));
   }
@@ -100,6 +101,7 @@ public class LeaseOrderController {
     List<LeaseOrderDto> leaseOrderDto = leaseOrderService.getLeaseOrderByLesseeId(id);
     return ResponseEntity.ok(leaseOrderDto.stream().map(dto->{
       UserDto lessor = userService.getUserById(dto.lessorId());
+      UserDto lessee = userService.getUserById(dto.lesseeId());
       ListingDto listingDto = listingService.getListingById(dto.listingId());
       CopyDto copy = copyService.getCopyById(listingDto.copyId());
       BookDto book = bookService.getBookById(copy.bookId());
@@ -122,7 +124,7 @@ public class LeaseOrderController {
               bookOwned,
               bookLeasing
       );
-      return new LeaseOrderDtoDetail(dto, listing, lessor);
+      return new LeaseOrderDtoDetail(dto, listing, lessor, lessee);
     }).collect(Collectors.toList()));
   }
 
@@ -148,6 +150,7 @@ public class LeaseOrderController {
     List<LeaseOrderDto> leaseOrderDto = leaseOrderService.getLeaseOrderByLessorIdAndStatus(id,leaseOrderStatus);
     return ResponseEntity.ok(leaseOrderDto.stream().map(dto->{
       UserDto lessor = userService.getUserById(dto.lessorId());
+      UserDto lessee = userService.getUserById(dto.lesseeId());
       ListingDto listingDto = listingService.getListingById(dto.listingId());
       CopyDto copy = copyService.getCopyById(listingDto.copyId());
       BookDto book = bookService.getBookById(copy.bookId());
@@ -170,7 +173,7 @@ public class LeaseOrderController {
               bookOwned,
               bookLeasing
       );
-      return new LeaseOrderDtoDetail(dto, listing, lessor);
+      return new LeaseOrderDtoDetail(dto, listing, lessor, lessee);
     }).collect(Collectors.toList()));
 
   }
@@ -208,6 +211,7 @@ public class LeaseOrderController {
     List<LeaseOrderDto> leaseOrderDto = leaseOrderService.getLeaseOrderByLesseeIdAndStatus(id,leaseOrderStatus);
     return ResponseEntity.ok(leaseOrderDto.stream().map(dto->{
       UserDto lessor = userService.getUserById(dto.lessorId());
+      UserDto lessee = userService.getUserById(dto.lesseeId());
       ListingDto listingDto = listingService.getListingById(dto.listingId());
       CopyDto copy = copyService.getCopyById(listingDto.copyId());
       BookDto book = bookService.getBookById(copy.bookId());
@@ -230,7 +234,7 @@ public class LeaseOrderController {
               bookOwned,
               bookLeasing
       );
-      return new LeaseOrderDtoDetail(dto, listing, lessor);
+      return new LeaseOrderDtoDetail(dto, listing, lessor, lessee);
     }).collect(Collectors.toList()));
 
   }

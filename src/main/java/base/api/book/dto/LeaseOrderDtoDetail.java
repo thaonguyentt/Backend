@@ -13,6 +13,7 @@ import java.util.Set;
 public record LeaseOrderDtoDetail (
     LeaseOrderDto leaseOrder,
     ListingDetailDto listing,
-    UserDto lessor
+    UserDto lessor,
+    UserDto lessee
 ) implements Serializable
         {}

@@ -252,6 +252,7 @@ public class LeaseOrderService {
     LeaseOrder leaseOrder = leaseOrderRepository.findById(id).get();
     LeaseOrderDto leaseOrderDto = leaseOrderMapper.toDto(leaseOrder);
     UserDto lessor = userService.getUserById(leaseOrder.getLessorId());
+    UserDto lessee = userService.getUserById(leaseOrder.getLesseeId());
     ListingDto listingDto = listingService.getListingById(leaseOrder.getListingId());
     if (listingDto == null) {
       return null;
@@ -278,7 +279,7 @@ public class LeaseOrderService {
             bookOwned,
             bookLeasing
     );
-    LeaseOrderDtoDetail result = new LeaseOrderDtoDetail(leaseOrderDto, listing, lessor);
+    LeaseOrderDtoDetail result = new LeaseOrderDtoDetail(leaseOrderDto, listing, lessor, lessee);
     return result;
   }
 
