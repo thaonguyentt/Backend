@@ -32,9 +32,10 @@ public interface LeaseOrderRepository extends JpaRepository<LeaseOrder, Long> {
     @Query(
             value = """
                       select * from lease_order
-                      where (date_add(created_date, '1 day') > now()
+                      where (date_add(created_date, '1 day') < now()
                       and status = 'ORDERED_PAYMENT_PENDING') or 
-                      (total_deposit <= (total_penalty_rate + total_lease_fee))
+                      (total_deposit <= (total_penalty_rate + total_lease_fee)
+                      and status = 'LATE_RETURN')
                     """,
             nativeQuery = true
     )
