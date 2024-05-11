@@ -88,22 +88,22 @@ public class LeaseOrderService {
             .collect(Collectors.toList());
   }
 
-  public LeaseOrderDto updateLeaseOrderStatus (Long id, LeaseOrderStatus leaseOrderStatus) {
+  public LeaseOrderDto updateLeaseOrderStatus (Long id, LeaseOrderStatus newStatus) {
     LeaseOrder leaseOrder = leaseOrderRepository.findById(id).get();
 
-    if (leaseOrderStatus.equals(LeaseOrderStatus.CANCELED)) {
+    if (newStatus.equals(LeaseOrderStatus.CANCELED)) {
       if (leaseOrder.getStatus().equals(LeaseOrderStatus.ORDERED_PAYMENT_PENDING)) {
         Listing listing = listingRepository.findById(leaseOrder.getListingId()).get();
         listing.setListingStatus(ListingStatus.AVAILABLE);
         Copy copy = listing.getCopy();
         copy.setCopyStatus(CopyStatus.LISTED);
-        leaseOrder.setStatus(leaseOrderStatus);
+        leaseOrder.setStatus(newStatus);
         LeaseOrder savedLeaseOrder = leaseOrderRepository.save(leaseOrder);
         return leaseOrderMapper.toDto(savedLeaseOrder);
       } else {
         throw new LeaseCanNotCancel("lease order can not cancel");
       }
-    } else if (leaseOrderStatus.equals(LeaseOrderStatus.RETURNING)) {
+    } else if (newStatus.equals(LeaseOrderStatus.RETURNING)) {
       Listing listing = listingRepository.findById(leaseOrder.getListingId()).get();
       if (leaseOrder.getToDate().isAfter(LocalDate.now())
               && leaseOrder.getFromDate().isBefore(LocalDate.now())) {
@@ -114,14 +114,14 @@ public class LeaseOrderService {
                                 leaseOrder.getToDate().atStartOfDay())
                         .toDays()));
         leaseOrder.setTotalLeaseFee(totalLeaseFee);
-        leaseOrder.setStatus(leaseOrderStatus);
+        leaseOrder.setStatus(newStatus);
         LeaseOrder savedLeaseOrder = leaseOrderRepository.save(leaseOrder);
         return leaseOrderMapper.toDto(savedLeaseOrder);
       }
       else if ((leaseOrder.getFromDate().isEqual(LocalDate.now()))) {
         leaseOrder.setToDate(LocalDate.now());
         leaseOrder.setTotalLeaseFee(listing.getLeaseRate());
-        leaseOrder.setStatus(leaseOrderStatus);
+        leaseOrder.setStatus(newStatus);
         LeaseOrder savedLeaseOrder = leaseOrderRepository.save(leaseOrder);
         return leaseOrderMapper.toDto(savedLeaseOrder);
       } else if (leaseOrder.getFromDate().isEqual(LocalDate.now())) {
@@ -132,14 +132,14 @@ public class LeaseOrderService {
       }
 
     } else {
-      if (leaseOrderStatus.equals(LeaseOrderStatus.RETURNED) || leaseOrderStatus.equals(LeaseOrderStatus.LATE_RETURN)) {
+      if (newStatus.equals(LeaseOrderStatus.RETURNED) || newStatus.equals(LeaseOrderStatus.LATE_RETURN)) {
         //update copy and listing
         Listing listing = listingRepository.findById(leaseOrder.getListingId()).get();
         listing.setListingStatus(ListingStatus.AVAILABLE);
         Copy copy = listing.getCopy();
         copy.setCopyStatus(CopyStatus.LISTED);
       }
-      leaseOrder.setStatus(leaseOrderStatus);
+      leaseOrder.setStatus(newStatus);
       LeaseOrder savedLeaseOrder = leaseOrderRepository.save(leaseOrder);
       return leaseOrderMapper.toDto(savedLeaseOrder);
     }
