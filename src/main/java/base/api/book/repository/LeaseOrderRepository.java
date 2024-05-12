@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 public interface LeaseOrderRepository extends JpaRepository<LeaseOrder, Long> {
+
     public List<LeaseOrder> findLeaseOrderByLesseeId (Long id);
 
     public List<LeaseOrder> findByLesseeIdAndStatusIn(Long id, List<LeaseOrderStatus> leaseOrderStatus);

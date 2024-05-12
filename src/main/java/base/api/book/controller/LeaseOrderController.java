@@ -16,6 +16,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -76,6 +79,11 @@ public class LeaseOrderController {
       Long bookOwned = listingService.countListingByOwner(listingDto.ownerId());
       Long bookLeasing = listingService.countListingByOwnerAndStatus(listingDto.ownerId());
       UserDto user = userService.getUserById(listingDto.ownerId());
+      BigDecimal totalPenaltyFee = dto.totalPenaltyRate()
+              .multiply(BigDecimal.valueOf(Duration.between(
+                              dto.toDate().atStartOfDay(),
+                              LocalDate.now().atStartOfDay())
+                      .toDays()));
       ListingDetailDto listing = new ListingDetailDto(
               listingDto.id(),
               user,
@@ -91,7 +99,7 @@ public class LeaseOrderController {
               bookOwned,
               bookLeasing
       );
-      return new LeaseOrderDtoDetail(dto, listing, lessor, lessee);
+      return new LeaseOrderDtoDetail(dto, listing, lessor, lessee, totalPenaltyFee);
     }).collect(Collectors.toList()));
 //            ResponseEntity.ok(leaseOrderService.getLeaseOrderByLessorId(id));
   }
@@ -109,6 +117,11 @@ public class LeaseOrderController {
       Long bookOwned = listingService.countListingByOwner(listingDto.ownerId());
       Long bookLeasing = listingService.countListingByOwnerAndStatus(listingDto.ownerId());
       UserDto user = userService.getUserById(listingDto.ownerId());
+      BigDecimal totalPenaltyFee = dto.totalPenaltyRate()
+              .multiply(BigDecimal.valueOf(Duration.between(
+                              dto.toDate().atStartOfDay(),
+                              LocalDate.now().atStartOfDay())
+                      .toDays()));
       ListingDetailDto listing = new ListingDetailDto(
               listingDto.id(),
               user,
@@ -124,7 +137,7 @@ public class LeaseOrderController {
               bookOwned,
               bookLeasing
       );
-      return new LeaseOrderDtoDetail(dto, listing, lessor, lessee);
+      return new LeaseOrderDtoDetail(dto, listing, lessor, lessee, totalPenaltyFee);
     }).collect(Collectors.toList()));
   }
 
@@ -158,6 +171,11 @@ public class LeaseOrderController {
       Long bookOwned = listingService.countListingByOwner(listingDto.ownerId());
       Long bookLeasing = listingService.countListingByOwnerAndStatus(listingDto.ownerId());
       UserDto user = userService.getUserById(listingDto.ownerId());
+      BigDecimal totalPenaltyFee = dto.totalPenaltyRate()
+              .multiply(BigDecimal.valueOf(Duration.between(
+                              dto.toDate().atStartOfDay(),
+                              LocalDate.now().atStartOfDay())
+                      .toDays()));
       ListingDetailDto listing = new ListingDetailDto(
               listingDto.id(),
               user,
@@ -173,7 +191,7 @@ public class LeaseOrderController {
               bookOwned,
               bookLeasing
       );
-      return new LeaseOrderDtoDetail(dto, listing, lessor, lessee);
+      return new LeaseOrderDtoDetail(dto, listing, lessor, lessee, totalPenaltyFee);
     }).collect(Collectors.toList()));
 
   }
@@ -219,6 +237,11 @@ public class LeaseOrderController {
       Long bookOwned = listingService.countListingByOwner(listingDto.ownerId());
       Long bookLeasing = listingService.countListingByOwnerAndStatus(listingDto.ownerId());
       UserDto user = userService.getUserById(listingDto.ownerId());
+      BigDecimal totalPenaltyFee = dto.totalPenaltyRate()
+              .multiply(BigDecimal.valueOf(Duration.between(
+                              dto.toDate().atStartOfDay(),
+                              LocalDate.now().atStartOfDay())
+                      .toDays()));
       ListingDetailDto listing = new ListingDetailDto(
               listingDto.id(),
               user,
@@ -234,7 +257,7 @@ public class LeaseOrderController {
               bookOwned,
               bookLeasing
       );
-      return new LeaseOrderDtoDetail(dto, listing, lessor, lessee);
+      return new LeaseOrderDtoDetail(dto, listing, lessor, lessee, totalPenaltyFee);
     }).collect(Collectors.toList()));
 
   }

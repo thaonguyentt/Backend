@@ -14,6 +14,7 @@ public record LeaseOrderDtoDetail (
     LeaseOrderDto leaseOrder,
     ListingDetailDto listing,
     UserDto lessor,
-    UserDto lessee
+    UserDto lessee,
+    BigDecimal totalPenaltyFee
 ) implements Serializable
         {}

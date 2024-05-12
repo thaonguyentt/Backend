@@ -134,7 +134,7 @@ public class LeaseOrderService {
       }
 
     } else {
-      if (LeaseOrderStatus.RETURNED.equals(newStatus) || LeaseOrderStatus.LATE_RETURN.equals(newStatus)) {
+      if (LeaseOrderStatus.RETURNED.equals(newStatus)) {
         //update copy and listing
         Listing listing = listingRepository.findById(leaseOrder.getListingId()).get();
         listing.setListingStatus(ListingStatus.AVAILABLE);
@@ -196,7 +196,7 @@ public class LeaseOrderService {
         requestDto.toDate().atStartOfDay())
         .toDays()));
     BigDecimal totalDeposit = listing.getDepositFee();
-    BigDecimal totalPenaltyRate = BigDecimal.ZERO;
+    BigDecimal totalPenaltyRate = listing.getPenaltyRate();
 
     LeaseOrder newLeaseOrder = new LeaseOrder();
     newLeaseOrder.setListingId(updatedListing.getId());
@@ -221,7 +221,7 @@ public class LeaseOrderService {
           .copy(listing.getCopy())
           .leaseRate(listing.getLeaseRate())
           .depositFee(listing.getDepositFee())
-          .penaltyRate(listing.getDepositFee())
+          .penaltyRate(listing.getPenaltyRate())
         .build()
       )
     );
@@ -263,6 +263,11 @@ public class LeaseOrderService {
     Long bookOwned = listingService.countListingByOwner(listingDto.ownerId());
     Long bookLeasing = listingService.countListingByOwnerAndStatus(listingDto.ownerId());
     UserDto user = userService.getUserById(listingDto.ownerId());
+    BigDecimal totalPenaltyFee = leaseOrder.getTotalPenaltyRate()
+            .multiply(BigDecimal.valueOf(Duration.between(
+                            leaseOrder.getToDate().atStartOfDay(),
+                            LocalDate.now().atStartOfDay())
+                    .toDays()));
     ListingDetailDto listing = new ListingDetailDto(
             listingDto.id(),
             user,
@@ -279,7 +284,7 @@ public class LeaseOrderService {
             bookOwned,
             bookLeasing
     );
-    LeaseOrderDtoDetail result = new LeaseOrderDtoDetail(leaseOrderDto, listing, lessor, lessee);
+    LeaseOrderDtoDetail result = new LeaseOrderDtoDetail(leaseOrderDto, listing, lessor, lessee,totalPenaltyFee);
     return result;
   }
 
