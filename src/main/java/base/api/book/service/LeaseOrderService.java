@@ -13,9 +13,11 @@ import base.api.book.mapper.LeaseOrderMapper;
 import base.api.book.repository.CopyRepository;
 import base.api.book.repository.LeaseOrderRepository;
 import base.api.book.repository.ListingRepository;
+import base.api.payment.dto.PaymentCreateRequest;
 import base.api.payment.dto.PaymentDto;
 import base.api.payment.entity.PaymentMethod;
 import base.api.payment.service.PaymentService;
+import base.api.system.security.SecurityUtils;
 import base.api.user.UserDto;
 import base.api.user.UserService;
 import base.api.user.internal.entity.User;
@@ -91,8 +93,8 @@ public class LeaseOrderService {
   public LeaseOrderDto updateLeaseOrderStatus (Long id, LeaseOrderStatus newStatus) {
     LeaseOrder leaseOrder = leaseOrderRepository.findById(id).get();
 
-    if (newStatus.equals(LeaseOrderStatus.CANCELED)) {
-      if (leaseOrder.getStatus().equals(LeaseOrderStatus.ORDERED_PAYMENT_PENDING)) {
+    if (LeaseOrderStatus.CANCELED.equals(newStatus)) {
+      if (LeaseOrderStatus.ORDERED_PAYMENT_PENDING.equals(leaseOrder.getStatus())) {
         Listing listing = listingRepository.findById(leaseOrder.getListingId()).get();
         listing.setListingStatus(ListingStatus.AVAILABLE);
         Copy copy = listing.getCopy();
@@ -103,7 +105,7 @@ public class LeaseOrderService {
       } else {
         throw new LeaseCanNotCancel("lease order can not cancel");
       }
-    } else if (newStatus.equals(LeaseOrderStatus.RETURNING)) {
+    } else if (LeaseOrderStatus.RETURNING.equals(newStatus)) {
       Listing listing = listingRepository.findById(leaseOrder.getListingId()).get();
       if (leaseOrder.getToDate().isAfter(LocalDate.now())
               && leaseOrder.getFromDate().isBefore(LocalDate.now())) {
@@ -132,7 +134,7 @@ public class LeaseOrderService {
       }
 
     } else {
-      if (newStatus.equals(LeaseOrderStatus.RETURNED) || newStatus.equals(LeaseOrderStatus.LATE_RETURN)) {
+      if (LeaseOrderStatus.RETURNED.equals(newStatus) || LeaseOrderStatus.LATE_RETURN.equals(newStatus)) {
         //update copy and listing
         Listing listing = listingRepository.findById(leaseOrder.getListingId()).get();
         listing.setListingStatus(ListingStatus.AVAILABLE);
@@ -168,9 +170,7 @@ public class LeaseOrderService {
 
 
   public LeaseOrderDto createLeaseOrder(Authentication auth, LeaseOrderCreateRequest requestDto) {
-    if (auth == null) {
-      throw new UnauthorizedException("Unauthorized access");
-    }
+    SecurityUtils.requireAuthentication(auth);
     // TODO tạo service handle anonymous user
     // FIXME anonymous user => auth.getPrincipal == "anonymousUser" => parse số => lỗi
     Long userId = Long.valueOf((String)auth.getPrincipal());
@@ -303,8 +303,7 @@ public class LeaseOrderService {
       BigDecimal totalPenaltyRate = order.getTotalPenaltyRate();
       BigDecimal leaseOrderPenaltyRate = order.getLeaseOrderDetails().stream().findFirst().get().getPenaltyRate();
       order.setTotalPenaltyRate(totalPenaltyRate.add(leaseOrderPenaltyRate));
-    }
-      );
+    });
   }
 
   

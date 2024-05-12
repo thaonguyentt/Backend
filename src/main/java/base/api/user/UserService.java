@@ -4,6 +4,7 @@ import base.api.common.CommonValidator;
 import base.api.system.security.JwtService;
 import base.api.user.internal.entity.User;
 import base.api.user.internal.entity.UserPassword;
+import base.api.user.internal.entity.UserRole;
 import base.api.user.internal.mapper.UserMapper;
 import base.api.user.internal.repository.UserPasswordRepository;
 import base.api.user.internal.repository.UserRepository;
@@ -107,7 +108,7 @@ public class UserService {
   public Optional<String> authenticateUserByPassword(String loginName, String password) {
     var o1 = getUserByLoginName(loginName);
     var o2 = o1.filter(user -> validatePassword(user.getId(), password));
-    var o3 = o2.map(user -> jwtService.makeTokenWithUserIdAndRoles(user.getId(), Collections.singleton("NONE")));
+    var o3 = o2.map(user -> jwtService.makeTokenWithUserIdAndRoles(user.getId(), user.getRoles().stream().map(UserRole::getName).toList()));
     return o3;
   }
 

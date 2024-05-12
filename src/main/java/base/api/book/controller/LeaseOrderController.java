@@ -251,8 +251,13 @@ public class LeaseOrderController {
     return ResponseEntity.ok(leaseOrderService.getDetailLeaseOrderById(id));
   }
 
+  @PostMapping("/api/leaseOrder/{leaseOrderId}/pay/{paymentId}")
+  public ResponseEntity<LeaseOrderDto> payTotalLeaseAndDepositFee(
+    @PathVariable("leaseOrderId") Long leaseOrderId,
+    @PathVariable("paymentId") Long paymentId) {
+      return ResponseEntity.badRequest().build();
 
-
+  }
 
 
 }

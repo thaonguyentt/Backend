@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 @Data
@@ -22,6 +23,14 @@ public class User {
       allocationSize = 1)
   @Column(name = "id")
   private Long id;
+
+  @ManyToMany
+  @JoinTable(
+    name = "user_user_role",
+    joinColumns = @JoinColumn(name = "user_id"),
+    inverseJoinColumns = @JoinColumn(name = "role_id")
+  )
+  private Set<UserRole> roles;
 
   @Column(name = "username")
   private String username;

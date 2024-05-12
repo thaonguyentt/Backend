@@ -119,7 +119,8 @@ VALUES
     (98,'dev96','Marcella74@gmail.com','0905907362','Marcella','Rau','2017-03-14','https://loremflickr.com/640/480/cats?lock=94089','Tây Sơn, Phường Ngã Tư Sở, Quận Đống Đa, Hà Nội'),
     (99,'dev97','Dahlia5@hotmail.com','0905907362','Dahlia','McDermott','2017-03-14','https://loremflickr.com/640/480/cats?lock=15796','Đường Phùng Khoang, Phường Trung Văn, Quận Nam Từ Liêm, Hà Nội'),
     (100,'dev98','Christ_Jacobson36@yahoo.com','0905907362','Christ','Jacobson','2017-03-14','https://loremflickr.com/640/480/cats?lock=20383','Đường Nguyễn Trãi, Phường Thượng Đình, Quận Thanh Xuân, Hà Nội'),
-    (101,'dev99','Kristoffer_Braun49@hotmail.com','0905907362','Kristoffer','Braun','2017-03-14','https://loremflickr.com/640/480/cats?lock=95137','Đường Tây Sơn, Phường Ngã Tư Sở, Quận Đống Đa, Hà Nội')
+    (101,'dev99','Kristoffer_Braun49@hotmail.com','0905907362','Kristoffer','Braun','2017-03-14','https://loremflickr.com/640/480/cats?lock=95137','Đường Tây Sơn, Phường Ngã Tư Sở, Quận Đống Đa, Hà Nội'),
+    (999,'admin','admin@local.test','0905907362','Admin','Admin','2017-03-14','https://loremflickr.com/640/480/cats?lock=95137','xxx')
 ;
 
 alter sequence user_user_id_seq restart with 1000;
@@ -236,11 +237,31 @@ VALUES
     (98,98,'$2a$10$oO1SJWlHYNK4KTIZvxDuXu2iCaDLuKiEMLNzNK8Yv5bJVsemCT7j6'),
     (99,99,'$2a$10$oO1SJWlHYNK4KTIZvxDuXu2iCaDLuKiEMLNzNK8Yv5bJVsemCT7j6'),
     (100,100,'$2a$10$oO1SJWlHYNK4KTIZvxDuXu2iCaDLuKiEMLNzNK8Yv5bJVsemCT7j6'),
-    (101,101,'$2a$10$oO1SJWlHYNK4KTIZvxDuXu2iCaDLuKiEMLNzNK8Yv5bJVsemCT7j6');
+    (101,101,'$2a$10$oO1SJWlHYNK4KTIZvxDuXu2iCaDLuKiEMLNzNK8Yv5bJVsemCT7j6'),
+    (999,999,'$2a$10$oO1SJWlHYNK4KTIZvxDuXu2iCaDLuKiEMLNzNK8Yv5bJVsemCT7j6');
+
 
 alter sequence user_password_id_seq restart with 1000;
 
+drop table if exists user_role;
+create table user_role
+(
+    id          bigserial primary key,
+    name        text not null,
+    description text
+);
+insert into user_role(id, name) values
+    (1, 'ADMIN'),
+    (2, 'USER');
 
+drop table if exists user_user_role;
+create table user_user_role (
+    id bigserial primary key ,
+    user_id bigint not null ,
+    role_id bigint not null
+);
+insert into user_user_role(user_id, role_id) values
+    (999, 1);
 
 --
 -- -- bang bai dang
