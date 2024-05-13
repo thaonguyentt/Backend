@@ -19,6 +19,7 @@ import base.api.book.repository.BookRepository;
 import base.api.book.repository.CopyRepository;
 import base.api.book.repository.ListingRepository;
 import base.api.user.UserService;
+import base.api.user.internal.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
@@ -39,17 +40,21 @@ public class ListingService {
     private final CopyRepository copyRepository;
 
     private final CopyMapper copyMapper;
+    private final UserRepository userRepository;
 
 
-    public ListingService(ListingMapper listingMapper, ListingRepository listingRepository, CopyRepository copyRepository, CopyMapper copyMapper) {
+    public ListingService(ListingMapper listingMapper, ListingRepository listingRepository, CopyRepository copyRepository, CopyMapper copyMapper, UserRepository userRepository) {
         this.listingMapper = listingMapper;
         this.listingRepository = listingRepository;
         this.copyRepository = copyRepository;
         this.copyMapper = copyMapper;
+        this.userRepository = userRepository;
     }
 
     public ListingDto createListing (ListingDto listingDto) {
         Listing listing = listingMapper.toEntity(listingDto);
+        listing.setCopy(copyRepository.getReferenceById(listing.getCopy().getId()));
+        listing.setOwner(userRepository.getReferenceById(listing.getOwner().getId()));
         Listing createdListing = listingRepository.save(listing);
 //        update status copy
         Copy copy = copyRepository.getReferenceById(createdListing.getCopy().getId());
