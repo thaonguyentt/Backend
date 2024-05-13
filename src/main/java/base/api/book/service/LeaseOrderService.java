@@ -367,14 +367,14 @@ public class LeaseOrderService {
     leaseOrderRepository.saveAll(latePaymentOrders);
   }
 
-  public void chargeLateFees () {
-    List<LeaseOrder> listReturnLate = leaseOrderRepository.findLeaseOrderByStatus(LeaseOrderStatus.LATE_RETURN);
-    listReturnLate.forEach(order -> {
-      BigDecimal totalPenaltyRate = order.getTotalPenaltyRate();
-      BigDecimal leaseOrderPenaltyRate = order.getLeaseOrderDetails().stream().findFirst().get().getPenaltyRate();
-      order.setTotalPenaltyRate(totalPenaltyRate.add(leaseOrderPenaltyRate));
-    });
-  }
+//  public void chargeLateFees () {
+//    List<LeaseOrder> listReturnLate = leaseOrderRepository.findLeaseOrderByStatus(LeaseOrderStatus.LATE_RETURN);
+//    listReturnLate.forEach(order -> {
+//      BigDecimal totalPenaltyRate = order.getTotalPenaltyRate();
+//      BigDecimal leaseOrderPenaltyRate = order.getLeaseOrderDetails().stream().findFirst().get().getPenaltyRate();
+//      order.setTotalPenaltyRate(totalPenaltyRate.add(leaseOrderPenaltyRate));
+//    });
+//  }
 
   
 }

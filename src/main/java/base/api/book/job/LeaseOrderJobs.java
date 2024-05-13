@@ -24,6 +24,6 @@ public class LeaseOrderJobs {
     }
 
 
-    @Scheduled(cron = "0 */1 * * * ?")
-    public void chargeLateFees () {leaseOrderService.chargeLateFees();}
+//    @Scheduled(cron = "0 */1 * * * ?")
+//    public void chargeLateFees () {leaseOrderService.chargeLateFees();}
 }

@@ -21,7 +21,7 @@ public interface LeaseOrderRepository extends JpaRepository<LeaseOrder, Long> {
     @Query(
       value = """
         select * from lease_order
-        where (return_date < now() and (status = 'PAYMENT_SUCCESS' or status = 'DELIVERED'))
+        where (return_date > now() and (status = 'PAYMENT_SUCCESS' or status = 'DELIVERED'))
             or ( date_add(to_date, '14 day') > now() and 
             status = 'RETURNING'
             )
@@ -33,10 +33,8 @@ public interface LeaseOrderRepository extends JpaRepository<LeaseOrder, Long> {
     @Query(
             value = """
                       select * from lease_order
-                      where (date_add(created_date, '1 day') < now()
-                      and status = 'ORDERED_PAYMENT_PENDING') or 
-                      (total_deposit <= (total_penalty_rate + total_lease_fee)
-                      and status = 'LATE_RETURN')
+                      where (date_add(created_date, '1 day') > now()
+                      and status = 'ORDERED_PAYMENT_PENDING')
                     """,
             nativeQuery = true
     )
