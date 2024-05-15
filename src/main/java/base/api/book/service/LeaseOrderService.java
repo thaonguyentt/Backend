@@ -101,6 +101,9 @@ public class LeaseOrderService {
       updatedLeaseOrder = changeOrderStatusReturning(leaseOrder);
     } else if (LeaseOrderStatus.RETURNED.equals(newStatus)) {
       updatedLeaseOrder = changeOrderStatusReturned(leaseOrder);
+    } else {
+      leaseOrder.setStatus(newStatus);
+      updatedLeaseOrder = leaseOrderRepository.save(leaseOrder);
     }
 
     return leaseOrderMapper.toDto(updatedLeaseOrder);
@@ -266,6 +269,9 @@ public class LeaseOrderService {
     LeaseOrder newLeaseOrder = new LeaseOrder();
     newLeaseOrder.setListingId(updatedListing.getId());
     newLeaseOrder.setStatus(LeaseOrderStatus.ORDERED_PAYMENT_PENDING);
+    if (requestDto.paymentMethod().equals(PaymentMethod.VNPAY)) {
+      newLeaseOrder.setStatus(LeaseOrderStatus.PAYMENT_SUCCESS);
+    }
     newLeaseOrder.setLessorId(lessorId);
     newLeaseOrder.setLessorAddress(listing.getAddress());
     newLeaseOrder.setLesseeId(userId);
@@ -363,7 +369,7 @@ public class LeaseOrderService {
 
   public void cancelOrderOnLatePayment() {
     List<LeaseOrder> latePaymentOrders = leaseOrderRepository.findLatePaymentLeaseOrder();
-    latePaymentOrders.forEach(order -> order.setStatus(LeaseOrderStatus.CANCELED));
+    latePaymentOrders.forEach(order -> changeOrderStatusCancel(order));
     leaseOrderRepository.saveAll(latePaymentOrders);
   }
 
