@@ -5,6 +5,7 @@ import base.api.book.dto.search.LeaseOrderUpdateRequest;
 import base.api.book.entity.support.LeaseOrderStatus;
 import base.api.book.repository.LeaseOrderRepository;
 import base.api.book.service.*;
+import base.api.system.security.SecurityUtils;
 import base.api.user.UserDto;
 import base.api.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -198,12 +199,13 @@ public class LeaseOrderController {
 
   @GetMapping ("/api/leaseOrder/edit/status")
   public ResponseEntity<LeaseOrderDto> updateStatus (@RequestParam(name="id") Long id, @RequestParam(name="status") LeaseOrderStatus status) {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    SecurityUtils.requireAuthentication(auth);
     try {
-      leaseOrderService.updateLeaseOrderStatus(id, status);
+      return ResponseEntity.ok(leaseOrderService.updateLeaseOrderStatus(auth, id, status));
     } catch (Exception e) {
       return new ResponseEntity("Error update status", HttpStatus.LOCKED);
     }
-    return ResponseEntity.ok(leaseOrderService.updateLeaseOrderStatus(id, status));
   }
 
   @GetMapping ("/api/leaseOrder/search/lessee/status/{id}")

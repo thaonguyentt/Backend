@@ -22,7 +22,8 @@ import base.api.system.security.SecurityUtils;
 import base.api.user.UserDto;
 import base.api.user.UserService;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -36,46 +37,21 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class LeaseOrderService {
 
-  @Autowired
   final LeaseOrderRepository leaseOrderRepository;
-
   final ListingRepository listingRepository;
-
   final LeaseOrderDetailMapper leaseOrderDetailMapper;
   final LeaseOrderMapper leaseOrderMapper;
   private final CopyRepository copyRepository;
   private final PaymentService paymentService;
-
   private final UserService userService;
-
   private final ListingService listingService;
-
   private final CopyService copyService;
-
   private final BookService bookService;
-
   private final ReviewService reviewService;
-    @Autowired
-    private PaymentRepository paymentRepository;
-
-  public LeaseOrderService(LeaseOrderRepository leaseOrderRepository, ListingRepository listingRepository, LeaseOrderDetailMapper leaseOrderDetailMapper, LeaseOrderMapper leaseOrderMapper,
-                           CopyRepository copyRepository, PaymentService paymentService, UserService userService, ListingService listingService, CopyService copyService,
-                            BookService bookService, ReviewService reviewService) {
-    this.leaseOrderRepository = leaseOrderRepository;
-      this.listingRepository = listingRepository;
-      this.leaseOrderDetailMapper = leaseOrderDetailMapper;
-      this.leaseOrderMapper = leaseOrderMapper;
-      this.copyRepository = copyRepository;
-      this.paymentService = paymentService;
-      this.userService = userService;
-      this.listingService = listingService;
-      this.copyService = copyService;
-      this.bookService = bookService;
-      this.reviewService = reviewService;
-  }
-
+  private PaymentRepository paymentRepository;
 
   public List<LeaseOrderDto> getLeaseOrderByLesseeId(Long id) {
     return leaseOrderRepository.findLeaseOrderByLesseeId(id)
@@ -91,26 +67,28 @@ public class LeaseOrderService {
             .collect(Collectors.toList());
   }
 
-  public LeaseOrderDto updateLeaseOrderStatus (Long id, LeaseOrderStatus newStatus) {
+  public LeaseOrderDto updateLeaseOrderStatus (Authentication auth, Long id, LeaseOrderStatus newStatus) {
     LeaseOrder leaseOrder = leaseOrderRepository.findById(id).get();
-    LeaseOrder updatedLeaseOrder = null;
-
-    if (LeaseOrderStatus.CANCELED.equals(newStatus)) {
-      updatedLeaseOrder = changeOrderStatusCancel(leaseOrder);
-    } else if (LeaseOrderStatus.RETURNING.equals(newStatus)) {
-      updatedLeaseOrder = changeOrderStatusReturning(leaseOrder);
-    } else if (LeaseOrderStatus.RETURNED.equals(newStatus)) {
-      updatedLeaseOrder = changeOrderStatusReturned(leaseOrder);
-    } else {
-      leaseOrder.setStatus(newStatus);
-      updatedLeaseOrder = leaseOrderRepository.save(leaseOrder);
-    }
+    LeaseOrder updatedLeaseOrder = switch (newStatus) {
+        case ORDERED_PAYMENT_PENDING -> leaseOrder;
+        case CANCELED -> changeOrderStatusCancel(auth, leaseOrder);
+        case USER_PAID -> changeOrderStatusUserPaid(auth, leaseOrder);
+        case PAYMENT_SUCCESS -> changeOrderStatusPaymentSuccess(auth, leaseOrder);
+        case DELIVERED -> null;
+        case LATE_RETURN -> changeOrderStatusLateReturn(auth, leaseOrder);
+        case RETURNING -> changeOrderStatusReturning(auth, leaseOrder);
+        case RETURNED -> changeOrderStatusReturned(auth, leaseOrder);
+        case DEPOSIT_RETURNED -> changeOrderStatusDepositReturned(auth, leaseOrder);
+        case PAID_OWNER -> changeOrderStatusPaidOwner(auth, leaseOrder);
+    };
 
     return leaseOrderMapper.toDto(updatedLeaseOrder);
   }
 
 
-  private LeaseOrder changeOrderStatusCancel(LeaseOrder leaseOrder) {
+  private LeaseOrder changeOrderStatusCancel(@NonNull Authentication auth, LeaseOrder leaseOrder) {
+    SecurityUtils.requireHasRoleAny(auth, "USER", "ADMIN");
+
     if (LeaseOrderStatus.ORDERED_PAYMENT_PENDING.equals(leaseOrder.getStatus())) {
       Listing listing = listingRepository.findById(leaseOrder.getListingId()).get();
       listing.setListingStatus(ListingStatus.AVAILABLE);
@@ -123,7 +101,9 @@ public class LeaseOrderService {
     }
   }
 
-  private LeaseOrder changeOrderStatusUserPaid(LeaseOrder leaseOrder) {
+  private LeaseOrder changeOrderStatusUserPaid(@NonNull Authentication auth, LeaseOrder leaseOrder) {
+    SecurityUtils.requireHasRoleAny(auth, "SYSTEM", "ADMIN");
+
     // Check if user already paid
     PaymentDto userPay = paymentService.getPaymentById(leaseOrder.getLeaseAndDepositPaymentId());
     if (!PaymentStatus.SUCCEEDED.equals(userPay.paymentStatus())) {
@@ -133,18 +113,24 @@ public class LeaseOrderService {
     return leaseOrderRepository.save(leaseOrder);
   }
 
-  private LeaseOrder changeOrderStatusPaymentSucess(LeaseOrder leaseOrder) {
+  private LeaseOrder changeOrderStatusPaymentSuccess(@NonNull Authentication auth, LeaseOrder leaseOrder) {
+    SecurityUtils.requireHasRoleAny(auth, "SYSTEM", "ADMIN");
+
     leaseOrder.setStatus(LeaseOrderStatus.PAYMENT_SUCCESS);
     return leaseOrderRepository.save(leaseOrder);
   }
 
-  private LeaseOrder changeOrderStatusLateReturn(LeaseOrder leaseOrder) {
+  private LeaseOrder changeOrderStatusLateReturn(Authentication auth, LeaseOrder leaseOrder) {
+    SecurityUtils.requireHasRoleAny(auth, "SYSTEM", "ADMIN");
+
     // TODO Maybe check if order is really late return
     leaseOrder.setStatus(LeaseOrderStatus.LATE_RETURN);
     return leaseOrderRepository.save(leaseOrder);
   }
 
-  private LeaseOrder changeOrderStatusReturning(LeaseOrder leaseOrder) {
+  private LeaseOrder changeOrderStatusReturning(Authentication auth, LeaseOrder leaseOrder) {
+    SecurityUtils.requireHasRoleAny(auth, "USER", "SYSTEM", "ADMIN");
+
     Listing listing = listingRepository.findById(leaseOrder.getListingId()).get();
     if (leaseOrder.getToDate().isAfter(LocalDate.now())
             && leaseOrder.getFromDate().isBefore(LocalDate.now())) {
@@ -173,7 +159,10 @@ public class LeaseOrderService {
     }
   }
 
-  private LeaseOrder changeOrderStatusReturned(LeaseOrder leaseOrder) {
+  //TODO calculate amount of fee
+  private LeaseOrder changeOrderStatusReturned(Authentication auth, LeaseOrder leaseOrder) {
+    SecurityUtils.requireHasRoleAny(auth, "USER", "SYSTEM", "ADMIN");
+
     Listing listing = listingRepository.findById(leaseOrder.getListingId()).get();
     listing.setListingStatus(ListingStatus.AVAILABLE);
     Copy copy = listing.getCopy();
@@ -181,20 +170,27 @@ public class LeaseOrderService {
     leaseOrder.setStatus(LeaseOrderStatus.RETURNED);
 
     // TODO create 2 payment
-    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    if (auth == null || !auth.isAuthenticated()) {
+      auth = SecurityContextHolder.getContext().getAuthentication();
+    }
     // Create Pay-Owner payment
     PaymentDto payOwner = paymentService.create(
       auth,
       PaymentDto.builder()
+        .payerId(0L)
+        .payeeId(leaseOrder.getLessorId())
         .amount(BigDecimal.valueOf(999999L))
         .currency("VND")
         .paymentMethod(PaymentMethod.BANK_TRANSFER)
         .description("Pay books owner of order " + leaseOrder.getId())
         .build()
     );
+    // Refund to renter payment
     PaymentDto refundDeposit = paymentService.create(
       auth,
       PaymentDto.builder()
+        .payerId(0L)
+        .payeeId(leaseOrder.getLesseeId())
         .amount(BigDecimal.valueOf(9999999L))
         .currency("VND")
         .paymentMethod(PaymentMethod.BANK_TRANSFER)
@@ -207,12 +203,28 @@ public class LeaseOrderService {
     return leaseOrderRepository.save(leaseOrder);
   }
 
-  private LeaseOrder changeOrderStatusDepositReturned(LeaseOrder leaseOrder) {
-    return null;
+  private LeaseOrder changeOrderStatusDepositReturned(Authentication auth, LeaseOrder leaseOrder) {
+    SecurityUtils.requireHasRoleAny(auth, "SYSTEM", "ADMIN");
+
+    Long refundPaymentId = leaseOrder.getRefundDepositPaymentId();
+    Payment refundPayment = paymentRepository.getReferenceById(refundPaymentId);
+    refundPayment.setPaymentStatus(PaymentStatus.SUCCEEDED);
+    paymentRepository.save(refundPayment);
+
+    leaseOrder.setStatus(LeaseOrderStatus.DEPOSIT_RETURNED);
+    return leaseOrderRepository.save(leaseOrder);
   }
 
-  private LeaseOrder changeOrderStatusPaidOwner(LeaseOrder leaseOrder) {
-    return null;
+  private LeaseOrder changeOrderStatusPaidOwner(Authentication auth, LeaseOrder leaseOrder) {
+    SecurityUtils.requireHasRoleAny(auth, "SYSTEM", "ADMIN");
+
+    Long payOwnerPaymentId = leaseOrder.getPayOwnerPaymentId();
+    Payment payOwnerPayment = paymentRepository.getReferenceById(payOwnerPaymentId);
+    payOwnerPayment.setPaymentStatus(PaymentStatus.SUCCEEDED);
+    paymentRepository.save(payOwnerPayment);
+
+    leaseOrder.setStatus(LeaseOrderStatus.PAID_OWNER);
+    return leaseOrderRepository.save(leaseOrder);
   }
 
   public List<LeaseOrderDto> getLeaseOrderByLessorIdAndStatus(Long id, List<LeaseOrderStatus> leaseOrderStatus) {
@@ -369,7 +381,7 @@ public class LeaseOrderService {
 
   public void cancelOrderOnLatePayment() {
     List<LeaseOrder> latePaymentOrders = leaseOrderRepository.findLatePaymentLeaseOrder();
-    latePaymentOrders.forEach(order -> changeOrderStatusCancel(order));
+    latePaymentOrders.forEach(order -> changeOrderStatusCancel(null, order));
     leaseOrderRepository.saveAll(latePaymentOrders);
   }
 
