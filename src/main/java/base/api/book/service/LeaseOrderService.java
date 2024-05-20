@@ -18,6 +18,7 @@ import base.api.payment.entity.PaymentMethod;
 import base.api.payment.entity.PaymentStatus;
 import base.api.payment.repository.PaymentRepository;
 import base.api.payment.service.PaymentService;
+import base.api.system.security.JwtAuthenticationToken;
 import base.api.system.security.SecurityUtils;
 import base.api.user.UserDto;
 import base.api.user.UserService;
@@ -87,7 +88,7 @@ public class LeaseOrderService {
 
 
   private LeaseOrder changeOrderStatusCancel(@NonNull Authentication auth, LeaseOrder leaseOrder) {
-    SecurityUtils.requireHasRoleAny(auth, "USER", "ADMIN");
+//    SecurityUtils.requireHasRoleAny(auth, "USER", "ADMIN");
 
     if (LeaseOrderStatus.ORDERED_PAYMENT_PENDING.equals(leaseOrder.getStatus())) {
       Listing listing = listingRepository.findById(leaseOrder.getListingId()).get();
@@ -381,7 +382,7 @@ public class LeaseOrderService {
 
   public void cancelOrderOnLatePayment() {
     List<LeaseOrder> latePaymentOrders = leaseOrderRepository.findLatePaymentLeaseOrder();
-    latePaymentOrders.forEach(order -> changeOrderStatusCancel(null, order));
+    latePaymentOrders.forEach(order -> changeOrderStatusCancel(order));
     leaseOrderRepository.saveAll(latePaymentOrders);
   }
 
