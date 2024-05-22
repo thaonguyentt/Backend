@@ -5,13 +5,13 @@ import base.api.payment.entity.Payment;
 import base.api.payment.entity.PaymentStatus;
 import base.api.payment.mapper.PaymentMapper;
 import base.api.payment.repository.PaymentRepository;
-import base.api.system.security.SecurityUtils;
+import base.api.system.security.Identity;
+import base.api.system.security.IdentityUtil;
 import jakarta.transaction.Transactional;
 import java.util.Objects;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -34,9 +34,9 @@ public class PaymentService {
         return paymentRepository.findAll(pageable).map(paymentMapper::toDto);
     }
 
-    public PaymentDto create(Authentication auth, PaymentDto paymentDto) {
-        SecurityUtils.requireAuthentication(auth);
-        // WHO can create payment ?
+    public PaymentDto create(Identity identity, PaymentDto paymentDto) {
+        IdentityUtil.requireAuthenticated(identity);
+        IdentityUtil.requireHasAnyRole(identity, "ADMIN", "USER", "SYSTEM");
 
         Payment newPayment = paymentMapper.toEntity(paymentDto);
 
@@ -52,15 +52,15 @@ public class PaymentService {
     /**
      * Thay đổi status của payment
      * Chỉ admin và hệ thống được đổi
-     * @param auth
+     * @param identity
      * @param paymentId
      * @param newPaymentStatus
      * @return
      */
-    PaymentDto updatePaymentStatus(Authentication auth, Long paymentId, PaymentStatus newPaymentStatus) {
-        SecurityUtils.requireAuthentication(auth);
+    PaymentDto updatePaymentStatus(Identity identity, Long paymentId, PaymentStatus newPaymentStatus) {
+        IdentityUtil.requireAuthenticated(identity);
         // only ADMIN role can change payment status
-        SecurityUtils.requireHasRole(auth,"ADMIN");
+        IdentityUtil.requireHasAnyRole(identity, "ADMIN");
 
         Payment payment = paymentRepository.findById(paymentId).orElseThrow(()-> new IllegalArgumentException("No such payment: " + paymentId));
 
@@ -72,10 +72,10 @@ public class PaymentService {
 
     }
 
-    public PaymentDto updatePayment(Authentication auth, Long paymentId, PaymentDto paymentDto) {
-        SecurityUtils.requireAuthentication(auth);
+    public PaymentDto updatePayment(Identity identity, Long paymentId, PaymentDto paymentDto) {
+        IdentityUtil.requireAuthenticated(identity);
         // only ADMIN role can update payment
-        SecurityUtils.requireHasRole(auth,"ADMIN");
+        IdentityUtil.requireHasAnyRole(identity, "ADMIN");
 
         if (paymentDto.id() != null && !Objects.equals(paymentDto.id(), paymentId)) {
             throw new IllegalArgumentException("Payment id mismatch");

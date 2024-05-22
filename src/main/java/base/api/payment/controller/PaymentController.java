@@ -4,6 +4,8 @@ import base.api.payment.dto.PaymentCreateRequest;
 import base.api.payment.dto.PaymentDto;
 import base.api.payment.entity.PaymentMethod;
 import base.api.payment.service.PaymentService;
+import base.api.system.security.Identity;
+import base.api.system.security.IdentityUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -46,17 +48,19 @@ public class PaymentController {
     @PostMapping("/{id}")
     PaymentDto updatePaymentById(@PathVariable("id") Long paymentId, @RequestBody PaymentDto paymentDto) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Identity identity = IdentityUtil.fromSpringAuthentication(auth);
 
-        return paymentService.updatePayment(auth, paymentId, paymentDto);
+        return paymentService.updatePayment(identity, paymentId, paymentDto);
     }
 
     @GetMapping("/testcreate")
     PaymentDto testCreatePayment() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Identity identity = IdentityUtil.fromSpringAuthentication(auth);
         Long userId = Long.parseLong((String)auth.getPrincipal());
 
         return paymentService.create(
-          auth,
+          identity,
           PaymentDto.builder()
             .payerId(userId)
             .payeeId(0L)

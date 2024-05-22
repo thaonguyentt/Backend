@@ -5,6 +5,7 @@ import org.springframework.security.core.Authentication;
 
 import java.util.Arrays;
 
+@Deprecated
 public class SecurityUtils {
     private SecurityUtils() {}
 
