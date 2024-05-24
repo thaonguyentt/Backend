@@ -22,6 +22,10 @@ public final class IdentityUtil {
             .collect(Collectors.toSet());
 
         if (authentication.isAuthenticated()) {
+            // FIXME xoá workaround tại đây, lưu role user trong db
+            if (roles.isEmpty() || (roles.size() == 1 && roles.contains(""))) {
+                roles.add("USER");
+            }
             return Identity.unsafeAuthenticated(userId, roles);
         }
         return Identity.unauthenticated(userId, roles);

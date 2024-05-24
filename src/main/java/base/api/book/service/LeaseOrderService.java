@@ -7,6 +7,7 @@ import base.api.book.entity.support.LeaseOrderStatus;
 import base.api.book.entity.support.ListingStatus;
 import base.api.book.exception.LeaseCanNotCancel;
 import base.api.book.exception.ListingNotAvailableException;
+import base.api.book.exception.NoSuchListingException;
 import base.api.book.mapper.LeaseOrderDetailMapper;
 import base.api.book.mapper.LeaseOrderMapper;
 import base.api.book.repository.CopyRepository;
@@ -33,6 +34,7 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -90,7 +92,7 @@ public class LeaseOrderService {
 
 
   private LeaseOrder changeOrderStatusCancel(Identity identity, LeaseOrder leaseOrder) {
-    IdentityUtil.requireHasAnyRole(identity, "SYSTEM", "ADMIN");
+    IdentityUtil.requireHasAnyRole(identity, "SYSTEM", "ADMIN", "USER");
 
     if (LeaseOrderStatus.ORDERED_PAYMENT_PENDING.equals(leaseOrder.getStatus())) {
       Listing listing = listingRepository.findById(leaseOrder.getListingId()).get();
@@ -260,7 +262,7 @@ public class LeaseOrderService {
     // FIXME anonymous user => auth.getPrincipal == "anonymousUser" => parse số => lỗi
     Long userId = Long.valueOf((String)auth.getPrincipal());
 
-    Listing listing = listingRepository.findById(requestDto.listingId()).get();
+    Listing listing = listingRepository.findById(requestDto.listingId()).orElseThrow(() -> new NoSuchListingException("No such listing exists."));
     if (! ListingStatus.AVAILABLE.equals(listing.getListingStatus())) {
       throw new ListingNotAvailableException("Listing " + requestDto.listingId() + " is not available.");
     }
