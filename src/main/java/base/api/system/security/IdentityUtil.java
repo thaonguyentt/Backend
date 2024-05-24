@@ -15,6 +15,10 @@ public final class IdentityUtil {
 
     public static Identity fromSpringAuthentication(Authentication authentication) {
         if (authentication == null) return null;
+        if ("anonymousUser".equals(authentication.getPrincipal())) {
+            return Identity.anonymous();
+        }
+
         Long userId = Long.valueOf((String)authentication.getPrincipal());
         Set<String> roles =
           authentication.getAuthorities()
