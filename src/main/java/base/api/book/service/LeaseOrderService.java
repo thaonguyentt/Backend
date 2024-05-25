@@ -121,6 +121,8 @@ public class LeaseOrderService {
 //    if (!PaymentStatus.SUCCEEDED.equals(userPay.paymentStatus())) {
 //      throw new IllegalStateException("Lease and deposit payment of order " + leaseOrder.getId() + " haven't succeeded");
 //    }
+    Payment paymentUserPaid = paymentRepository.findById(leaseOrder.getLeaseAndDepositPaymentId()).get();
+    paymentUserPaid.setPaymentStatus(PaymentStatus.SUCCEEDED);
     leaseOrder.setStatus(LeaseOrderStatus.USER_PAID);
     return leaseOrderRepository.save(leaseOrder);
   }
@@ -196,6 +198,22 @@ public class LeaseOrderService {
     copy.setCopyStatus(CopyStatus.LISTED);
     leaseOrder.setStatus(LeaseOrderStatus.RETURNED);
 
+    //tinh phi tra
+    BigDecimal totalLeaseFee = leaseOrder.getTotalLeaseFee();
+    BigDecimal totalPenaltyFee = BigDecimal.ZERO;
+    BigDecimal depositReturnFee;
+    BigDecimal paidOwnerFee;
+    if (leaseOrder.getToDate().isBefore(leaseOrder.getReturnDate())) {
+      totalPenaltyFee = leaseOrder.getTotalPenaltyRate()
+              .multiply(BigDecimal.valueOf(Duration.between(
+                              leaseOrder.getToDate().atStartOfDay(),
+                              leaseOrder.getReturnDate().atStartOfDay())
+                      .toDays()));
+    }
+    depositReturnFee = leaseOrder.getTotalDeposit().subtract(totalLeaseFee).subtract(totalPenaltyFee);
+    paidOwnerFee = totalLeaseFee.add(totalLeaseFee);
+
+
     // TODO create 2 payment
     // Create Pay-Owner payment
     PaymentDto payOwner = paymentService.create(
@@ -203,7 +221,7 @@ public class LeaseOrderService {
       PaymentDto.builder()
         .payerId(0L)
         .payeeId(leaseOrder.getLessorId())
-        .amount(BigDecimal.valueOf(999999L))
+        .amount(paidOwnerFee)
         .currency("VND")
         .paymentMethod(PaymentMethod.BANK_TRANSFER)
         .description("Pay books owner of order " + leaseOrder.getId())
@@ -215,7 +233,7 @@ public class LeaseOrderService {
       PaymentDto.builder()
         .payerId(0L)
         .payeeId(leaseOrder.getLesseeId())
-        .amount(BigDecimal.valueOf(9999999L))
+        .amount(depositReturnFee)
         .currency("VND")
         .paymentMethod(PaymentMethod.BANK_TRANSFER)
         .description("Return deposit of order " + leaseOrder.getId())
@@ -343,6 +361,7 @@ public class LeaseOrderService {
       PaymentDto.builder()
         .amount(totalLeaseFee.add(totalDeposit))
         .currency("VND")
+        .amount(totalDeposit)
         .payerId(userId) // Pay từ userId cho hệ thống
         .payeeId(0L) // Pay cho hệ thống tạm cho payeeId = 0
         .description("Lease fee and deposit")
