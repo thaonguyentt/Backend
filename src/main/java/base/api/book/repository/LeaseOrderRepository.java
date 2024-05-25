@@ -18,6 +18,8 @@ public interface LeaseOrderRepository extends JpaRepository<LeaseOrder, Long> {
 
     public List<LeaseOrder> findLeseOrderByLessorId (Long id);
 
+    public List<LeaseOrder> findByStatusIn (List<LeaseOrderStatus> leaseOrderStatus);
+
     @Query(
       value = """
         select * from lease_order
@@ -40,7 +42,6 @@ public interface LeaseOrderRepository extends JpaRepository<LeaseOrder, Long> {
     )
     List<LeaseOrder> findLatePaymentLeaseOrder();
 
-    List<LeaseOrder> findLeaseOrderByStatus(LeaseOrderStatus leaseOrderStatus);
 
 
 }

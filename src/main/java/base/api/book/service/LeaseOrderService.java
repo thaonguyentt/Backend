@@ -26,6 +26,8 @@ import base.api.user.UserDto;
 import base.api.user.UserService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -70,6 +72,11 @@ public class LeaseOrderService {
             .collect(Collectors.toList());
   }
 
+  public Page<LeaseOrderDto> getAllLeaseOrder (Pageable pageable) {
+    return leaseOrderRepository.findAll(pageable)
+            .map(leaseOrderMapper::toDto);
+  }
+
   public LeaseOrderDto updateLeaseOrderStatus (Authentication auth, Long id, LeaseOrderStatus newStatus) {
     Identity identity = IdentityUtil.fromSpringAuthentication(auth);
 
@@ -79,7 +86,7 @@ public class LeaseOrderService {
         case CANCELED -> changeOrderStatusCancel(identity, leaseOrder);
         case USER_PAID -> changeOrderStatusUserPaid(identity, leaseOrder);
         case PAYMENT_SUCCESS -> changeOrderStatusPaymentSuccess(identity, leaseOrder);
-        case DELIVERED -> null;
+        case DELIVERED -> changeOrderStatusDelivered(identity,leaseOrder);
         case LATE_RETURN -> changeOrderStatusLateReturn(identity, leaseOrder);
         case RETURNING -> changeOrderStatusReturning(identity, leaseOrder);
         case RETURNED -> changeOrderStatusReturned(identity, leaseOrder);
@@ -107,13 +114,13 @@ public class LeaseOrderService {
   }
 
   private LeaseOrder changeOrderStatusUserPaid(Identity identity, LeaseOrder leaseOrder) {
-    IdentityUtil.requireHasAnyRole(identity, "SYSTEM", "ADMIN");
+    IdentityUtil.requireHasAnyRole(identity, "SYSTEM", "ADMIN", "USER");
 
     // Check if user already paid
-    PaymentDto userPay = paymentService.getPaymentById(leaseOrder.getLeaseAndDepositPaymentId());
-    if (!PaymentStatus.SUCCEEDED.equals(userPay.paymentStatus())) {
-      throw new IllegalStateException("Lease and deposit payment of order " + leaseOrder.getId() + " haven't succeeded");
-    }
+//    PaymentDto userPay = paymentService.getPaymentById(leaseOrder.getLeaseAndDepositPaymentId());
+//    if (!PaymentStatus.SUCCEEDED.equals(userPay.paymentStatus())) {
+//      throw new IllegalStateException("Lease and deposit payment of order " + leaseOrder.getId() + " haven't succeeded");
+//    }
     leaseOrder.setStatus(LeaseOrderStatus.USER_PAID);
     return leaseOrderRepository.save(leaseOrder);
   }
@@ -136,32 +143,46 @@ public class LeaseOrderService {
   private LeaseOrder changeOrderStatusReturning(Identity identity, LeaseOrder leaseOrder) {
     IdentityUtil.requireHasAnyRole(identity, "USER", "SYSTEM", "ADMIN");
 
-    Listing listing = listingRepository.findById(leaseOrder.getListingId()).get();
-    if (leaseOrder.getToDate().isAfter(LocalDate.now())
-            && leaseOrder.getFromDate().isBefore(LocalDate.now())) {
-      leaseOrder.setToDate(LocalDate.now());
-      BigDecimal totalLeaseFee = listing.getLeaseRate()
+//    Listing listing = listingRepository.findById(leaseOrder.getListingId()).get();
+//    if (leaseOrder.getToDate().isAfter(LocalDate.now())
+//            && leaseOrder.getFromDate().isBefore(LocalDate.now())) {
+//      leaseOrder.setToDate(LocalDate.now());
+//      BigDecimal totalLeaseFee = listing.getLeaseRate()
+//              .multiply(BigDecimal.valueOf(Duration.between(
+//                              leaseOrder.getFromDate().atStartOfDay(),
+//                              leaseOrder.getToDate().atStartOfDay())
+//                      .toDays()));
+//      leaseOrder.setTotalLeaseFee(totalLeaseFee);
+//      leaseOrder.setStatus(LeaseOrderStatus.RETURNING);
+//      LeaseOrder savedLeaseOrder = leaseOrderRepository.save(leaseOrder);
+//      return savedLeaseOrder;
+//    }
+//    else if ((leaseOrder.getFromDate().isEqual(LocalDate.now()))) {
+//      leaseOrder.setToDate(LocalDate.now());
+//      leaseOrder.setTotalLeaseFee(listing.getLeaseRate());
+//      leaseOrder.setStatus(LeaseOrderStatus.RETURNING);
+//      LeaseOrder savedLeaseOrder = leaseOrderRepository.save(leaseOrder);
+//      return savedLeaseOrder;
+//    } else if (leaseOrder.getFromDate().isEqual(LocalDate.now())) {
+//      return null;
+//    }
+//      else {
+//      throw new LeaseCanNotCancel("lease order can not return");
+//    }
+    leaseOrder.setReturnDate(LocalDate.now());
+    leaseOrder.setStatus(LeaseOrderStatus.RETURNING);
+    if (leaseOrder.getReceiveDate().isEqual(LocalDate.now())) {
+      leaseOrder.setTotalLeaseFee(leaseOrder.getLeaseOrderDetails().stream().findFirst().get().getLeaseRate());
+    } else if (leaseOrder.getToDate().isAfter(leaseOrder.getReturnDate())) {
+      BigDecimal totalLeaseFee = leaseOrder.getLeaseOrderDetails().stream().findFirst().get().getLeaseRate()
               .multiply(BigDecimal.valueOf(Duration.between(
-                              leaseOrder.getFromDate().atStartOfDay(),
-                              leaseOrder.getToDate().atStartOfDay())
+                              leaseOrder.getReceiveDate().atStartOfDay(),
+                              leaseOrder.getReturnDate().atStartOfDay())
                       .toDays()));
       leaseOrder.setTotalLeaseFee(totalLeaseFee);
-      leaseOrder.setStatus(LeaseOrderStatus.RETURNING);
-      LeaseOrder savedLeaseOrder = leaseOrderRepository.save(leaseOrder);
-      return savedLeaseOrder;
     }
-    else if ((leaseOrder.getFromDate().isEqual(LocalDate.now()))) {
-      leaseOrder.setToDate(LocalDate.now());
-      leaseOrder.setTotalLeaseFee(listing.getLeaseRate());
-      leaseOrder.setStatus(LeaseOrderStatus.RETURNING);
-      LeaseOrder savedLeaseOrder = leaseOrderRepository.save(leaseOrder);
-      return savedLeaseOrder;
-    } else if (leaseOrder.getFromDate().isEqual(LocalDate.now())) {
-      return null;
-    }
-      else {
-      throw new LeaseCanNotCancel("lease order can not return");
-    }
+    return leaseOrderRepository.save(leaseOrder);
+
   }
 
   //TODO calculate amount of fee
@@ -219,7 +240,7 @@ public class LeaseOrderService {
   }
 
   private LeaseOrder changeOrderStatusPaidOwner(Identity identity, LeaseOrder leaseOrder) {
-    IdentityUtil.requireHasAnyRole(identity, "SYSTEM", "ADMIN");
+    IdentityUtil.requireHasAnyRole(identity, "SYSTEM", "ADMIN", "USER");
 
     Long payOwnerPaymentId = leaseOrder.getPayOwnerPaymentId();
     Payment payOwnerPayment = paymentRepository.getReferenceById(payOwnerPaymentId);
@@ -407,5 +428,19 @@ public class LeaseOrderService {
 //    });
 //  }
 
-  
+  public LeaseOrder changeOrderStatusDelivered (Identity identity, LeaseOrder leaseOrder) {
+    IdentityUtil.requireAuthenticated(identity);
+    IdentityUtil.requireHasAnyRole(identity, "ADMIN", "SYSTEM", "USER");
+
+    leaseOrder.setReceiveDate(LocalDate.now());
+    BigDecimal totalLeaseFee = leaseOrder.getLeaseOrderDetails().stream().findFirst().get().getLeaseRate()
+            .multiply(BigDecimal.valueOf(Duration.between(
+                            leaseOrder.getReceiveDate().atStartOfDay(),
+                            leaseOrder.getToDate().atStartOfDay())
+                    .toDays()));
+    leaseOrder.setTotalLeaseFee(totalLeaseFee);
+    return leaseOrderRepository.save(leaseOrder);
+  }
+
+
 }
