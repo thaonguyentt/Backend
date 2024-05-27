@@ -184,7 +184,7 @@ public class ListingController {
     public ResponseEntity<Void> deleteListing(@PathVariable Long id) {
         Long copyId = listingService.getListingById(id).copyId();
         listingService.deleteListing(id);
-        copyService.deleteCopy(copyId);
+//        copyService.deleteCopy(copyId);
         return ResponseEntity.noContent().build();
     }
 

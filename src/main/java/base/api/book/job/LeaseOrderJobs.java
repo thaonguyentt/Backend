@@ -13,10 +13,10 @@ public class LeaseOrderJobs {
         this.leaseOrderService = leaseOrderService;
     }
 
-    @Scheduled(cron = "0 */10 * * * ?")
-    public void updateLeaseOrderStatusLateReturn() {
-        leaseOrderService.setStatusOnLateReturnOrder();
-    }
+//    @Scheduled(cron = "0 */10 * * * ?")
+//    public void updateLeaseOrderStatusLateReturn() {
+//        leaseOrderService.setStatusOnLateReturnOrder();
+//    }
 
     @Scheduled(cron = "0 */1 * * * ?")
     public void cancelLatePaymentOrders() {
