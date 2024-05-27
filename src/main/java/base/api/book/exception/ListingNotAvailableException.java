@@ -1,6 +1,8 @@
 package base.api.book.exception;
 
+import lombok.experimental.StandardException;
 
+@StandardException
 public class ListingNotAvailableException extends RuntimeException {
     String message;
 

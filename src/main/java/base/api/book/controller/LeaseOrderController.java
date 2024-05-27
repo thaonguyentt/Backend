@@ -5,9 +5,11 @@ import base.api.book.dto.search.LeaseOrderUpdateRequest;
 import base.api.book.entity.support.LeaseOrderStatus;
 import base.api.book.repository.LeaseOrderRepository;
 import base.api.book.service.*;
+import base.api.system.security.SecurityUtils;
 import base.api.user.UserDto;
 import base.api.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.data.domain.Page;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -198,12 +201,13 @@ public class LeaseOrderController {
 
   @GetMapping ("/api/leaseOrder/edit/status")
   public ResponseEntity<LeaseOrderDto> updateStatus (@RequestParam(name="id") Long id, @RequestParam(name="status") LeaseOrderStatus status) {
-    try {
-      leaseOrderService.updateLeaseOrderStatus(id, status);
-    } catch (Exception e) {
-      return new ResponseEntity("Error update status", HttpStatus.LOCKED);
-    }
-    return ResponseEntity.ok(leaseOrderService.updateLeaseOrderStatus(id, status));
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    SecurityUtils.requireAuthentication(auth);
+//    try {status
+      return ResponseEntity.ok(leaseOrderService.updateLeaseOrderStatus(auth, id, status));
+//    } catch (Exception e) {
+//      return new ResponseEntity("Error update status", HttpStatus.LOCKED);
+//    }
   }
 
   @GetMapping ("/api/leaseOrder/search/lessee/status/{id}")
@@ -281,6 +285,68 @@ public class LeaseOrderController {
       return ResponseEntity.badRequest().build();
 
   }
+
+  @GetMapping("/api/leaseOrder/admin")
+  public Page<LeaseOrderAdmin> getLeaseOrderForAdmin (Pageable pageable) {
+
+    Page<LeaseOrderDto> leaseOrderDto = leaseOrderService.getAllLeaseOrder(pageable);
+    return leaseOrderDto.map(dto->{
+      UserDto lessor = userService.getUserById(dto.lessorId());
+      UserDto lessee = userService.getUserById(dto.lesseeId());
+      ListingDto listingDto = listingService.getListingById(dto.listingId());
+      CopyDto copy = copyService.getCopyById(listingDto.copyId());
+      BookDto book = bookService.getBookById(copy.bookId());
+      List<ReviewDto> reviews = reviewService.getReviewByOwnerId(listingDto.ownerId());
+      Long bookOwned = listingService.countListingByOwner(listingDto.ownerId());
+      Long bookLeasing = listingService.countListingByOwnerAndStatus(listingDto.ownerId());
+      UserDto user = userService.getUserById(listingDto.ownerId());
+      BigDecimal totalPenaltyFee = BigDecimal.ZERO;
+      if (dto.status().equals("LATE_RETURN")) {
+        totalPenaltyFee = dto.totalPenaltyRate()
+                .multiply(BigDecimal.valueOf(Duration.between(
+                                dto.toDate().atStartOfDay(),
+                                LocalDate.now().atStartOfDay())
+                        .toDays()));
+      } else if (dto.returnDate() != null) {
+        if (dto.toDate().isBefore(dto.returnDate())) {
+        totalPenaltyFee = dto.totalPenaltyRate()
+                .multiply(BigDecimal.valueOf(Duration.between(
+                                dto.toDate().atStartOfDay(),
+                                dto.returnDate().atStartOfDay())
+                        .toDays()));
+        }
+      }
+      BigDecimal paidOwnerFee = totalPenaltyFee.add(dto.totalLeaseFee());
+      BigDecimal depositReturnFee = dto.totalDeposit().subtract(paidOwnerFee);
+      if (dto.status().equals("ORDERED_PAYMENT_PENDING") || dto.status().equals("CANCELED")) {
+        totalPenaltyFee = BigDecimal.ZERO;
+        paidOwnerFee = BigDecimal.ZERO;
+        depositReturnFee = BigDecimal.ZERO;
+      }
+//      if (depositReturnFee.compareTo(BigDecimal.ZERO) < 0) {depositReturnFee = BigDecimal.ZERO;}
+//      BigDecimal paidOwnerFee = dto.totalDeposit().subtract(depositReturnFee);
+      ListingDetailDto listing = new ListingDetailDto(
+              listingDto.id(),
+              user,
+              listingDto.quantity(),
+              listingDto.address(),
+              listingDto.leaseRate(),
+              listingDto.depositFee(),
+              listingDto.penaltyRate(),
+              listingDto.description(),
+              copy,
+              book,
+              reviews,
+              bookOwned,
+              bookLeasing
+      );
+      return new LeaseOrderAdmin(dto, listing, lessor, lessee, totalPenaltyFee,depositReturnFee,paidOwnerFee);
+    });
+
+
+  }
+
+
 
 
 }

@@ -21,5 +21,26 @@ create table payment (
     bank_transfer_img_url text
 );
 
--- insert into payment (id, payment_status, payer_id, payee_id, currency, amount, payment_method)
--- values (1, 'PAYMENT_PENDING', 1, 2, 224100.00, 1);
+insert into payment (id, payment_status, payer_id, payee_id, currency, amount, payment_method)
+values (1, 'PAYMENT_PENDING', 2, 0,'VND', 224100.00, 'COD'),
+       (2, 'PAYMENT_PENDING', 1, 0,'VND', 414800.00, 'COD'),
+       (3, 'PAYMENT_PENDING', 1, 0,'VND', 46000.00, 'COD'),
+       (4, 'SUCCEEDED', 1, 0,'VND', 46000.00, 'COD'),
+       (5, 'SUCCEEDED', 3, 0,'VND', 383700.00, 'COD'),
+       (6, 'SUCCEEDED', 4, 0,'VND', 376600.00, 'COD'),
+       (7, 'SUCCEEDED', 5, 0,'VND', 105700.00, 'COD'),
+       (8, 'SUCCEEDED', 6, 0,'VND', 120300.00, 'COD'),
+       (9, 'PAYMENT_PENDING', 7, 0,'VND', 76500.00, 'COD'),
+       (10, 'SUCCEEDED', 8, 0,'VND', 194200.00, 'COD'),
+       (11, 'SUCCEEDED', 2, 0,'VND', 224100.00, 'COD'),
+       (12, 'SUCCEEDED', 0, 6,'VND', 84300.00, 'COD'),
+       (13, 'SUCCEEDED', 0, 7,'VND', 16500.00, 'COD'),
+       (14, 'SUCCEEDED', 0, 7,'VND', 60000.00, 'COD'),
+       (15, 'PAYMENT_PENDING', 0, 4,'VND', 376600.00, 'COD'),
+       (16, 'PAYMENT_PENDING', 0, 4,'VND', 298600.00, 'COD'),
+       (17, 'SUCCEEDED', 0, 2,'VND', 140100.00, 'COD'),
+       (18, 'SUCCEEDED', 0, 2,'VND', 8400.00, 'COD')
+;
+
+
+alter sequence payment_id_seq restart with 19;

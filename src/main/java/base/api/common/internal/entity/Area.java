@@ -14,7 +14,7 @@ import org.hibernate.type.SqlTypes;
 import java.util.List;
 
 @Entity
-@Table(name = "common_area", schema = "nhahocduong")
+@Table(name = "common_area")
 @Getter @Setter
 //@JsonIgnoreProperties(ignoreUnknown = true)
 public class Area {
