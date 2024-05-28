@@ -458,6 +458,7 @@ public class LeaseOrderService {
                             leaseOrder.getToDate().atStartOfDay())
                     .toDays()));
     leaseOrder.setTotalLeaseFee(totalLeaseFee);
+    leaseOrder.setStatus(LeaseOrderStatus.DELIVERED);
     return leaseOrderRepository.save(leaseOrder);
   }
 
