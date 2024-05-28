@@ -2,7 +2,9 @@
 https://drive.google.com/file/d/1ZnXb0v32DSmM887Irp1iT2BN2gT8ebQj/view?usp=sharing
 
 # Getting Started
-
+```
+docker compose -f local.compose.yaml up -d
+```
 ### Reference Documentation
 For further reference, please consider the following sections:
 
