@@ -39,8 +39,9 @@ values (1, 'PAYMENT_PENDING', 2, 0,'VND', 224100.00, 'COD'),
        (15, 'PAYMENT_PENDING', 0, 4,'VND', 376600.00, 'COD'),
        (16, 'PAYMENT_PENDING', 0, 4,'VND', 298600.00, 'COD'),
        (17, 'SUCCEEDED', 0, 2,'VND', 140100.00, 'COD'),
-       (18, 'SUCCEEDED', 0, 2,'VND', 8400.00, 'COD')
+       (18, 'SUCCEEDED', 0, 2,'VND', 8400.00, 'COD'),
+       (19, 'PAYMENT_PENDING', 5, 0,'VND', 105700.00, 'COD')
 ;
 
 
-alter sequence payment_id_seq restart with 19;
+alter sequence payment_id_seq restart with 20;
