@@ -3,14 +3,12 @@ package base.api.book.controller;
 import base.api.book.dto.BooksDto;
 import base.api.book.service.BooksService;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+import org.springframework.web.bind.annotation.CrossOrigin;
 @RestController
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8080"})
 @RequestMapping("/api/books")
 public class BooksController {
 
