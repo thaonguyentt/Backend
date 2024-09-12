@@ -61,6 +61,11 @@ public class Listing {
   @Column(name = "status")
   private ListingStatus listingStatus;
 
+  @Column(name = "allow_rent")
+  private Long allow_rent;
+
+  @Column(name = "allow_purchase")
+  private Long allow_purchase;
 
 
 }

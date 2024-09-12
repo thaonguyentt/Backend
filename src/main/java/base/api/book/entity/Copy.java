@@ -48,6 +48,12 @@ public class Copy {
   @Column(name = "status")
   private CopyStatus copyStatus;
 
+  @Column(name = "allow_rent")
+  private Long allow_rent;
+
+  @Column(name = "allow_purchase")
+  private Long allow_purchase;
+
 //  @Column(name = "created_date")
 //  private LocalDate createdDate;
 //
