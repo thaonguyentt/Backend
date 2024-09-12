@@ -51,6 +51,9 @@ public class Listing {
   @Column(name = "penalty_rate", precision = 10, scale = 2)
   private BigDecimal penaltyRate;
 
+  @Column(name = "price", precision = 10, scale = 2)
+  private BigDecimal price;
+
   @Column(name = "description", length = Integer.MAX_VALUE)
   private String description;
 
