@@ -14,25 +14,24 @@ spring:
 
   jackson:
     # Skip serializing null fields
-    default-property-inclusion: non_null
+    default-property-inclusion: NON_NULL
 
   data:
     rest:
       base-path: /api
 
 server:
-  port: 8082
+  port: 8080
   error:
     whitelabel:
       enabled: false
-
 
 # FIXME: Limit Actuator endpoint exposure
 management:
   endpoints:
     web:
       exposure:
-        include: '*'
+        include: "*"
   influx:
     metrics:
       export:
@@ -41,7 +40,6 @@ management:
 #infinispan:
 #  embedded:
 #    cluster-name: buffalo-api
-
 springdoc:
   api-docs:
     path: /docs/api-docs
