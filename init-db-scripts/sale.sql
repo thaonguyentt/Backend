@@ -14,7 +14,7 @@ create table sales_order
     total_price             DECIMAL(10, 2),
     total_change            DECIMAL(10, 2),  -- tiền trả dư lại cho người mua khi còn dư tiền cọc
     total_compensate        DECIMAL(10, 2),  -- tiền trả thêm khi người mua không đủ phí
-    payment_method          integer,         -- 1: cod, 2: chuyen khoan, 3. vnpay, 4, crypto ????
+    payment_method          integer,         -- 1. COD, 2. VNPAY, 3. BANK_TRANSFER, 4. crypto
     sell_payment_id         integer,
     change_payment_id       integer,         -- id payment trả lại tiền thừa cho người mua chuyển từ đơn hàng thuê qua
     compensate_payment_id   integer,

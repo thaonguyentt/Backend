@@ -14,18 +14,18 @@ public class LeaseOrderJobs {
         this.leaseOrderService = leaseOrderService;
     }
 
-
-    @Scheduled(cron = "0 */10 * * * ?")
-    public void updateLeaseOrderStatusLateReturn() {
-        Identity identity = Identity.SYSTEM;
-        leaseOrderService.setStatusOnLateReturnOrder(identity);
-    }
-
-    @Scheduled(cron = "0 */1 * * * ?")
-    public void cancelLatePaymentOrders() {
-        Identity identity = Identity.SYSTEM;
-        leaseOrderService.cancelOrderOnLatePayment(identity);
-    }
+//
+//    @Scheduled(cron = "0 */10 * * * ?")
+//    public void updateLeaseOrderStatusLateReturn() {
+//        Identity identity = Identity.SYSTEM;
+//        leaseOrderService.setStatusOnLateReturnOrder(identity);
+//    }
+//
+//    @Scheduled(cron = "0 */1 * * * ?")
+//    public void cancelLatePaymentOrders() {
+//        Identity identity = Identity.SYSTEM;
+//        leaseOrderService.cancelOrderOnLatePayment(identity);
+//    }
 
 
 //    @Scheduled(cron = "0 */1 * * * ?")
