@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build-deploy:
+  build:
     name: Build and deploy book App
     runs-on: ubuntu-latest
     steps:
@@ -16,10 +16,46 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          distribution: "temurin" # See 'Supported distributions' for available options
+          distribution: "temurin"
           java-version: "21"
 
+      # Uncomment this if you want to run unit tests
+      # - name: unit test
+      #   run: ./gradlew test
+
       - name: Build with Gradle
-        run: |
-          ./gradlew clean
-          ./gradlew build
+        run: ./gradlew clean build -x test
+
+      - name: Login to Docker Hub
+        run: echo "${{ DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+
+      - name: Build Docker image
+        run: docker build -t minhkuku/bookc2c .
+
+      - name: Push Docker image
+        run: docker push minhkuku/bookc2c:latest
+
+      # - name: Deploy to AWS
+      #   uses: appleboy/ssh-action@master
+      #   with:
+      #     host: ${{ secrets.AWS_HOST }}
+      #     username: ${{ secrets.AWS_USER }}
+      #     key: ${{ secrets.AWS_KEY }}
+      #     script: |
+      #       docker stop bookc2c || true
+      #       docker rm bookc2c || true
+      #       docker pull minhkuku/bookc2c:latest
+      #       docker run -d -p 8080:8080 --name bookc2c minhkuku/bookc2c:latest
+
+  deploy:
+    needs: build
+    runs-on: [ec2-bookc2c]
+    steps:
+      - name: pull docker image
+        run: docker pull minhkuku/bookc2c:latest
+      - name: docker stop
+        run: docker stop bookc2c || true
+      - name: docker rm
+        run: docker rm bookc2c || true
+      - name: run docker container
+        run: docker run -d -p 8080:8080 --name bookc2c --network bookc2c-network -e "SPRING_PROFILES_ACTIVE=prod" minhkuku/bookc2c:latest
