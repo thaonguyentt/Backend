@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: Build and deploy book App
+    name: Build and deploy book website
     runs-on: ubuntu-latest
 
     steps:
@@ -49,8 +49,7 @@ jobs:
           username: ${{ secrets.AWS_USER }}
           key: ${{ secrets.AWS_KEY }}
           script: |
-            docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" -p "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
-            docker stop bookc2c || true
-            docker rm bookc2c || true
-            docker pull minhkuku/bookc2c:latest
-            docker run -d -p 8080:8080 --name bookc2c --network bookc2c-network -e "SPRING_PROFILES_ACTIVE=prod" minhkuku/bookc2c:latest
+            sudo docker stop bookc2c || true
+            sudo docker rm bookc2c || true
+            sudo docker pull minhkuku/bookc2c:latest
+            sudo docker run -d -p 8080:8080 --name bookc2c --network bookc2c-network -e "SPRING_PROFILES_ACTIVE=prod" minhkuku/bookc2c:latest
