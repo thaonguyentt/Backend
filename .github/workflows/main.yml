@@ -7,8 +7,9 @@ on:
 
 jobs:
   build:
-    name: Build and push Docker image
+    name: Build and deploy book App
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -19,6 +20,10 @@ jobs:
           distribution: "temurin"
           java-version: "21"
 
+      # Uncomment this if you want to run unit tests
+      # - name: Run unit tests
+      #   run: ./gradlew test
+
       - name: Build with Gradle
         run: ./gradlew clean build -x test
 
@@ -28,25 +33,24 @@ jobs:
       - name: Build Docker image
         run: docker build -t minhkuku/bookc2c .
 
-      - name: Push Docker image
+      - name: Push Docker image to Docker Hub
         run: docker push minhkuku/bookc2c:latest
 
   deploy:
-    name: Deploy to EC2 instance
+    name: Deploy to AWS EC2
     needs: build
-    runs-on: [ec2-bookc2c]
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Login to Docker Hub
-        run: echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
-
-      - name: Pull Docker image from Docker Hub
-        run: docker pull minhkuku/bookc2c:latest
-
-      - name: Stop existing container
-        run: docker stop bookc2c || true
-
-      - name: Remove existing container
-        run: docker rm bookc2c || true
-
-      - name: Run Docker container
-        run: docker run -d -p 8080:8080 --name bookc2c --network bookc2c-network -e "SPRING_PROFILES_ACTIVE=prod" minhkuku/bookc2c:latest
+      - name: Connect to EC2 via SSH and deploy Docker container
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USER }}
+          key: ${{ secrets.AWS_KEY }}
+          script: |
+            docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" -p "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+            docker stop bookc2c || true
+            docker rm bookc2c || true
+            docker pull minhkuku/bookc2c:latest
+            docker run -d -p 8080:8080 --name bookc2c --network bookc2c-network -e "SPRING_PROFILES_ACTIVE=prod" minhkuku/bookc2c:latest
