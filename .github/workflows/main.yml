@@ -34,8 +34,7 @@ jobs:
   deploy:
     name: Deploy to EC2 instance
     needs: build
-    runs-on: self-hosted
-    labels: [ec2-bookc2c]
+    runs-on: [ec2-bookc2c]
     steps:
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
