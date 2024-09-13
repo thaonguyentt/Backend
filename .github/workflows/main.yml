@@ -18,9 +18,8 @@ jobs:
         with:
           distribution: "temurin" # See 'Supported distributions' for available options
           java-version: "21"
-          
-        - name: Build with Gradle
-          run: |
-            ./gradlew clean
-            ./gradlew build
 
+      - name: Build with Gradle
+        run: |
+          ./gradlew clean
+          ./gradlew build
