@@ -263,6 +263,16 @@ create table user_user_role (
 insert into user_user_role(user_id, role_id) values
     (999, 1);
 
+drop table if exists user_crypto_info;
+create table user_crypto_info
+(
+    id             bigserial primary key,
+    crypto_ID	   text
+);
+
+insert into user_crypto_info
+values (1, 'test');
+
 --
 -- -- bang bai dang
 -- drop table if exists user_post;

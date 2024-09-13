@@ -51,6 +51,9 @@ public class Listing {
   @Column(name = "penalty_rate", precision = 10, scale = 2)
   private BigDecimal penaltyRate;
 
+  @Column(name = "price", precision = 10, scale = 2)
+  private BigDecimal price;
+
   @Column(name = "description", length = Integer.MAX_VALUE)
   private String description;
 
@@ -58,6 +61,11 @@ public class Listing {
   @Column(name = "status")
   private ListingStatus listingStatus;
 
+  @Column(name = "allow_rent")
+  private Long allow_rent;
+
+  @Column(name = "allow_purchase")
+  private Long allow_purchase;
 
 
 }
