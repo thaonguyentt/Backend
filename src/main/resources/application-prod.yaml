@@ -1,6 +1,12 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/nhahocduong?currentSchema=nhahocduong
-    username: nhahocduong_admin
-    password: nhahocduong#123
+    url: jdbc:postgresql://dbBookc2c:5432/postgres
+    username: postgres
+    password: password
     driver-class-name: org.postgresql.Driver
+# spring:
+#   datasource:
+#     url: jdbc:postgresql://54.169.153.253:5432/postgres
+#     username: postgres
+#     password: password
+#     driver-class-name: org.postgresql.Driver
