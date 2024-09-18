@@ -21,6 +21,9 @@ public record ListingDto(
   BigDecimal leaseRate,
   BigDecimal depositFee,
   BigDecimal penaltyRate,
+  BigDecimal price,
   String description,
+  BigDecimal allow_rent,
+  BigDecimal allow_purchase,
   ListingStatus listingStatus
 ) implements Serializable {}

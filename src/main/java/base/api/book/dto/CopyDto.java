@@ -11,7 +11,19 @@ import java.time.LocalDate;
 /**
  * DTO for {@link Copy}
  */
-public record CopyDto(Long id, Long bookId, @NotNull Long ownerId, Integer quantity, String imageLink,
-                      BigDecimal damagePercent, LocalDate createdDate,
-                      LocalDate updatedDate, LocalDate deletedDate, CopyStatus copyStatus) implements Serializable {
+public record CopyDto(
+        Long id,
+        Long bookId,
+        @NotNull
+        Long ownerId,
+        Integer quantity,
+        String imageLink,
+        BigDecimal allow_rent,
+        BigDecimal allow_purchase,
+        BigDecimal damagePercent,
+        LocalDate createdDate,
+        LocalDate updatedDate,
+        LocalDate deletedDate,
+        CopyStatus copyStatus
+) implements Serializable {
 }

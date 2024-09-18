@@ -1,8 +1,9 @@
 package base.api.book.controller;
 
-import base.api.book.dto.BookDto;
+
+import base.api.book.dto.SaleOrderDetailDto;
 import base.api.book.dto.SaleOrderDto;
-import base.api.book.entity.SaleOrder;
+import base.api.book.service.SaleOrderDetailService;
 import base.api.book.service.SaleOrderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,8 +14,12 @@ import org.springframework.web.bind.annotation.*;
 public class SaleOrderController {
     private final SaleOrderService saleOrderService;
 
-    public SaleOrderController(SaleOrderService saleOrderService) {
+    private final SaleOrderDetailService saleOrderDetailService;
+
+
+    public SaleOrderController(SaleOrderService saleOrderService, SaleOrderDetailService saleOrderDetailService) {
         this.saleOrderService = saleOrderService;
+        this.saleOrderDetailService = saleOrderDetailService;
     }
 
     @GetMapping ("/{id}")
@@ -23,5 +28,15 @@ public class SaleOrderController {
         if (saleOrderDto == null) {return ResponseEntity.notFound().build();}
         return ResponseEntity.ok(saleOrderDto);
     }
+
+    @GetMapping("/saleOrderDT/{id}")
+    public ResponseEntity<SaleOrderDetailDto> getSaleOrderDetailById (@PathVariable Long id) {
+        SaleOrderDetailDto saleOrderDetailDto = saleOrderDetailService.getSaleOrderDetail(id);
+        if (saleOrderDetailDto == null) {return ResponseEntity.notFound().build();}
+        return ResponseEntity.ok(saleOrderDetailDto);
+    }
+
+
+
 
 }

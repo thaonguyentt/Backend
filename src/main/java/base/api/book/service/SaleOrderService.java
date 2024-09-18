@@ -1,8 +1,11 @@
 package base.api.book.service;
 
+import base.api.book.dto.SaleOrderDetailDto;
 import base.api.book.dto.SaleOrderDto;
 import base.api.book.entity.SaleOrder;
+import base.api.book.mapper.SaleOrderDetailMapper;
 import base.api.book.mapper.SaleOrderMapper;
+import base.api.book.repository.SaleOrderDetailRepository;
 import base.api.book.repository.SaleOrderRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
