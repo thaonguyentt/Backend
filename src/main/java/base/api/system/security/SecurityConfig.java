@@ -68,15 +68,18 @@ public class SecurityConfig {
             // Authorize this endpoint to enable error response of others endpoint
             // Ref: https://docs.spring.io/spring-boot/docs/3.1.x/reference/htmlsingle/#web.servlet.spring-mvc.error-handling
             .requestMatchers("/error").permitAll()
-            .requestMatchers("/docs/**").access(
-              new WebExpressionAuthorizationManager("hasIpAddress(\"127.0.0.1\") or hasIpAddress(\"::1\")"))
+            .requestMatchers("/api/user/hello")
+            .permitAll()
             .requestMatchers("/api/user/login")
             .anonymous()
             .requestMatchers("/api/user/register")
             .anonymous()
-            .requestMatchers("/api/user/hello")
+            .requestMatchers("/api/**")
             .authenticated()
-            .requestMatchers("/api/test/**").permitAll()
+            .requestMatchers("/api/test/**")
+            .permitAll()
+            .requestMatchers("/docs/**").access(
+              new WebExpressionAuthorizationManager("hasIpAddress(\"127.0.0.1\") or hasIpAddress(\"::1\")"))
             .anyRequest()
             .permitAll(); // TODO authenticated()
         })
@@ -93,4 +96,5 @@ public class SecurityConfig {
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
+
 }
