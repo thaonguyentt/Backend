@@ -87,11 +87,11 @@ public class ListingService {
     public Page<ListingDto> findListings(Pageable pageable, ListingSearchDto searchDto) {
         Page<Listing> result;
         if (StringUtils.isNoneBlank(searchDto.getTitle(), searchDto.getGenre())) {
-            result = listingRepository.findByTitleLikeAndGenre(pageable, searchDto.getTitle(), searchDto.getGenre());
+            result = listingRepository.findByTitleLikeAndGenre(pageable, searchDto.getTitle(), searchDto.getGenre(),searchDto.getAllowRent(), searchDto.getAllowPurchase());
         } else if (StringUtils.isNoneBlank(searchDto.getTitle()) && StringUtils.isBlank(searchDto.getGenre())) {
-            result = listingRepository.findByTitle(pageable, searchDto.getTitle());
+            result = listingRepository.findByTitle(pageable, searchDto.getTitle(), searchDto.getAllowRent(), searchDto.getAllowPurchase());
         } else if (StringUtils.isBlank(searchDto.getTitle()) && StringUtils.isNotBlank(searchDto.getGenre())) {
-            result = listingRepository.findByGenre(pageable, searchDto.getGenre());
+            result = listingRepository.findByGenre(pageable, searchDto.getGenre(), searchDto.getAllowRent(), searchDto.getAllowPurchase());
         } else {
             result = listingRepository.findByListingStatus(pageable,ListingStatus.AVAILABLE);
         }

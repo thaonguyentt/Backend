@@ -18,6 +18,8 @@ public record ListingExtendedDto (
         BigDecimal depositFee,
         BigDecimal penaltyRate,
         String description,
+        BigDecimal allowRent,
+        BigDecimal allowPurchase,
         CopyDto copy,
         BookDto book
         ) implements Serializable {}

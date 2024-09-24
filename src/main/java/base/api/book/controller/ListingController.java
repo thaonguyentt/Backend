@@ -91,10 +91,15 @@ public class ListingController {
     public Page<ListingExtendedDto> test(
       Pageable pageable,
       @RequestParam(name = "title", required = false) String title,
-      @RequestParam(name = "genre", required = false) String genre) {
+      @RequestParam(name = "genre", required = false) String genre,
+      @RequestParam(name = "allowRent") Number allowRent,
+      @RequestParam(name = "allowPurchase") Number allowPurchase
+    ) {
         List<GenreDto> genreDto = genreService.getGenreByNameVn(genre);
         ListingSearchDto listingSearchDto = new ListingSearchDto();
         listingSearchDto.setTitle(title);
+        listingSearchDto.setAllowPurchase(allowPurchase);
+        listingSearchDto.setAllowRent(allowRent);
         if (!genreDto.isEmpty()) {
             listingSearchDto.setGenre(genreDto.get(0).name());
         }
@@ -112,6 +117,8 @@ public class ListingController {
                 dto.depositFee(),
                 dto.penaltyRate(),
                 dto.description(),
+                dto.allow_rent(),
+                dto.allow_purchase(),
                 copyDto,
                 bookDto
                 );
@@ -134,6 +141,8 @@ public class ListingController {
                             dto.depositFee(),
                             dto.penaltyRate(),
                             dto.description(),
+                            dto.allow_rent(),
+                            dto.allow_purchase(),
                             copyDto,
                             bookDto
                     );
@@ -164,6 +173,8 @@ public class ListingController {
                     dto.depositFee(),
                     dto.penaltyRate(),
                     dto.description(),
+                    dto.allow_rent(),
+                    dto.allow_purchase(),
                     copyDto,
                     bookDto
             );

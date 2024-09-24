@@ -13,4 +13,8 @@ public class ListingSearchDto {
   private String title;
 //  private String author;
   private String genre;
+
+  private Number allowRent;
+
+  private Number allowPurchase;
 }

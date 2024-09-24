@@ -45,44 +45,65 @@ public interface ListingRepository extends JpaRepository<Listing, Long>, JpaSpec
         select l.* from listing l join copy c on l.copy_id = c.id join book b on c.book_id = b.id
         where b.title like CONCAT('%',:title,'%')
         and l.status = 'AVAILABLE'
+        and :allowRent = l.allow_rent
+        and :allowPurchase = l.allow_purchase
       """,
       nativeQuery = true,
       countQuery = """
         select count(*)from listing l join copy c on l.copy_id = c.id join book b on c.book_id = b.id
         where b.title like CONCAT('%',:title,'%')
         and l.status = 'AVAILABLE'
+        and :allowRent = l.allow_rent
+        and :allowPurchase = l.allow_purchase
       """
     )
-    Page<Listing> findByTitle(Pageable pageable, @Param("title") String title);
+    Page<Listing> findByTitle(Pageable pageable, @Param("title") String title,
+                                                 @Param("allowRent") Number allowRent,
+                                                 @Param("allowPurchase") Number allowPurchase);
 
     @Query(value = """
         select l.* from listing l join copy c on l.copy_id = c.id join book b on c.book_id = b.id
         where exists (SELECT * FROM UNNEST (b.genre) genre WHERE genre LIKE :genre )
+        and :allowRent = l.allow_rent
+        and :allowPurchase = l.allow_purchase
         and l.status = 'AVAILABLE'
       """,
       nativeQuery = true,
       countQuery = """
         select count(*) from listing l join copy c on l.copy_id = c.id join book b on c.book_id = b.id
-        where exists (SELECT * FROM UNNEST (b.genre) genre WHERE genre LIKE :genre )
+        where exists (SELECT * FROM UNNEST (b.genre) genre WHERE genre LIKE :genre)
+        and :allowRent = l.allow_rent
+        and :allowPurchase = l.allow_purchase
         and l.status = 'AVAILABLE'
       """)
-    Page<Listing> findByGenre(Pageable pageable, @Param("genre") String genre);
+    Page<Listing> findByGenre(Pageable pageable, @Param("genre") String genre,
+                                                 @Param("allowRent") Number allowRent,
+                                                 @Param("allowPurchase") Number allowPurchase);
 
     @Query(value = """
         select l.* from listing l join copy c on l.copy_id = c.id join book b on c.book_id = b.id
         where b.title like CONCAT('%',:title,'%')
-        and exists (SELECT * FROM UNNEST (b.genre) genre WHERE genre LIKE :genre ) 
+        and exists 
+            (SELECT * FROM UNNEST (b.genre) genre WHERE genre LIKE :genre ) 
         and l.status = 'AVAILABLE'
+        and :allowRent = l.allow_rent
+        and :allowPurchase = l.allow_purchase
       """,
         nativeQuery = true,
         countQuery = """
         select count(*) from listing l join copy c on l.copy_id = c.id join book b on c.book_id = b.id
         where b.title like CONCAT('%',:title,'%')
-        and exists (SELECT * FROM UNNEST (b.genre) genre WHERE genre LIKE :genre ) 
+        and exists 
+            (SELECT * FROM UNNEST (b.genre) genre WHERE genre LIKE :genre) 
         and l.status = 'AVAILABLE'
+        and :allowRent = l.allow_rent
+        and :allowPurchase = l.allow_purchase
       """
     )
-    Page<Listing> findByTitleLikeAndGenre(Pageable pageable, @Param("title") String title, @Param("genre") String genre);
+    Page<Listing> findByTitleLikeAndGenre(Pageable pageable, @Param("title") String title,
+                                                             @Param("genre") String genre,
+                                                             @Param("allowRent") Number allowRent,
+                                                             @Param("allowPurchase") Number allowPurchase);
 
     Long countListingByOwnerId(Long id);
 
