@@ -74,8 +74,8 @@ public class SecurityConfig {
             .anonymous()
             .requestMatchers("/api/user/register")
             .anonymous()
-            .requestMatchers("/api/**")
-            .authenticated()
+//            .requestMatchers("/api/**")
+//            .authenticated()
             .requestMatchers("/api/test/**")
             .permitAll()
             .requestMatchers("/docs/**").access(
