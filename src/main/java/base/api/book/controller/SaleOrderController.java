@@ -1,6 +1,7 @@
 package base.api.book.controller;
 
 
+import base.api.book.dto.SaleOrderCreateRequest;
 import base.api.book.dto.SaleOrderDetailDto;
 import base.api.book.dto.SaleOrderDto;
 import base.api.book.service.SaleOrderDetailService;
@@ -36,6 +37,11 @@ public class SaleOrderController {
         return ResponseEntity.ok(saleOrderDetailDto);
     }
 
+
+//    @PostMapping ("/createSaleOrder")
+//    public ResponseEntity<SaleOrderDto> createLeaseOrder (@RequestBody SaleOrderCreateRequest) {
+//
+//    }
 
 
 
