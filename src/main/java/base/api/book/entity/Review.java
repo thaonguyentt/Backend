@@ -27,9 +27,9 @@ public class Review {
     @Column(name = "description", length = Integer.MAX_VALUE)
     private String description;
 
-    @Column(name = "image_link")
-    @Type(StringArrayType.class)
-    private String[] imageLink;
+//    @Column(name = "image_link")
+//    @Type(StringArrayType.class)
+//    private String[] imageLink;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
