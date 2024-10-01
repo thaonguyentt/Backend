@@ -1,10 +1,7 @@
 package base.api.book.service;
 
 
-import base.api.book.dto.CopyDto;
-import base.api.book.dto.ListingDetailDto;
-import base.api.book.dto.ListingDto;
-import base.api.book.dto.ListingExtendedDto;
+import base.api.book.dto.*;
 import base.api.book.dto.search.ListingSearchByOwnerAndNameDto;
 import base.api.book.dto.search.ListingSearchDto;
 import base.api.book.entity.Book;
@@ -122,6 +119,15 @@ public class ListingService {
     public Page<ListingDto> getListingByOwnerIdAndTitleContainer (Pageable pageable,ListingSearchByOwnerAndNameDto listingSearch) {
         Page<Listing> result = listingRepository.findByIdAndBookTitleContaining(pageable,listingSearch.getOwnerId(), listingSearch.getTitle());
         return result.map(listingMapper::toDto);
+    }
+
+    public ListingDto editStatus (EditStatusListingRequest statusRequest) {
+        Long Listing_id = statusRequest.id();
+        Listing listing = listingRepository.findById(Listing_id).get();
+        Copy copy = listing.getCopy();
+        Long copy_id = copy.getId();
+
+
     }
 
 

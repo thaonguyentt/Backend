@@ -38,10 +38,10 @@ public class SaleOrderController {
     }
 
 
-//    @PostMapping ("/createSaleOrder")
-//    public ResponseEntity<SaleOrderDto> createLeaseOrder (@RequestBody SaleOrderCreateRequest) {
-//
-//    }
+    @PostMapping ("/createSaleOrder")
+    public ResponseEntity<SaleOrderDto> createLeaseOrder (@RequestBody SaleOrderCreateRequest saleOrderCreateRequest) {
+        return ResponseEntity.ok(null);
+    }
 
 
 
