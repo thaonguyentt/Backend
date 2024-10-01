@@ -13,7 +13,7 @@ spring:
     properties:
       hibernate:
         "[format_sql]": true
-
+# ci/cd
 server:
   error:
     whitelabel:
