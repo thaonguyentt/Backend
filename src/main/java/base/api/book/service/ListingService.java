@@ -126,7 +126,7 @@ public class ListingService {
         Listing listing = listingRepository.findById(Listing_id).get();
         Copy copy = listing.getCopy();
         Long copy_id = copy.getId();
-
+        return null;
 
     }
 
