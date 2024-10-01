@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/base?currentSchema=public
+    url: jdbc:postgresql://ec2-54-169-153-253.ap-southeast-1.compute.amazonaws.com:5432/postgres
     username: postgres
-    password: postgres
+    password: password
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -23,17 +23,17 @@ management:
   endpoints:
     web:
       exposure:
-        include: '*'
+        include: "*"
 
 logging:
   level:
-#      springframework:
-#        security: TRACE
-      hibernate:
-#        SQL: DEBUG
-        orm:
-          jdbc:
-            bind: TRACE
-        stat: DEBUG
-        SQL_SLOW: INFO
-        cache: DEBUG
+    #      springframework:
+    #        security: TRACE
+    hibernate:
+      #        SQL: DEBUG
+      orm:
+        jdbc:
+          bind: TRACE
+      stat: DEBUG
+      SQL_SLOW: INFO
+      cache: DEBUG

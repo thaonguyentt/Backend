@@ -2,11 +2,12 @@ spring:
   mvc:
     problemdetails:
       enabled: true
-
+  profiles:
+    active: dev
   jpa:
     #open-in-view: false
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     show-sql: false
     properties:
       hibernate:
