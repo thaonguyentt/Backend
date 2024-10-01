@@ -1,6 +1,7 @@
 package base.api.book.controller;
 
 
+import base.api.book.dto.SaleOrderCreateRequest;
 import base.api.book.dto.SaleOrderDetailDto;
 import base.api.book.dto.SaleOrderDto;
 import base.api.book.service.SaleOrderDetailService;
@@ -9,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8080"})
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8080", "https://the-flying-bookstore.vercel.app"})
 @RequestMapping("/api/SaleOrder")
 public class SaleOrderController {
     private final SaleOrderService saleOrderService;
@@ -36,6 +37,11 @@ public class SaleOrderController {
         return ResponseEntity.ok(saleOrderDetailDto);
     }
 
+
+    @PostMapping ("/createSaleOrder")
+    public ResponseEntity<SaleOrderDto> createLeaseOrder (@RequestBody SaleOrderCreateRequest saleOrderCreateRequest) {
+        return ResponseEntity.ok(null);
+    }
 
 
 

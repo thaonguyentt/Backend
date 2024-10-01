@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8080"})
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8080", "https://the-flying-bookstore.vercel.app"})
 @RequestMapping("/api/listing")
 public class ListingController {
     private final ListingService listingService;
@@ -191,12 +191,18 @@ public class ListingController {
         return ResponseEntity.ok(listingService.updateListing(listingDto));
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteListing(@PathVariable Long id) {
         Long copyId = listingService.getListingById(id).copyId();
         listingService.deleteListing(id);
 //        copyService.deleteCopy(copyId);
         return ResponseEntity.noContent().build();
+    }
+
+
+    @PutMapping("/editStatus/{id}")
+    public ResponseEntity<ListingDto> updateRentStatusAndPurchaseStatusListing (@PathVariable Long id, @RequestBody EditStatusListingRequest statusRequest) {
+        return ResponseEntity.ok(null);
     }
 
 
