@@ -3906,7 +3906,7 @@ create table COPY
     status          text not null default 'UNLISTED',
     allow_rent      integer,
     allow_purchase  integer,
-    img_review      text[],
+    img_review      text[] default NULL,
     created_date    date default now(),
     updated_date    date,
     deleted_date    date
