@@ -1,4 +1,4 @@
-
+-- CREATE SEQUENCE sale_order_id_seq START WITH 2 INCREMENT BY 1;
 -- sale_order
 drop table if exists sales_order;
 create table sales_order
@@ -23,12 +23,15 @@ create table sales_order
     deleted_date            date
 );
 
-insert into sales_order (listing_id,status,seller_id,buyer_id,seller_address,buyer_address,
+insert into sales_order (id,listing_id,status,seller_id,buyer_id,seller_address,buyer_address,
                         receive_date,total_price,total_change,total_compensate,payment_method,
                         sell_payment_id,change_payment_id,compensate_payment_id,created_date)
 values
-    (37,'ORDERED_PAYMENT_PENDING',1,2,'test','test',null,100000.0,10000.0,0.0,1,1,1,null,'2024/09/12');
+    (1,37,'ORDERED_PAYMENT_PENDING',1,2,'test','test',null,100000.0,10000.0,0.0,1,1,1,null,'2024/09/12');
+alter sequence sales_order_id_seq restart with 2;
 
+
+-- CREATE SEQUENCE sale_order_detail_id_seq START WITH 2 INCREMENT BY 1;
 
 drop table if exists sales_order_detail;
 create table sales_order_detail
@@ -41,6 +44,8 @@ create table sales_order_detail
     price          decimal(10, 2)
 );
 
-insert into sales_order_detail (title,sale_order_id,listing_id,copy_id,price)
+insert into sales_order_detail (id,title,sale_order_id,listing_id,copy_id,price)
 values
-    ('test',1,1,1,100000.0);
+    (1,'test',1,1,1,100000.0);
+
+alter sequence sales_order_detail_id_seq restart with 2;

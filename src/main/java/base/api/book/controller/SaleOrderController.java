@@ -2,11 +2,15 @@ package base.api.book.controller;
 
 
 import base.api.book.dto.SaleOrderCreateRequest;
+import base.api.book.dto.SaleOrderCreateRequestFromLease;
 import base.api.book.dto.SaleOrderDetailDto;
 import base.api.book.dto.SaleOrderDto;
+import base.api.book.entity.SaleOrder;
 import base.api.book.service.SaleOrderDetailService;
 import base.api.book.service.SaleOrderService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -39,9 +43,18 @@ public class SaleOrderController {
 
 
     @PostMapping ("/createSaleOrder")
-    public ResponseEntity<SaleOrderDto> createLeaseOrder (@RequestBody SaleOrderCreateRequest saleOrderCreateRequest) {
-        return ResponseEntity.ok(null);
+    public SaleOrderDto createLeaseOrder (@RequestBody SaleOrderCreateRequest request) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return saleOrderService.createSaleOrder(auth,request);
     }
+
+    @PostMapping ("/createSaleOrderFromLease")
+    public SaleOrderDto createLeaseOrderFromLease (@RequestBody SaleOrderCreateRequestFromLease request) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return saleOrderService.createSaleOrderFromLease(auth,request);
+    }
+
+
 
 
 

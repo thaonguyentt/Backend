@@ -8,7 +8,6 @@ import java.math.BigDecimal;
  */
 public record LeaseOrderDetailDto(
   Long id,
-  String title,
   Long listingId,
   BigDecimal leaseRate,
   BigDecimal depositFee,

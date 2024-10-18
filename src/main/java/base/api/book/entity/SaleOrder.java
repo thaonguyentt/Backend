@@ -21,8 +21,8 @@ import java.util.Set;
 @ToString // TODO delete this
 public class SaleOrder {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sale_order_id_gen")
-    @SequenceGenerator(name = "sale_order_id_gen", sequenceName = "sale_order_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sales_order_id_gen")
+    @SequenceGenerator(name = "sales_order_id_gen", sequenceName = "sales_order_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -47,8 +47,7 @@ public class SaleOrder {
     @Column(name = "buyer_address", length = Integer.MAX_VALUE)
     private String buyerAddress;
 
-    @NotNull
-    @Column(name = "receive_date", nullable = false)
+    @Column(name = "receive_date")
     private LocalDate receiveDate;
 
     @Column(name = "total_price ", precision = 10, scale = 2)
@@ -81,9 +80,8 @@ public class SaleOrder {
 
     @Column(name = "deleted_date")
     private LocalDate deletedDate;
-
-//    @OneToMany(mappedBy = "SaleOrder", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-//    private Set<LeaseOrderDetail> leaseOrderDetails = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "saleOrder", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<SaleOrderDetail> saleOrderDetails = new LinkedHashSet<>();
 
 
 }

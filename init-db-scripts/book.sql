@@ -4920,23 +4920,23 @@ alter sequence copy_id_seq restart with 2000;
 drop table if exists LISTING;
 create table LISTING
 (
-    id           BIGSERIAL primary key,
-    copy_id      bigint references COPY (id),
-    owner_id     bigint,
-    quantity     integer,
-    address      text,
-    expiry_date  date,
-    lease_rate   DECIMAL(10, 2),
-    deposit_fee  DECIMAL(10, 2),
+    id              BIGSERIAL primary key,
+    copy_id         bigint references COPY (id),
+    owner_id        bigint,
+    quantity        integer,
+    address         text,
+    expiry_date     date,
+    lease_rate      DECIMAL(10, 2),
+    deposit_fee     DECIMAL(10, 2),
     penalty_rate    DECIMAL(10, 2),
     price           DECIMAL(10, 2),
     description     text,
     status          text default 'AVAILABLE',
     allow_rent      integer,
     allow_purchase  integer,
-    created_date date default now(),
-    updated_date date,
-    deleted_date date
+    created_date    date default now(),
+    updated_date    date,
+    deleted_date    date
 );
 INSERT INTO LISTING (id,copy_id,owner_id,quantity,address,lease_rate,deposit_fee,penalty_rate,price,description,status,allow_rent,allow_purchase)
 VALUES
