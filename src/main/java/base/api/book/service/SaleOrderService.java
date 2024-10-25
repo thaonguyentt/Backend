@@ -187,6 +187,7 @@ public class SaleOrderService {
         newSaleOrder.setTotalChange(totalChange);
         newSaleOrder.setTotalCompensate(totalCompensate);
         newSaleOrder.setPaymentMethod(requestDto.paymentMethod());
+        newSaleOrder.setCreatedDate(LocalDate.now());
         newSaleOrder.setSaleOrderDetails(
                 Set.of(SaleOrderDetail.builder()
                         .title(copy.getBook().getTitle())
