@@ -17,6 +17,7 @@ public record ListingExtendedDto (
         BigDecimal leaseRate,
         BigDecimal depositFee,
         BigDecimal penaltyRate,
+        BigDecimal price,
         String description,
         BigDecimal allowRent,
         BigDecimal allowPurchase,

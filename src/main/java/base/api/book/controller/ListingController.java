@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8080", "https://the-flying-bookstore.vercel.app"})
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8082", "https://the-flying-bookstore.vercel.app","https://the-flying-bookstore-dashboard-fe.vercel.app"})
 @RequestMapping("/api/listing")
 public class ListingController {
     private final ListingService listingService;
@@ -116,6 +116,7 @@ public class ListingController {
                 dto.leaseRate(),
                 dto.depositFee(),
                 dto.penaltyRate(),
+                dto.price(),
                 dto.description(),
                 dto.allow_rent(),
                 dto.allow_purchase(),
@@ -140,6 +141,7 @@ public class ListingController {
                             dto.leaseRate(),
                             dto.depositFee(),
                             dto.penaltyRate(),
+                            dto.price(),
                             dto.description(),
                             dto.allow_rent(),
                             dto.allow_purchase(),
@@ -172,6 +174,7 @@ public class ListingController {
                     dto.leaseRate(),
                     dto.depositFee(),
                     dto.penaltyRate(),
+                    dto.price(),
                     dto.description(),
                     dto.allow_rent(),
                     dto.allow_purchase(),

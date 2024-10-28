@@ -24,7 +24,7 @@ import java.util.List;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8080", "https://the-flying-bookstore.vercel.app"})
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8082", "https://the-flying-bookstore.vercel.app","https://the-flying-bookstore-dashboard-fe.vercel.app"})
 @RequestMapping("api/copy")
 public class CopyController {
     private final CopyService copyService;
@@ -73,21 +73,11 @@ public class CopyController {
         return ResponseEntity.noContent().build();
     }
 
-//    @Configuration
-//    public class FileUploadConfig {
-//
-//        @Bean
-//        public MultipartConfigElement multipartConfigElement() {
-//            MultipartConfigFactory factory = new MultipartConfigFactory();
-//            factory.setMaxFileSize("10MB");
-//            factory.setMaxRequestSize("10MB");
-//            return factory.createMultipartConfig();
-//        }
-//    }
-
     @PostMapping (path="/upload")
-    public ResponseEntity<String> upload (@RequestParam("file") MultipartFile[] file) {
+    public ResponseEntity<String> upload (@RequestParam("file") MultipartFile[] file, @RequestBody CopyDto copyDto) {
         // Kiểm tra nếu file không trống
+
+        String message = "";
 
         if (file.length == 0) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please select a file to upload.");
