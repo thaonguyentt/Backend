@@ -36,7 +36,6 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -408,7 +407,7 @@ public class LeaseOrderService {
             listingDto.depositFee(),
             listingDto.penaltyRate(),
             listingDto.description(),
-            copy,
+            listingDto.price(), copy,
             book,
             reviews,
             bookOwned,

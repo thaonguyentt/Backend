@@ -1,11 +1,9 @@
 package base.api.book.dto;
 
 import base.api.user.UserDto;
-import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 
 public record ListingDetailDto(
@@ -18,6 +16,7 @@ public record ListingDetailDto(
         BigDecimal depositFee,
         BigDecimal penaltyRate,
         String description,
+        BigDecimal price,
         CopyDto copy,
         BookDto book,
         List<ReviewDto> review,

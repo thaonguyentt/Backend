@@ -73,6 +73,7 @@ public class ListingController {
                 listingDto.depositFee(),
                 listingDto.penaltyRate(),
                 listingDto.description(),
+                listingDto.price(),
                 copy,
                 book,
                 reviews,

@@ -10,7 +10,6 @@ import base.api.user.UserDto;
 import base.api.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -96,7 +95,7 @@ public class LeaseOrderController {
               listingDto.depositFee(),
               listingDto.penaltyRate(),
               listingDto.description(),
-              copy,
+              listingDto.price(), copy,
               book,
               reviews,
               bookOwned,
@@ -134,7 +133,7 @@ public class LeaseOrderController {
               listingDto.depositFee(),
               listingDto.penaltyRate(),
               listingDto.description(),
-              copy,
+              listingDto.price(), copy,
               book,
               reviews,
               bookOwned,
@@ -188,7 +187,7 @@ public class LeaseOrderController {
               listingDto.depositFee(),
               listingDto.penaltyRate(),
               listingDto.description(),
-              copy,
+              listingDto.price(), copy,
               book,
               reviews,
               bookOwned,
@@ -255,7 +254,7 @@ public class LeaseOrderController {
               listingDto.depositFee(),
               listingDto.penaltyRate(),
               listingDto.description(),
-              copy,
+              listingDto.price(), copy,
               book,
               reviews,
               bookOwned,
@@ -334,7 +333,7 @@ public class LeaseOrderController {
               listingDto.depositFee(),
               listingDto.penaltyRate(),
               listingDto.description(),
-              copy,
+              listingDto.price(), copy,
               book,
               reviews,
               bookOwned,
