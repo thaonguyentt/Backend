@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface VoucherShopRepository extends JpaRepository<VoucherShop, Long> {
     List<VoucherShop> findByNameContaining(String name);
+    boolean existsByCode(String code);
 }

@@ -413,8 +413,7 @@ public class LeaseOrderService {
             bookOwned,
             bookLeasing
     );
-    LeaseOrderDtoDetail result = new LeaseOrderDtoDetail(leaseOrderDto, listing, lessor, lessee,totalPenaltyFee);
-    return result;
+      return new LeaseOrderDtoDetail(leaseOrderDto, listing, lessor, lessee,totalPenaltyFee);
   }
 
   public void setStatusOnLateReturnOrder(Identity identity) {
@@ -422,9 +421,7 @@ public class LeaseOrderService {
     IdentityUtil.requireHasAnyRole(identity, "ADMIN", "SYSTEM");
 
     List<LeaseOrder> lateLeaseOrders = leaseOrderRepository.findLateReturnLeaseOrder();
-    lateLeaseOrders.forEach(order -> {
-      order.setStatus(LeaseOrderStatus.LATE_RETURN);
-    });
+    lateLeaseOrders.forEach(order -> order.setStatus(LeaseOrderStatus.LATE_RETURN));
     leaseOrderRepository.saveAll(lateLeaseOrders);
   }
 
