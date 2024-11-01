@@ -7,13 +7,10 @@ import org.mapstruct.*;
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface VoucherSessionMapper {
 
-    // Mapping from DTO to entity
     VoucherSession toEntity(VoucherSessionDto VoucherSessionDto);
 
-    // Mapping from entity to DTO
     VoucherSessionDto toDto(VoucherSession VoucherSession);
 
-    // update from DTO to entity, ignore null value
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     VoucherSession partialUpdate(VoucherSessionDto VoucherSessionDto, @MappingTarget VoucherSession VoucherSession);
 

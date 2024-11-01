@@ -1,14 +1,14 @@
 package base.api.book.dto;
 
+import lombok.Getter;
+
+@Getter
 public class ErrorResponse {
-    private String message;
+    // Getter
+    private final String message;
 
     public ErrorResponse(String message) {
         this.message = message;
     }
 
-    // Getter
-    public String getMessage() {
-        return message;
-    }
 }
