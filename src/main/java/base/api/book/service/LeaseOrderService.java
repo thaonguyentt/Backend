@@ -78,7 +78,7 @@ public class LeaseOrderService {
 
   public LeaseOrderDto updateLeaseOrderStatus (Authentication auth, Long id, LeaseOrderStatus newStatus) {
     Identity identity = IdentityUtil.fromSpringAuthentication(auth);
-
+    if(leaseOrderRepository.findById(id).isEmpty()) return null;
     LeaseOrder leaseOrder = leaseOrderRepository.findById(id).get();
     LeaseOrder updatedLeaseOrder = switch (newStatus) {
         case ORDERED_PAYMENT_PENDING -> leaseOrder;
@@ -100,7 +100,7 @@ public class LeaseOrderService {
   private LeaseOrder changeOrderStatusCancel(Identity identity, LeaseOrder leaseOrder) {
     IdentityUtil.requireHasAnyRole(identity, "SYSTEM", "ADMIN", "USER");
 
-    if (LeaseOrderStatus.ORDERED_PAYMENT_PENDING.equals(leaseOrder.getStatus())) {
+    if (LeaseOrderStatus.ORDERED_PAYMENT_PENDING.equals(leaseOrder.getStatus()) && leaseOrder.getListingId().describeConstable().isPresent()) {
       Listing listing = listingRepository.findById(leaseOrder.getListingId()).get();
       listing.setListingStatus(ListingStatus.AVAILABLE);
       Copy copy = listing.getCopy();

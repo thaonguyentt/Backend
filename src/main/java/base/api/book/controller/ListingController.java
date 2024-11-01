@@ -6,7 +6,6 @@ import base.api.book.dto.search.ListingSearchDto;
 import base.api.book.service.*;
 import base.api.user.UserDto;
 import base.api.user.UserService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -102,7 +101,7 @@ public class ListingController {
         listingSearchDto.setAllowPurchase(allowPurchase);
         listingSearchDto.setAllowRent(allowRent);
         if (!genreDto.isEmpty()) {
-            listingSearchDto.setGenre(genreDto.get(0).name());
+            listingSearchDto.setGenre(genreDto.getFirst().name());
         }
         return listingService.findListings(pageable, listingSearchDto)
           .map(dto -> {
@@ -197,7 +196,7 @@ public class ListingController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteListing(@PathVariable Long id) {
-        Long copyId = listingService.getListingById(id).copyId();
+//        Long copyId = listingService.getListingById(id).copyId();
         listingService.deleteListing(id);
 //        copyService.deleteCopy(copyId);
         return ResponseEntity.noContent().build();
