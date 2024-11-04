@@ -1,55 +1,55 @@
-name: Build and deploy book App to AWS
+# name: Build and deploy book App to AWS
 
-on:
-  push:
-    branches:
-      - main
+# on:
+#   push:
+#     branches:
+#       - main
 
-jobs:
-  build:
-    name: Build and deploy book website
-    runs-on: ubuntu-latest
+# jobs:
+#   build:
+#     name: Build and deploy book website
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
 
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          distribution: "temurin"
-          java-version: "21"
+#       - name: Set up JDK 21
+#         uses: actions/setup-java@v4
+#         with:
+#           distribution: "temurin"
+#           java-version: "21"
 
-      # Uncomment this if you want to run unit tests
-      # - name: Run unit tests
-      #   run: ./gradlew test
+#       # Uncomment this if you want to run unit tests
+#       # - name: Run unit tests
+#       #   run: ./gradlew test
 
-      - name: Build with Gradle
-        run: ./gradlew clean build -x test
+#       - name: Build with Gradle
+#         run: ./gradlew clean build -x test
 
-      - name: Login to Docker Hub
-        run: echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+#       - name: Login to Docker Hub
+#         run: echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
 
-      - name: Build Docker image
-        run: docker build -t minhkuku/bookc2c .
+#       - name: Build Docker image
+#         run: docker build -t minhkuku/bookc2c .
 
-      - name: Push Docker image to Docker Hub
-        run: docker push minhkuku/bookc2c:latest
+#       - name: Push Docker image to Docker Hub
+#         run: docker push minhkuku/bookc2c:latest
 
-  deploy:
-    name: Deploy to AWS EC2
-    needs: build
-    runs-on: ubuntu-latest
+#   deploy:
+#     name: Deploy to AWS EC2
+#     needs: build
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Connect to EC2 via SSH and deploy Docker container
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.AWS_HOST }}
-          username: ${{ secrets.AWS_USER }}
-          key: ${{ secrets.AWS_KEY }}
-          script: |
-            sudo docker stop bookc2c || true
-            sudo docker rm bookc2c || true
-            sudo docker pull minhkuku/bookc2c:latest
-            sudo docker run -d -p 8080:8080 --name bookc2c --network bookc2c-network -e "SPRING_PROFILES_ACTIVE=prod" minhkuku/bookc2c:latest
+#     steps:
+#       - name: Connect to EC2 via SSH and deploy Docker container
+#         uses: appleboy/ssh-action@master
+#         with:
+#           host: ${{ secrets.AWS_HOST }}
+#           username: ${{ secrets.AWS_USER }}
+#           key: ${{ secrets.AWS_KEY }}
+#           script: |
+#             sudo docker stop bookc2c || true
+#             sudo docker rm bookc2c || true
+#             sudo docker pull minhkuku/bookc2c:latest
+#             sudo docker run -d -p 8080:8080 --name bookc2c --network bookc2c-network -e "SPRING_PROFILES_ACTIVE=prod" minhkuku/bookc2c:latest
