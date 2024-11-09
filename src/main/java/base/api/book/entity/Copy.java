@@ -54,6 +54,7 @@ public class Copy {
   @Column(name = "allow_purchase")
   private Long allow_purchase;
 
+  
 //  @Column(name = "created_date")
 //  private LocalDate createdDate;
 //
