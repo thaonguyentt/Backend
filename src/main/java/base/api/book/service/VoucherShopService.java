@@ -47,8 +47,8 @@ public class VoucherShopService {
                 .collect(Collectors.toList());
     }
 
-    public List<VoucherShopDto> getVouchersByName(String name) {
-        List<VoucherShop> vouchers = voucherShopRepository.findByNameContaining(name);
+    public List<VoucherShopDto> getVouchersByKeyword(String keyword) {
+        List<VoucherShop> vouchers = voucherShopRepository.findByNameContainingOrCodeContaining(keyword,keyword);
         return vouchers
                 .stream()
                 .map(voucherShopMapper::toDto)

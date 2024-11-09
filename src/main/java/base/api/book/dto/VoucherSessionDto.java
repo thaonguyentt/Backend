@@ -19,5 +19,5 @@ public record VoucherSessionDto(
         BigDecimal minValue,
         BigDecimal discountAmount,
         BigDecimal discountPercentage,
-        @NotNull Integer voucherType
+        @NotNull Integer voucherType // 0 is discountAmount value, 1 is discountPercentage
 ) implements Serializable {}

@@ -35,8 +35,8 @@ public class VoucherSessionController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<VoucherSessionDto>> getVoucherByName(@RequestParam String name) {
-        List<VoucherSessionDto> voucherSessionDto = voucherSessionService.getVouchersByName(name);
+    public ResponseEntity<List<VoucherSessionDto>> getVoucherByName(@RequestParam String keyword) {
+        List<VoucherSessionDto> voucherSessionDto = voucherSessionService.getVouchersByKeyword(keyword);
         if (voucherSessionDto == null || voucherSessionDto.isEmpty()) {
             return ResponseEntity.notFound().build();
         }

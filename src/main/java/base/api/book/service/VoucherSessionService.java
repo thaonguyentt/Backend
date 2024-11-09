@@ -36,8 +36,8 @@ public class VoucherSessionService {
                 .collect(Collectors.toList());
     }
 
-    public List<VoucherSessionDto> getVouchersByName(String name) {
-        List<VoucherSession> vouchers = voucherSessionRepository.findByNameContaining(name);
+    public List<VoucherSessionDto> getVouchersByKeyword(String keyword) {
+        List<VoucherSession> vouchers = voucherSessionRepository.findByNameContainingOrCodeContaining(keyword, keyword);
         return vouchers
                 .stream()
                 .map(voucherSessionMapper::toDto)

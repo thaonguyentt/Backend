@@ -38,8 +38,8 @@ public class VoucherShopController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<VoucherShopDto>> getVoucherByName(@RequestParam String name) {
-        List<VoucherShopDto> voucherShopDtos = voucherShopService.getVouchersByName(name);
+    public ResponseEntity<List<VoucherShopDto>> getVoucherByName(@RequestParam String keyword) {
+        List<VoucherShopDto> voucherShopDtos = voucherShopService.getVouchersByKeyword(keyword);
         if (voucherShopDtos == null || voucherShopDtos.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
