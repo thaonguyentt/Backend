@@ -1,11 +1,12 @@
 package base.api.book.entity;
 
-import base.api.book.entity.Book;
+import io.hypersistence.utils.hibernate.type.array.StringArrayType;
 import base.api.book.entity.support.CopyStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -47,6 +48,10 @@ public class Copy {
   @Enumerated(EnumType.STRING)
   @Column(name = "status")
   private CopyStatus copyStatus;
+
+  @Column(name = "img_review")
+  @Type(StringArrayType.class)
+  private String[] imgReview;
 
   @Column(name = "allow_rent")
   private Long allow_rent;
