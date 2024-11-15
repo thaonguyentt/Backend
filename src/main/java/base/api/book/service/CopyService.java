@@ -70,8 +70,11 @@ public class CopyService {
 
 
     public String[] getImgReview (Long id) {
-         Copy copy = copyRepository.findById(id).get();
-        return copy.getImgReview();
+        if (copyRepository.findById(id).isPresent()) {
+            Copy copy = copyRepository.findById(id).get();
+            return copy.getImgReview();
+        }
+        return null;
     }
 
 //    public

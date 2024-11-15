@@ -28,6 +28,7 @@ insert into sales_order (id,listing_id,status,seller_id,buyer_id,seller_address,
                         sell_payment_id,change_payment_id,compensate_payment_id,created_date)
 values
     (1,37,'ORDERED_PAYMENT_PENDING',1,2,'test','test',null,100000.0,10000.0,0.0,1,1,1,null,'2024/09/12');
+
 alter sequence sales_order_id_seq restart with 2;
 
 

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8082", "https://the-flying-bookstore.vercel.app","https://the-flying-bookstore-dashboard-fe.vercel.app"})
@@ -30,6 +31,20 @@ public class SaleOrderController {
     @GetMapping ("/{id}")
     public ResponseEntity<SaleOrderDto> getSaleOrderById (@PathVariable Long id) {
         SaleOrderDto saleOrderDto = saleOrderService.getSaleOrderById(id);
+        if (saleOrderDto == null) {return ResponseEntity.notFound().build();}
+        return ResponseEntity.ok(saleOrderDto);
+    }
+
+    @GetMapping ("/seller/{id}")
+    public ResponseEntity<List<SaleOrderDto>> getSaleOrderBySellerId (@PathVariable Long id) {
+        List<SaleOrderDto> saleOrderDto = saleOrderService.getSaleOrderBySellerId(id);
+        if (saleOrderDto == null) {return ResponseEntity.notFound().build();}
+        return ResponseEntity.ok(saleOrderDto);
+    }
+
+    @GetMapping ("/buyer/{id}")
+    public ResponseEntity<List<SaleOrderDto>> getSaleOrderByBuyerId (@PathVariable Long id) {
+        List<SaleOrderDto> saleOrderDto = saleOrderService.getSaleOrderByBuyerId(id);
         if (saleOrderDto == null) {return ResponseEntity.notFound().build();}
         return ResponseEntity.ok(saleOrderDto);
     }
@@ -53,6 +68,8 @@ public class SaleOrderController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return saleOrderService.createSaleOrderFromLease(auth,request);
     }
+
+
 
 
 

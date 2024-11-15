@@ -26,11 +26,14 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Set;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -54,6 +57,22 @@ public class SaleOrderService {
     public SaleOrderDto getSaleOrderById (Long id) {
         return saleOrderRepository.findById(id).map(saleOrderMapper::toDto).orElse(null);
     }
+
+    public List<SaleOrderDto> getSaleOrderBySellerId (Long id) {
+        return saleOrderRepository.findSaleOrderBySellerId(id)
+                .stream()
+                .map(saleOrderMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<SaleOrderDto> getSaleOrderByBuyerId (Long id) {
+        return saleOrderRepository.findSaleOrderByBuyerId(id)
+                .stream()
+                .map(saleOrderMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+
 
     public SaleOrderDto createSaleOrder (Authentication auth, SaleOrderCreateRequest requestDto) {
         SecurityUtils.requireAuthentication(auth);
