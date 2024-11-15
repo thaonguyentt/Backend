@@ -109,6 +109,7 @@ public class SaleOrderService {
         newSaleOrder.setTotalChange(BigDecimal.ZERO);
         newSaleOrder.setTotalCompensate(BigDecimal.ZERO);
         newSaleOrder.setPaymentMethod(requestDto.paymentMethod());
+        newSaleOrder.setCreatedDate(LocalDate.now());
         newSaleOrder.setSaleOrderDetails(
                 Set.of(SaleOrderDetail.builder()
                         .title(copy.getBook().getTitle())
