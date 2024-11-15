@@ -68,6 +68,12 @@ public class CopyService {
         copyRepository.deleteById(id);
     }
 
+
+    public String[] getImgReview (Long id) {
+         Copy copy = copyRepository.findById(id).get();
+        return copy.getImgReview();
+    }
+
 //    public
 
 
