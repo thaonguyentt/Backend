@@ -51,7 +51,6 @@ public class SaleOrderService {
     private PaymentRepository paymentRepository;
 
     private final LeaseOrderRepository leaseOrderRepository;
-    private final LeaseOrderService leaseOrderService;
 
 
     public SaleOrderDto getSaleOrderById (Long id) {
@@ -97,6 +96,8 @@ public class SaleOrderService {
         Copy updatedCopy = copyRepository.save(copy);
         Book book = copy.getBook();
 
+
+
         SaleOrder newSaleOrder = new SaleOrder();
         newSaleOrder.setListingId(listing.getId());
         newSaleOrder.setStatus(SellOrderStatus.ORDERED_PAYMENT_PENDING);
@@ -118,6 +119,21 @@ public class SaleOrderService {
                         ).build()
                 )
         );
+
+        // Create Payment
+        PaymentDto newPayment = paymentService.create(
+                identity,
+                PaymentDto.builder()
+                        .amount(listing.getPrice())
+                        .currency("VND")
+                        .amount(listing.getPrice())
+                        .payerId(userId) // Pay từ userId cho hệ thống
+                        .payeeId(0L) // Pay cho hệ thống tạm cho payeeId = 0
+                        .description("Lease fee and deposit")
+                        .paymentMethod(PaymentMethod.COD)
+                        .build()
+        );
+        newSaleOrder.setSellPaymentId(newPayment.id());
 
         SaleOrder createdLO = saleOrderRepository.save(newSaleOrder);
 
@@ -195,7 +211,7 @@ public class SaleOrderService {
         if(totalCompensate.compareTo(BigDecimal.ZERO) > 0) {
             newSaleOrder.setStatus(SellOrderStatus.ORDERED_PAYMENT_PENDING);
         } else {
-            newSaleOrder.setStatus(SellOrderStatus.PAYMENT_SUCCESS);
+            newSaleOrder.setStatus(SellOrderStatus.DELIVERED);
         }
 //        newSaleOrder.setStatus(SellOrderStatus.ORDERED_PAYMENT_PENDING);
         newSaleOrder.setSellerId(listing.getOwner().getId());

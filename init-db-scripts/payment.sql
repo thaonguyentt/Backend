@@ -40,8 +40,14 @@ values (1, 'PAYMENT_PENDING', 2, 0,'VND', 224100.00, 'COD'),
        (16, 'PAYMENT_PENDING', 0, 4,'VND', 298600.00, 'COD'),
        (17, 'SUCCEEDED', 0, 2,'VND', 140100.00, 'COD'),
        (18, 'SUCCEEDED', 0, 2,'VND', 8400.00, 'COD'),
-       (19, 'PAYMENT_PENDING', 5, 0,'VND', 105700.00, 'COD')
-;
+       (19, 'PAYMENT_PENDING', 5, 0,'VND', 105700.00, 'COD'),
+       (20, 'PAYMENT_PENDING', 2, 0,'VND', 235480.0, 'COD'),
+       (21, 'PAYMENT_PENDING', 2, 0,'VND', 175700.0, 'COD'),
+       (22, 'SUCCEEDED', 2, 0,'VND', 175700.0, 'COD'),
+       (23, 'SUCCEEDED', 2, 0,'VND', 161630.0, 'COD'),
+       (24, 'PAYMENT_PENDING', 3, 0,'VND', 16.590, 'COD'),
+       (25, 'PAYMENT_PENDING', 0, 1,'VND', 16.590, 'COD'),
+       (26, 'PAYMENT_PENDING', 0, 1,'VND', 16.590, 'COD');
 
 
-alter sequence payment_id_seq restart with 20;
+alter sequence payment_id_seq restart with 30;
