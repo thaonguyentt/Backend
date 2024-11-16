@@ -1,4 +1,4 @@
-package base.api.book.dto;
+package base.api.book.dto.search;
 
 import base.api.book.entity.Copy;
 import base.api.book.entity.support.CopyStatus;
@@ -11,7 +11,7 @@ import java.time.LocalDate;
 /**
  * DTO for {@link Copy}
  */
-public record CopyDto(
+public record CopyDtoUpload(
         Long id,
         Long bookId,
         @NotNull
@@ -21,7 +21,6 @@ public record CopyDto(
         BigDecimal allow_rent,
         BigDecimal allow_purchase,
         BigDecimal damagePercent,
-        String[] img_review,
         LocalDate createdDate,
         LocalDate updatedDate,
         LocalDate deletedDate,

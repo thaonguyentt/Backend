@@ -26,11 +26,14 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Set;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -48,12 +51,27 @@ public class SaleOrderService {
     private PaymentRepository paymentRepository;
 
     private final LeaseOrderRepository leaseOrderRepository;
-    private final LeaseOrderService leaseOrderService;
 
 
     public SaleOrderDto getSaleOrderById (Long id) {
         return saleOrderRepository.findById(id).map(saleOrderMapper::toDto).orElse(null);
     }
+
+    public List<SaleOrderDto> getSaleOrderBySellerId (Long id) {
+        return saleOrderRepository.findSaleOrderBySellerId(id)
+                .stream()
+                .map(saleOrderMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<SaleOrderDto> getSaleOrderByBuyerId (Long id) {
+        return saleOrderRepository.findSaleOrderByBuyerId(id)
+                .stream()
+                .map(saleOrderMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+
 
     public SaleOrderDto createSaleOrder (Authentication auth, SaleOrderCreateRequest requestDto) {
         SecurityUtils.requireAuthentication(auth);
@@ -78,6 +96,8 @@ public class SaleOrderService {
         Copy updatedCopy = copyRepository.save(copy);
         Book book = copy.getBook();
 
+
+
         SaleOrder newSaleOrder = new SaleOrder();
         newSaleOrder.setListingId(listing.getId());
         newSaleOrder.setStatus(SellOrderStatus.ORDERED_PAYMENT_PENDING);
@@ -89,6 +109,7 @@ public class SaleOrderService {
         newSaleOrder.setTotalChange(BigDecimal.ZERO);
         newSaleOrder.setTotalCompensate(BigDecimal.ZERO);
         newSaleOrder.setPaymentMethod(requestDto.paymentMethod());
+        newSaleOrder.setCreatedDate(LocalDate.now());
         newSaleOrder.setSaleOrderDetails(
                 Set.of(SaleOrderDetail.builder()
                         .title(copy.getBook().getTitle())
@@ -99,6 +120,21 @@ public class SaleOrderService {
                         ).build()
                 )
         );
+
+        // Create Payment
+        PaymentDto newPayment = paymentService.create(
+                identity,
+                PaymentDto.builder()
+                        .amount(listing.getPrice())
+                        .currency("VND")
+                        .amount(listing.getPrice())
+                        .payerId(userId) // Pay từ userId cho hệ thống
+                        .payeeId(0L) // Pay cho hệ thống tạm cho payeeId = 0
+                        .description("Lease fee and deposit")
+                        .paymentMethod(PaymentMethod.COD)
+                        .build()
+        );
+        newSaleOrder.setSellPaymentId(newPayment.id());
 
         SaleOrder createdLO = saleOrderRepository.save(newSaleOrder);
 
@@ -176,7 +212,7 @@ public class SaleOrderService {
         if(totalCompensate.compareTo(BigDecimal.ZERO) > 0) {
             newSaleOrder.setStatus(SellOrderStatus.ORDERED_PAYMENT_PENDING);
         } else {
-            newSaleOrder.setStatus(SellOrderStatus.PAYMENT_SUCCESS);
+            newSaleOrder.setStatus(SellOrderStatus.DELIVERED);
         }
 //        newSaleOrder.setStatus(SellOrderStatus.ORDERED_PAYMENT_PENDING);
         newSaleOrder.setSellerId(listing.getOwner().getId());
