@@ -28,6 +28,13 @@ public class SaleOrderController {
         this.saleOrderDetailService = saleOrderDetailService;
     }
 
+    @GetMapping ("")
+    public ResponseEntity<List<SaleOrderDto>> getAllSaleOrder () {
+        List<SaleOrderDto> saleOrderDto = saleOrderService.getAllSaleOrder();
+        if (saleOrderDto == null) {return ResponseEntity.notFound().build();}
+        return ResponseEntity.ok(saleOrderDto);
+    }
+
     @GetMapping ("/{id}")
     public ResponseEntity<SaleOrderDto> getSaleOrderById (@PathVariable Long id) {
         SaleOrderDto saleOrderDto = saleOrderService.getSaleOrderById(id);
@@ -55,6 +62,7 @@ public class SaleOrderController {
         if (saleOrderDetailDto == null) {return ResponseEntity.notFound().build();}
         return ResponseEntity.ok(saleOrderDetailDto);
     }
+
 
 
     @PostMapping ("/createSaleOrder")

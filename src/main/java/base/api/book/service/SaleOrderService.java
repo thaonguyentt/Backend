@@ -52,7 +52,10 @@ public class SaleOrderService {
 
     private final LeaseOrderRepository leaseOrderRepository;
 
-
+    public List<SaleOrderDto> getAllSaleOrder ()
+    {
+        return saleOrderRepository.findAll().stream().map(saleOrderMapper::toDto).collect(Collectors.toList());
+    }
     public SaleOrderDto getSaleOrderById (Long id) {
         return saleOrderRepository.findById(id).map(saleOrderMapper::toDto).orElse(null);
     }
@@ -70,8 +73,6 @@ public class SaleOrderService {
                 .map(saleOrderMapper::toDto)
                 .collect(Collectors.toList());
     }
-
-
 
     public SaleOrderDto createSaleOrder (Authentication auth, SaleOrderCreateRequest requestDto) {
         SecurityUtils.requireAuthentication(auth);
@@ -193,8 +194,6 @@ public class SaleOrderService {
             totalChange = BigDecimal.ZERO;
             totalCompensate = BigDecimal.ZERO.subtract(totalChange);
         }
-
-
 
 
         Long SellerId = listing.getOwner().getId();
