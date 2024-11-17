@@ -1,41 +1,49 @@
 package base.api.system.storage.internal;
 
-import base.api.system.storage.FileInfo;
+import base.api.system.security.Identity;
+import base.api.system.security.IdentityUtil;
 import base.api.system.storage.FileStorageService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Stream;
-import java.io.*;
-import java.net.HttpURLConnection;
 
 
-@Component
 public class LocalFileStorageService implements FileStorageService {
 
-    private final Path root = Paths.get("uploads");
+    private final Path root;
     private final String API_URL = "https://api.imgbb.com/1/upload?key=f97f8ed9513b219d146c34700f66a5da&expiration=600";
     private final String API_KEY = "f97f8ed9513b219d146c34700f66a5da";
+    private final FileRepository fileRepository;
+
+    LocalFileStorageService(String storageDir, FileRepository fileRepository) {
+        super();
+        this.fileRepository = fileRepository;
+        if (StringUtils.isBlank(storageDir)) {
+            throw new IllegalArgumentException("storageDir can't be null or empty");
+        }
+        this.root = Paths.get(storageDir);
+    }
+
 
     @Override
     public void init() {
@@ -47,15 +55,20 @@ public class LocalFileStorageService implements FileStorageService {
     }
 
     @Override
-    public FileInfo save(InputStream fileInputStream, String fileName) {
+    @Transactional
+    public FileInfo save(InputStream fileInputStream, String originalFilename) {
         init();
-        String savedFileName = switch (StringUtils.trimToNull(fileName)) {
+        String savedFileName = switch (StringUtils.trimToNull(originalFilename)) {
             case null -> UUID.randomUUID().toString();
-            default -> fileName;
+            default -> originalFilename;
         };
         try {
-            Files.copy(fileInputStream, this.root.resolve(savedFileName));
-            return new FileInfo(savedFileName);
+            Identity identity = IdentityUtil.getIdentity();
+            Long userId = identity == null ? null : identity.getUserId();
+            FileInfo savedFileInfo = fileRepository.saveAndFlush(new FileInfo(null, savedFileName, userId));
+            Files.copy(fileInputStream, this.root.resolve(savedFileInfo.getId().toString()));
+
+            return savedFileInfo;
         } catch (Exception e) {
             if (e instanceof FileAlreadyExistsException) {
                 throw new RuntimeException("A file of that name already exists.");
@@ -219,13 +232,13 @@ public class LocalFileStorageService implements FileStorageService {
 
 
     @Override
-    public InputStream load(String fileName) {
-
+    public InputStream load(UUID fileId) {
+        FileInfo fileInfo = fileRepository.findById(fileId).orElse(null);
         try {
-            Path file = root.resolve(fileName);
+            Path file = root.resolve(fileId.toString());
 
             if (Files.exists(file) || Files.isReadable(file)) {
-                return Files.newInputStream(file);
+                return new BufferedInputStream(Files.newInputStream(file));
             } else {
                 throw new RuntimeException("Could not read the file!");
             }

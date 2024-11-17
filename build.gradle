@@ -44,6 +44,7 @@ dependencies {
 	implementation "org.mapstruct:mapstruct:${mapstructVersion}"
 	implementation "org.apache.commons:commons-lang3:${commonLang3Version}"
 	implementation "com.sanctionco.jmail:jmail:${jmailVersion}"
+	implementation 'org.overviewproject:mime-types:2.0.0'
 	implementation "com.googlecode.libphonenumber:libphonenumber:${libphonenumberVersion}"
 	implementation "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
 	implementation "io.jsonwebtoken:jjwt-impl:${jjwtVersion}"

@@ -4,6 +4,7 @@ import base.api.common.exception.AuthenticationException;
 import base.api.common.exception.AuthorizationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -34,6 +35,13 @@ public final class IdentityUtil {
         }
         return Identity.unauthenticated(userId, roles);
     }
+
+    public static Identity getIdentity() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return fromSpringAuthentication(authentication);
+    }
+
+
     public static void requireAuthenticated(Identity identity) {
         if (identity == null) {
             throw new IllegalArgumentException("Identity required");

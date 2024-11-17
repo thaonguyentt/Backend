@@ -5,6 +5,7 @@ import base.api.book.service.CopyService;
 import base.api.system.storage.FileStorageService;
 import jakarta.servlet.MultipartConfigElement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,7 +33,7 @@ public class CopyController {
     private final CopyService copyService;
     FileStorageService storageService;
 
-    public CopyController(CopyService copyService, FileStorageService storageService) {
+    public CopyController(CopyService copyService, @Qualifier("documentStorage") FileStorageService storageService) {
         this.copyService = copyService;
         this.storageService = storageService;
     }
