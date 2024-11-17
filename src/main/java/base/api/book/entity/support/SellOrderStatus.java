@@ -5,5 +5,6 @@ public enum SellOrderStatus {
     CANCELED,
     PAYMENT_SUCCESS,
     DELIVERED,
-    PAID_OWNER,
+    PAID_BUYER,
+    PAID_SELLER
 }

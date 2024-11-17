@@ -1,13 +1,13 @@
 package base.api.book.controller;
 
 
-import base.api.book.dto.SaleOrderCreateRequest;
-import base.api.book.dto.SaleOrderCreateRequestFromLease;
-import base.api.book.dto.SaleOrderDetailDto;
-import base.api.book.dto.SaleOrderDto;
+import base.api.book.dto.*;
 import base.api.book.entity.SaleOrder;
+import base.api.book.entity.support.LeaseOrderStatus;
+import base.api.book.entity.support.SellOrderStatus;
 import base.api.book.service.SaleOrderDetailService;
 import base.api.book.service.SaleOrderService;
+import base.api.system.security.SecurityUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -54,6 +54,17 @@ public class SaleOrderController {
         List<SaleOrderDto> saleOrderDto = saleOrderService.getSaleOrderByBuyerId(id);
         if (saleOrderDto == null) {return ResponseEntity.notFound().build();}
         return ResponseEntity.ok(saleOrderDto);
+    }
+
+    @GetMapping ("/status")
+    public ResponseEntity<SaleOrderDto> updateStatus (@RequestParam(name="id") Long id, @RequestParam(name="status") SellOrderStatus status) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        SecurityUtils.requireAuthentication(auth);
+//    try {status
+        return ResponseEntity.ok(saleOrderService.updateSaleOrderStatus(auth, id, status));
+//    } catch (Exception e) {
+//      return new ResponseEntity("Error update status", HttpStatus.LOCKED);
+//    }
     }
 
     @GetMapping("/saleOrderDT/{id}")
