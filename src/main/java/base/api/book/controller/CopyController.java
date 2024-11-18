@@ -2,7 +2,10 @@ package base.api.book.controller;
 
 import base.api.book.dto.CopyDto;
 import base.api.book.service.CopyService;
+import base.api.system.storage.FileStorageService;
 import jakarta.servlet.MultipartConfigElement;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,9 +31,11 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 @RequestMapping("api/copy")
 public class CopyController {
     private final CopyService copyService;
+    FileStorageService storageService;
 
-    public CopyController(CopyService copyService) {
+    public CopyController(CopyService copyService, @Qualifier("documentStorage") FileStorageService storageService) {
         this.copyService = copyService;
+        this.storageService = storageService;
     }
 
     @GetMapping("/{id}")
@@ -83,6 +88,8 @@ public class CopyController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please select a file to upload.");
         }
 
+
+
         return ResponseEntity.ok("ok");
 //
 //        try {
@@ -113,6 +120,12 @@ public class CopyController {
         // Trả về phản hồi từ API lưu file
         return response.getBody();
     }
+
+    @GetMapping(path="/imgLink/{id}")
+    public ResponseEntity<String[]> getImgLink (@PathVariable Long id) {
+        return ResponseEntity.ok(copyService.getImgReview(id));
+    }
+
 
 
 }

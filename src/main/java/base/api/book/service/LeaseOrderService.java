@@ -36,7 +36,6 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -79,7 +78,7 @@ public class LeaseOrderService {
 
   public LeaseOrderDto updateLeaseOrderStatus (Authentication auth, Long id, LeaseOrderStatus newStatus) {
     Identity identity = IdentityUtil.fromSpringAuthentication(auth);
-
+    if(leaseOrderRepository.findById(id).isEmpty()) return null;
     LeaseOrder leaseOrder = leaseOrderRepository.findById(id).get();
     LeaseOrder updatedLeaseOrder = switch (newStatus) {
         case ORDERED_PAYMENT_PENDING -> leaseOrder;
@@ -101,7 +100,7 @@ public class LeaseOrderService {
   private LeaseOrder changeOrderStatusCancel(Identity identity, LeaseOrder leaseOrder) {
     IdentityUtil.requireHasAnyRole(identity, "SYSTEM", "ADMIN", "USER");
 
-    if (LeaseOrderStatus.ORDERED_PAYMENT_PENDING.equals(leaseOrder.getStatus())) {
+    if (LeaseOrderStatus.ORDERED_PAYMENT_PENDING.equals(leaseOrder.getStatus()) && leaseOrder.getListingId().describeConstable().isPresent()) {
       Listing listing = listingRepository.findById(leaseOrder.getListingId()).get();
       listing.setListingStatus(ListingStatus.AVAILABLE);
       Copy copy = listing.getCopy();
@@ -408,14 +407,13 @@ public class LeaseOrderService {
             listingDto.depositFee(),
             listingDto.penaltyRate(),
             listingDto.description(),
-            copy,
+            listingDto.price(), copy,
             book,
             reviews,
             bookOwned,
             bookLeasing
     );
-    LeaseOrderDtoDetail result = new LeaseOrderDtoDetail(leaseOrderDto, listing, lessor, lessee,totalPenaltyFee);
-    return result;
+      return new LeaseOrderDtoDetail(leaseOrderDto, listing, lessor, lessee,totalPenaltyFee);
   }
 
   public void setStatusOnLateReturnOrder(Identity identity) {
@@ -423,9 +421,7 @@ public class LeaseOrderService {
     IdentityUtil.requireHasAnyRole(identity, "ADMIN", "SYSTEM");
 
     List<LeaseOrder> lateLeaseOrders = leaseOrderRepository.findLateReturnLeaseOrder();
-    lateLeaseOrders.forEach(order -> {
-      order.setStatus(LeaseOrderStatus.LATE_RETURN);
-    });
+    lateLeaseOrders.forEach(order -> order.setStatus(LeaseOrderStatus.LATE_RETURN));
     leaseOrderRepository.saveAll(lateLeaseOrders);
   }
 

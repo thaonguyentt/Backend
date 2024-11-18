@@ -1,14 +1,14 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/base?currentSchema=public
+    url: jdbc:postgresql://ec2-54-255-206-191.ap-southeast-1.compute.amazonaws.com:5432/postgres
     username: postgres
-    password: postgres
+    password: password
     driver-class-name: org.postgresql.Driver
 
   jpa:
     #open-in-view: false
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:

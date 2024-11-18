@@ -11,6 +11,7 @@ import base.api.book.entity.support.ListingStatus;
 import base.api.book.entity.support.SellOrderStatus;
 import base.api.book.exception.ListingNotAvailableException;
 import base.api.book.exception.NoSuchListingException;
+import base.api.book.exception.SaleOrderCanNotUpdateStatus;
 import base.api.book.mapper.SaleOrderDetailMapper;
 import base.api.book.mapper.SaleOrderMapper;
 import base.api.book.repository.*;
@@ -26,11 +27,15 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Set;
+import java.util.List;
+import java.util.stream.Collectors;
+import base.api.book.entity.support.SellOrderStatus;
 
 @Service
 @Transactional
@@ -48,21 +53,37 @@ public class SaleOrderService {
     private PaymentRepository paymentRepository;
 
     private final LeaseOrderRepository leaseOrderRepository;
-    private final LeaseOrderService leaseOrderService;
 
+    public List<SaleOrderDto> getAllSaleOrder() {
+        return saleOrderRepository.findAll().stream().map(saleOrderMapper::toDto).collect(Collectors.toList());
+    }
 
-    public SaleOrderDto getSaleOrderById (Long id) {
+    public SaleOrderDto getSaleOrderById(Long id) {
         return saleOrderRepository.findById(id).map(saleOrderMapper::toDto).orElse(null);
     }
 
-    public SaleOrderDto createSaleOrder (Authentication auth, SaleOrderCreateRequest requestDto) {
+    public List<SaleOrderDto> getSaleOrderBySellerId(Long id) {
+        return saleOrderRepository.findSaleOrderBySellerId(id)
+                .stream()
+                .map(saleOrderMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<SaleOrderDto> getSaleOrderByBuyerId(Long id) {
+        return saleOrderRepository.findSaleOrderByBuyerId(id)
+                .stream()
+                .map(saleOrderMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public SaleOrderDto createSaleOrder(Authentication auth, SaleOrderCreateRequest requestDto) {
         SecurityUtils.requireAuthentication(auth);
         if (auth == null || !auth.isAuthenticated()) {
             auth = SecurityContextHolder.getContext().getAuthentication();
         }
         Identity identity = IdentityUtil.fromSpringAuthentication(auth);
 
-        Long userId = Long.valueOf((String)auth.getPrincipal());
+        Long userId = Long.valueOf((String) auth.getPrincipal());
         Listing listing = listingRepository.findById(requestDto.listingId()).orElseThrow(() -> new NoSuchListingException("No such listing exists."));
         if (!ListingStatus.AVAILABLE.equals(listing.getListingStatus()) || listing.getAllow_purchase().equals(0L)) {
             throw new ListingNotAvailableException("Listing " + requestDto.listingId() + " is not available.");
@@ -78,6 +99,7 @@ public class SaleOrderService {
         Copy updatedCopy = copyRepository.save(copy);
         Book book = copy.getBook();
 
+
         SaleOrder newSaleOrder = new SaleOrder();
         newSaleOrder.setListingId(listing.getId());
         newSaleOrder.setStatus(SellOrderStatus.ORDERED_PAYMENT_PENDING);
@@ -89,6 +111,7 @@ public class SaleOrderService {
         newSaleOrder.setTotalChange(BigDecimal.ZERO);
         newSaleOrder.setTotalCompensate(BigDecimal.ZERO);
         newSaleOrder.setPaymentMethod(requestDto.paymentMethod());
+        newSaleOrder.setCreatedDate(LocalDate.now());
         newSaleOrder.setSaleOrderDetails(
                 Set.of(SaleOrderDetail.builder()
                         .title(copy.getBook().getTitle())
@@ -100,6 +123,21 @@ public class SaleOrderService {
                 )
         );
 
+        // Create Payment
+        PaymentDto newPayment = paymentService.create(
+                identity,
+                PaymentDto.builder()
+                        .amount(listing.getPrice())
+                        .currency("VND")
+                        .amount(listing.getPrice())
+                        .payerId(userId) // Pay từ userId cho hệ thống
+                        .payeeId(0L) // Pay cho hệ thống tạm cho payeeId = 0
+                        .description("Lease fee and deposit")
+                        .paymentMethod(PaymentMethod.COD)
+                        .build()
+        );
+        newSaleOrder.setSellPaymentId(newPayment.id());
+
         SaleOrder createdLO = saleOrderRepository.save(newSaleOrder);
 
         var newSaleOrderDto = saleOrderMapper.toDto(createdLO);
@@ -110,14 +148,14 @@ public class SaleOrderService {
 
     }
 
-    public SaleOrderDto createSaleOrderFromLease (Authentication auth, SaleOrderCreateRequestFromLease requestDto) {
+    public SaleOrderDto createSaleOrderFromLease(Authentication auth, SaleOrderCreateRequestFromLease requestDto) {
         SecurityUtils.requireAuthentication(auth);
         if (auth == null || !auth.isAuthenticated()) {
             auth = SecurityContextHolder.getContext().getAuthentication();
         }
         Identity identity = IdentityUtil.fromSpringAuthentication(auth);
 
-        Long userId = Long.valueOf((String)auth.getPrincipal());
+        Long userId = Long.valueOf((String) auth.getPrincipal());
         Listing listing = listingRepository.findById(requestDto.listingId()).orElseThrow(() -> new NoSuchListingException("No such listing exists."));
         if (!ListingStatus.LEASED.equals(listing.getListingStatus()) || listing.getAllow_purchase().equals(0L)) {
             throw new ListingNotAvailableException("Listing " + requestDto.listingId() + " is not available.");
@@ -128,9 +166,9 @@ public class SaleOrderService {
 
 
         if (status.equals(LeaseOrderStatus.CANCELED) || status.equals(LeaseOrderStatus.RETURNING)
-            || status.equals(LeaseOrderStatus.PAID_OWNER) || status.equals(LeaseOrderStatus.RETURNED)
-            || status.equals(LeaseOrderStatus.DEPOSIT_RETURNED) || status.equals(LeaseOrderStatus.LATE_RETURN)
-            || status.equals(LeaseOrderStatus.ORDERED_PAYMENT_PENDING) ) {
+                || status.equals(LeaseOrderStatus.PAID_OWNER) || status.equals(LeaseOrderStatus.RETURNED)
+                || status.equals(LeaseOrderStatus.DEPOSIT_RETURNED) || status.equals(LeaseOrderStatus.LATE_RETURN)
+                || status.equals(LeaseOrderStatus.ORDERED_PAYMENT_PENDING)) {
             throw new ListingNotAvailableException("Book" + requestDto.listingId() + " is not allow to purchase.");
         }
 
@@ -159,8 +197,6 @@ public class SaleOrderService {
         }
 
 
-
-
         Long SellerId = listing.getOwner().getId();
         listing.setListingStatus(ListingStatus.SOLD);
         Copy copy = listing.getCopy();
@@ -171,12 +207,28 @@ public class SaleOrderService {
         Copy updatedCopy = copyRepository.save(copy);
         Book book = copy.getBook();
 
+        PaymentDto newPayment = paymentService.create(
+                identity,
+                PaymentDto.builder()
+                        .amount(listing.getPrice())
+                        .currency("VND")
+                        .amount(listing.getPrice())
+                        .payerId(userId) // Pay từ userId cho hệ thống
+                        .payeeId(0L) // Pay cho hệ thống tạm cho payeeId = 0
+                        .description("Lease fee and deposit")
+                        .paymentMethod(PaymentMethod.COD)
+                        .build()
+        );
+
         SaleOrder newSaleOrder = new SaleOrder();
         newSaleOrder.setListingId(listing.getId());
-        if(totalCompensate.compareTo(BigDecimal.ZERO) > 0) {
+        if (totalCompensate.compareTo(BigDecimal.ZERO) > 0) {
             newSaleOrder.setStatus(SellOrderStatus.ORDERED_PAYMENT_PENDING);
+            newSaleOrder.setChangePaymentId(newPayment.id());
         } else {
-            newSaleOrder.setStatus(SellOrderStatus.PAYMENT_SUCCESS);
+            newSaleOrder.setStatus(SellOrderStatus.DELIVERED);
+            newSaleOrder.setReceiveDate(LocalDate.now());
+            newSaleOrder.setChangePaymentId(newPayment.id());
         }
 //        newSaleOrder.setStatus(SellOrderStatus.ORDERED_PAYMENT_PENDING);
         newSaleOrder.setSellerId(listing.getOwner().getId());
@@ -207,5 +259,67 @@ public class SaleOrderService {
         return newSaleOrderDto;
 
 
+    }
+
+    public SaleOrderDto updateSaleOrderStatus (Authentication auth, Long id, SellOrderStatus newStatus) {
+        Identity identity = IdentityUtil.fromSpringAuthentication(auth);
+        if( saleOrderRepository.findById(id).isEmpty()) return null;
+        SaleOrder saleOrder = saleOrderRepository.findById(id).get();
+        SaleOrder updateOrder = switch (newStatus)  {
+            case ORDERED_PAYMENT_PENDING -> saleOrder;
+            case CANCELED -> changeOrderStatusCancel(identity, saleOrder);
+            case PAYMENT_SUCCESS -> changeOderStatusPaymentsuccess(identity, saleOrder);
+            case DELIVERED -> changeOderStatusDelivered(identity, saleOrder);
+            case PAID_BUYER -> changeOderStatusPaidBuyer(identity, saleOrder);
+            case PAID_SELLER -> changeOderStatusPaidSeller(identity,saleOrder);
+        };
+
+        return saleOrderMapper.toDto(updateOrder);
+    }
+
+    public SaleOrder changeOrderStatusCancel (Identity identity, SaleOrder saleOrder) {
+        IdentityUtil.requireHasAnyRole(identity, "SYSTEM", "ADMIN", "USER");
+        if (saleOrder.getSellPaymentId().describeConstable().isEmpty()) {
+            throw new SaleOrderCanNotUpdateStatus("Đơn hàng không thể cancel");
+        } else {
+            Listing listing = listingRepository.findById(saleOrder.getListingId()).get();
+            listing.setListingStatus(ListingStatus.AVAILABLE);
+            Copy copy = listing.getCopy();
+            copy.setCopyStatus(CopyStatus.LISTED);
+            saleOrder.setStatus(SellOrderStatus.CANCELED);
+            return saleOrderRepository.save(saleOrder);
+        }
+    }
+
+    public SaleOrder changeOderStatusPaymentsuccess (Identity identity, SaleOrder saleOrder) {
+        IdentityUtil.requireHasAnyRole(identity, "SYSTEM", "ADMIN", "USER");
+        if (saleOrder.getSellPaymentId().describeConstable().isPresent()) {
+            saleOrder.setStatus(SellOrderStatus.PAYMENT_SUCCESS);
+            return saleOrderRepository.save(saleOrder);
+        } else {
+            throw new SaleOrderCanNotUpdateStatus("Nếu user đã trả phần tiền còn thiếu thì đơn hàng cần chuyển sang trạng thái DELIVERED");
+        }
+    }
+
+    public SaleOrder changeOderStatusDelivered (Identity identity, SaleOrder saleOrder) {
+        IdentityUtil.requireHasAnyRole(identity, "SYSTEM", "ADMIN", "USER");
+            saleOrder.setStatus(SellOrderStatus.DELIVERED);
+            saleOrder.setReceiveDate(LocalDate.now());
+            return saleOrderRepository.save(saleOrder);
+    }
+
+    public SaleOrder changeOderStatusPaidBuyer (Identity identity, SaleOrder saleOrder) {
+        IdentityUtil.requireHasAnyRole(identity, "SYSTEM", "ADMIN", "USER");
+       if (saleOrder.getChangePaymentId().describeConstable().isPresent()){
+            saleOrder.setStatus(SellOrderStatus.PAID_BUYER);
+            return saleOrderRepository.save(saleOrder);
+        } else {
+            throw new SaleOrderCanNotUpdateStatus("Nếu admin đã trả tiền cho người bán thì cần chuyển sang trạng thái PAID_SELLER");
+        }
+    }
+
+    public SaleOrder changeOderStatusPaidSeller (Identity identity, SaleOrder saleOrder) {
+        saleOrder.setStatus(SellOrderStatus.PAID_SELLER);
+        return saleOrderRepository.save(saleOrder);
     }
 }
