@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.util.List;
 
 public interface SaleOrderRepository extends JpaRepository<SaleOrder, Long>, JpaSpecificationExecutor<SaleOrder> {
-    List<SaleOrder> findSaleOrderBySellerId(Long Id);
-    List<SaleOrder> findSaleOrderByBuyerId(Long Id);
+    List<SaleOrder> findBySellerId(Long Id);
+    List<SaleOrder> findByBuyerId(Long Id);
 }

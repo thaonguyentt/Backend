@@ -63,14 +63,14 @@ public class SaleOrderService {
     }
 
     public List<SaleOrderDto> getSaleOrderBySellerId(Long id) {
-        return saleOrderRepository.findSaleOrderBySellerId(id)
+        return saleOrderRepository.findBySellerId(id)
                 .stream()
                 .map(saleOrderMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     public List<SaleOrderDto> getSaleOrderByBuyerId(Long id) {
-        return saleOrderRepository.findSaleOrderByBuyerId(id)
+        return saleOrderRepository.findByBuyerId(id)
                 .stream()
                 .map(saleOrderMapper::toDto)
                 .collect(Collectors.toList());

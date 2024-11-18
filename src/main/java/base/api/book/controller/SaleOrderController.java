@@ -45,14 +45,14 @@ public class SaleOrderController {
     @GetMapping ("/seller/{id}")
     public ResponseEntity<List<SaleOrderDto>> getSaleOrderBySellerId (@PathVariable Long id) {
         List<SaleOrderDto> saleOrderDto = saleOrderService.getSaleOrderBySellerId(id);
-        if (saleOrderDto == null) {return ResponseEntity.notFound().build();}
+//        if (saleOrderDto == null) {return ResponseEntity.notFound().build();}
         return ResponseEntity.ok(saleOrderDto);
     }
 
     @GetMapping ("/buyer/{id}")
     public ResponseEntity<List<SaleOrderDto>> getSaleOrderByBuyerId (@PathVariable Long id) {
         List<SaleOrderDto> saleOrderDto = saleOrderService.getSaleOrderByBuyerId(id);
-        if (saleOrderDto == null) {return ResponseEntity.notFound().build();}
+//        if (saleOrderDto == null) {return ResponseEntity.notFound().build();}
         return ResponseEntity.ok(saleOrderDto);
     }
 
