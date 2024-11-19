@@ -1,36 +1,37 @@
-# Stage 1: Build the application with Gradle
-FROM gradle:8.10.2-jdk21 AS build
+# # Stage 1: build
+# # Start with a Gradle image that includes JDK 21
+# FROM gradle:8.10.0-jdk21 AS build
 
-# Set the working directory
-WORKDIR /app
+# # Copy source code and build.gradle file to /app folder
+# WORKDIR /app
+# COPY build.gradle settings.gradle ./
+# COPY src ./src
 
-# Copy only the Gradle build files to cache dependencies first
-COPY build.gradle settings.gradle ./
+# # Build source code with Gradle
+# RUN gradle build -x test
 
-# Download dependencies
-RUN gradle build -x test --no-daemon || return 0
+# # Stage 2: create image
+# # Start with Amazon Correto JDK 21
+# FROM amazoncorretto:21.0.4
 
-# Copy the source code
-COPY src ./src
+# # Set working folder to App and copy compiled file from above step
+# WORKDIR /app
+# COPY --from=build /app/build/libs/*.jar app.jar
 
-# Build the application
-RUN gradle build -x test --no-daemon
+# # Command to run the application
+# ENTRYPOINT ["java", "-jar", "app.jar"]
 
-# Stage 2: Create the final image
-# Use Amazon Corretto JDK 21 as the base image for running the app
-FROM amazoncorretto:21.0.5
+# Use an official OpenJDK runtime as a parent image
+FROM amazoncorretto:21.0.4
 
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy the built JAR file from the build stage
-COPY --from=build /app/build/libs/*.jar app.jar
+# Copy the jar file into the container at /app
+COPY build/libs/*.jar /app.jar
 
-# Expose the default port (adjust if your app uses a different port)
+# Expose the port that the Spring Boot app will run on
 EXPOSE 8080
 
-# Set environment variable for Spring Boot profile
-ENV SPRING_PROFILES_ACTIVE=prod
-
-# Command to run the application with the specified profile
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Command to run the jar file
+ENTRYPOINT ["java", "-jar", "/app.jar"]
