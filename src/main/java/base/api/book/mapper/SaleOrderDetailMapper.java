@@ -11,7 +11,8 @@ public interface SaleOrderDetailMapper {
 //    @Mapping(source = "listingId", target = "listing.id")
     SaleOrderDetail toEntity(SaleOrderDetailDto saleOrderDetailDto);
 
-//    @Mapping(source = "listing.id", target = "listingId")
+    @Mapping(source = "listing.id", target = "listingId")
+    @Mapping(source = "copy.id", target = "copyId")
     SaleOrderDetailDto toDto(SaleOrderDetail saleOrderDetail);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

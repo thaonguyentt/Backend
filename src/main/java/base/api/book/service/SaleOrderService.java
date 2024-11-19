@@ -16,7 +16,9 @@ import base.api.book.mapper.SaleOrderDetailMapper;
 import base.api.book.mapper.SaleOrderMapper;
 import base.api.book.repository.*;
 import base.api.payment.dto.PaymentDto;
+import base.api.payment.entity.Payment;
 import base.api.payment.entity.PaymentMethod;
+import base.api.payment.entity.PaymentStatus;
 import base.api.payment.repository.PaymentRepository;
 import base.api.payment.service.PaymentService;
 import base.api.system.security.Identity;
@@ -75,6 +77,29 @@ public class SaleOrderService {
                 .map(saleOrderMapper::toDto)
                 .collect(Collectors.toList());
     }
+
+    public List<SaleOrderDto> getSaleOrderOfSellerByStatus(Long id, SellOrderStatus status) {
+        return saleOrderRepository.findBySellerIdAndStatus(id, status)
+                .stream()
+                .map(saleOrderMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<SaleOrderDto> getSaleOrderByBuyerAndStatus(Long id, SellOrderStatus status) {
+        return saleOrderRepository.findByBuyerIdAndStatus(id, status)
+                .stream()
+                .map(saleOrderMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<SaleOrderDto> getSaleOrderBySellerAndStatus(Long id, SellOrderStatus status) {
+        return saleOrderRepository.findBySellerIdAndStatus(id, status)
+                .stream()
+                .map(saleOrderMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+
 
     public SaleOrderDto createSaleOrder(Authentication auth, SaleOrderCreateRequest requestDto) {
         SecurityUtils.requireAuthentication(auth);
@@ -175,12 +200,6 @@ public class SaleOrderService {
         leaseOrder.setStatus(LeaseOrderStatus.CANCELED);
         leaseOrderRepository.save(leaseOrder);
 
-//        leaseOrderService.updateLeaseOrderStatus(auth, requestDto.LeaseOrderId(),LeaseOrderStatus.RETURNING);
-//        leaseOrderService.updateLeaseOrderStatus(auth, requestDto.LeaseOrderId(),LeaseOrderStatus.RETURNED);
-//        leaseOrderService.updateLeaseOrderStatus(auth, requestDto.LeaseOrderId(),LeaseOrderStatus.PAID_OWNER);
-//        leaseOrderService.updateLeaseOrderStatus(auth, requestDto.LeaseOrderId(),LeaseOrderStatus.DEPOSIT_RETURNED);
-
-
         // tính toán chi phí
         BigDecimal RealTotalLeaseFee = leaseOrder.getTotalPenaltyRate()
                 .multiply(BigDecimal.valueOf(Duration.between(
@@ -212,7 +231,7 @@ public class SaleOrderService {
                 PaymentDto.builder()
                         .amount(listing.getPrice())
                         .currency("VND")
-                        .amount(listing.getPrice())
+                        .paymentStatus(PaymentStatus.PAYMENT_PENDING)
                         .payerId(userId) // Pay từ userId cho hệ thống
                         .payeeId(0L) // Pay cho hệ thống tạm cho payeeId = 0
                         .description("Lease fee and deposit")
@@ -229,6 +248,10 @@ public class SaleOrderService {
             newSaleOrder.setStatus(SellOrderStatus.DELIVERED);
             newSaleOrder.setReceiveDate(LocalDate.now());
             newSaleOrder.setChangePaymentId(newPayment.id());
+            Long paymentId = newPayment.id();
+            Payment payment = paymentRepository.findById(paymentId).get();
+            payment.setPaymentStatus(PaymentStatus.SUCCEEDED);
+            paymentRepository.save(payment);
         }
 //        newSaleOrder.setStatus(SellOrderStatus.ORDERED_PAYMENT_PENDING);
         newSaleOrder.setSellerId(listing.getOwner().getId());
@@ -295,6 +318,10 @@ public class SaleOrderService {
         IdentityUtil.requireHasAnyRole(identity, "SYSTEM", "ADMIN", "USER");
         if (saleOrder.getSellPaymentId().describeConstable().isPresent()) {
             saleOrder.setStatus(SellOrderStatus.PAYMENT_SUCCESS);
+            Long paymentId = saleOrder.getSellPaymentId();
+            Payment payment = paymentRepository.findById(paymentId).get();
+            payment.setPaymentStatus(PaymentStatus.SUCCEEDED);
+            paymentRepository.save(payment);
             return saleOrderRepository.save(saleOrder);
         } else {
             throw new SaleOrderCanNotUpdateStatus("Nếu user đã trả phần tiền còn thiếu thì đơn hàng cần chuyển sang trạng thái DELIVERED");
@@ -305,6 +332,17 @@ public class SaleOrderService {
         IdentityUtil.requireHasAnyRole(identity, "SYSTEM", "ADMIN", "USER");
             saleOrder.setStatus(SellOrderStatus.DELIVERED);
             saleOrder.setReceiveDate(LocalDate.now());
+            if (saleOrder.getSellPaymentId().describeConstable().isPresent()) {
+                Long paymentId = saleOrder.getSellPaymentId();
+                Payment payment = paymentRepository.findById(paymentId).get();
+                payment.setPaymentStatus(PaymentStatus.SUCCEEDED);
+                paymentRepository.save(payment);
+            } else {
+                Long paymentId = saleOrder.getCompensatePaymentId();
+                Payment payment = paymentRepository.findById(paymentId).get();
+                payment.setPaymentStatus(PaymentStatus.SUCCEEDED);
+                paymentRepository.save(payment);
+            }
             return saleOrderRepository.save(saleOrder);
     }
 
@@ -312,6 +350,9 @@ public class SaleOrderService {
         IdentityUtil.requireHasAnyRole(identity, "SYSTEM", "ADMIN", "USER");
        if (saleOrder.getChangePaymentId().describeConstable().isPresent()){
             saleOrder.setStatus(SellOrderStatus.PAID_BUYER);
+            Payment payment = paymentRepository.findById(saleOrder.getId()).get();
+            payment.setPaymentStatus(PaymentStatus.SUCCEEDED);
+            paymentRepository.save(payment);
             return saleOrderRepository.save(saleOrder);
         } else {
             throw new SaleOrderCanNotUpdateStatus("Nếu admin đã trả tiền cho người bán thì cần chuyển sang trạng thái PAID_SELLER");
@@ -320,6 +361,9 @@ public class SaleOrderService {
 
     public SaleOrder changeOderStatusPaidSeller (Identity identity, SaleOrder saleOrder) {
         saleOrder.setStatus(SellOrderStatus.PAID_SELLER);
+        saleOrder.setStatus(SellOrderStatus.PAID_BUYER);
+        Payment payment = paymentRepository.findById(saleOrder.getId()).get();
+        payment.setPaymentStatus(PaymentStatus.SUCCEEDED);
         return saleOrderRepository.save(saleOrder);
     }
 }
