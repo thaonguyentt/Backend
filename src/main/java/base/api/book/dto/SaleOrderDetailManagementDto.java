@@ -12,6 +12,8 @@ public record SaleOrderDetailManagementDto(
     ListingDto listing,
     UserDto Seller,
     UserDto Buyer,
-    BigDecimal finalPrice
+    SaleOrderVoucherShopDto voucherShop,
+    SaleOrderVoucherSessionDto voucherSession,
+    BigDecimal totalPrice
 ) implements Serializable
         {}

@@ -1,9 +1,6 @@
 package base.api.book.service;
 
-import base.api.book.dto.SaleOrderCreateRequest;
-import base.api.book.dto.SaleOrderCreateRequestFromLease;
-import base.api.book.dto.SaleOrderDetailDto;
-import base.api.book.dto.SaleOrderDto;
+import base.api.book.dto.*;
 import base.api.book.entity.*;
 import base.api.book.entity.support.CopyStatus;
 import base.api.book.entity.support.LeaseOrderStatus;
@@ -12,6 +9,7 @@ import base.api.book.entity.support.SellOrderStatus;
 import base.api.book.exception.ListingNotAvailableException;
 import base.api.book.exception.NoSuchListingException;
 import base.api.book.exception.SaleOrderCanNotUpdateStatus;
+import base.api.book.exception.VoucherCanNotApply;
 import base.api.book.mapper.SaleOrderDetailMapper;
 import base.api.book.mapper.SaleOrderMapper;
 import base.api.book.repository.*;
@@ -26,6 +24,7 @@ import base.api.system.security.IdentityUtil;
 import base.api.system.security.SecurityUtils;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -55,6 +54,16 @@ public class SaleOrderService {
     private PaymentRepository paymentRepository;
 
     private final LeaseOrderRepository leaseOrderRepository;
+    @Autowired
+    VoucherShopService voucherShopService;
+    @Autowired
+    VoucherSessionService voucherSessionService;
+
+    @Autowired
+    SaleOrderVoucherShopService saleOrdervoucherShopService;
+    @Autowired
+    SaleOrderVoucherSessionService saleOrderVoucherSessionService;
+
 
     public List<SaleOrderDto> getAllSaleOrder() {
         return saleOrderRepository.findAll().stream().map(saleOrderMapper::toDto).collect(Collectors.toList());
@@ -125,6 +134,11 @@ public class SaleOrderService {
         Book book = copy.getBook();
 
 
+
+
+
+
+
         SaleOrder newSaleOrder = new SaleOrder();
         newSaleOrder.setListingId(listing.getId());
         newSaleOrder.setStatus(SellOrderStatus.ORDERED_PAYMENT_PENDING);
@@ -168,9 +182,76 @@ public class SaleOrderService {
         var newSaleOrderDto = saleOrderMapper.toDto(createdLO);
         // Add more info
 
+        // Kiểm tra tính hợp lệ của voucher shop và insert vào bảng SaleOrderVoucherShop
+        if (requestDto.VoucherShopId() != null) {
+            BigDecimal amount;
+            VoucherShopDto voucherShopDto = voucherShopService.getVoucherById(requestDto.VoucherShopId());
+            if (SaleOrderService.this.checkVoucherShopValid(voucherShopDto, listing.getPrice())) {
+                if (voucherShopDto.discountPercentage() != null) {
+                    amount = listing.getPrice().multiply(voucherShopDto.discountPercentage()).divide(BigDecimal.valueOf(100));
+                } else {
+                    amount = voucherShopDto.discountAmount();
+                }
+                SaleOrderVoucherShopDto newSaleOrderVoucherShopDto = saleOrdervoucherShopService.create(
+                        identity,
+                        SaleOrderVoucherShopDto.builder()
+                                .saleOrderId(createdLO.getId())
+                                .voucherId(requestDto.VoucherShopId())
+                                .discountAmount(amount)
+                                .build()
+                );
+            }
+        }
+
+        // Kiểm tra tính hợp lệ của voucher session và insert vào bảng SaleOrderVoucherSession
+        if (requestDto.VoucherSessionId() != null) {
+            BigDecimal amount;
+            VoucherSessionDto voucherSessionDto = voucherSessionService.getVoucherById(requestDto.VoucherSessionId());
+            if (SaleOrderService.this.checkVoucherSessionValid(voucherSessionDto, listing.getPrice())) {
+                if (voucherSessionDto.discountPercentage() != null) {
+                    amount = listing.getPrice().multiply(voucherSessionDto.discountPercentage()).divide(BigDecimal.valueOf(100));
+                } else {
+                    amount = voucherSessionDto.discountAmount();
+
+                }
+                SaleOrderVoucherSessionDto newSaleOrderVoucherSessionDto = saleOrderVoucherSessionService.create(
+                        identity,
+                        SaleOrderVoucherSessionDto.builder()
+                                .saleOrderId(newSaleOrderDto.id())
+                                .voucherId(requestDto.VoucherSessionId())
+                                .discountAmount(amount)
+                                .build()
+                );
+            }
+        }
+
         return newSaleOrderDto;
 
 
+    }
+
+    public Boolean checkVoucherShopValid (VoucherShopDto voucherShopDto, BigDecimal price) {
+        if (voucherShopDto.endDate().isBefore(LocalDate.now())) {
+            throw new VoucherCanNotApply("voucher Shop đã quá hạn");
+        } else if (voucherShopDto.startDate().isAfter(LocalDate.now())) {
+            throw new VoucherCanNotApply("voucher Shop chưa được áp dụng");
+        } else if (price.compareTo(voucherShopDto.minValue()) < 0) {
+            throw new VoucherCanNotApply("Chưa đạt giá trị đơn tối thiểu của voucher shop");
+        } else {
+            return true;
+        }
+    }
+
+    public Boolean checkVoucherSessionValid (VoucherSessionDto voucherSessionDto, BigDecimal price) {
+        if (voucherSessionDto.endDate().isBefore(LocalDate.now())) {
+            throw new VoucherCanNotApply("voucher Session đã quá hạn");
+        } else if (voucherSessionDto.startDate().isAfter(LocalDate.now())) {
+            throw new VoucherCanNotApply("voucher Session chưa được áp dụng");
+        } else if (price.compareTo(voucherSessionDto.minValue()) < 0) {
+            throw new VoucherCanNotApply("Chưa đạt giá trị đơn tối thiểu của voucher session");
+        } else {
+            return true;
+        }
     }
 
     public SaleOrderDto createSaleOrderFromLease(Authentication auth, SaleOrderCreateRequestFromLease requestDto) {
