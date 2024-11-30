@@ -7,5 +7,7 @@ public record SaleOrderCreateRequestFromLease(
         Long LeaseOrderId,
         Long listingId,
         String buyerAddress,
-        PaymentMethod paymentMethod
+        PaymentMethod paymentMethod,
+        Long VoucherShopId,
+        Long VoucherSessionId
 ) {}

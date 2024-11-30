@@ -32,8 +32,7 @@ public record SaleOrderDto (
         Long changePaymentId,
         Long compensatePaymentId,
         LocalDate createdDate
-
-//        Set<LeaseOrderDetailDto> leaseOrderDetails
+//        Set<SaleOrderDetailDto> saleOrderDetails
 
 ) implements Serializable {}
 

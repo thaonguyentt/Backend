@@ -33,16 +33,15 @@ values
     (3,13,'PAYMENT_SUCCESS',1,2,'123 Nguyễn Trọng Tuyển, phường 12, quận Bình Thạnh','Đường Kim Giang, Phường Kim Giang, Quận Thanh Xuân, Hà Nội',null,175700.0,0.0,0.0,1,22,null,null,'2024/11/15'),
     (4,14,'DELIVERED',1,2,'123 Nguyễn Trọng Tuyển, phường 12, quận Bình Thạnh','Đường Kim Giang, Phường Kim Giang, Quận Thanh Xuân, Hà Nội',null,161630.0,0.0,0.0,1,23,null,null,'2024/11/12'),
  --  đơn bán xuất phát từ đơn thuê
-    (5,4,'ORDERED_PAYMENT_PENDING',2,3,'Đường Kim Giang, Phường Kim Giang, Quận Thanh Xuân, Hà Nội','phố minh khai, Phường Minh Khai, Quận Hai Bà Trưng, Hà Nội',null,268590.0,16.590,0.0,1,null,null,24,'2024/11/12'),
-    (6,3,'DELIVERED',2,1,'Đường Kim Giang, Phường Kim Giang, Quận Thanh Xuân, Hà Nội','phố minh khai, Phường Minh Khai, Quận Hai Bà Trưng, Hà Nội',null,268590.0,0.0,6000.0,1,null,25,null,'2024/11/12'),
-    (7,3,'PAID_OWNER',2,1,'Đường Kim Giang, Phường Kim Giang, Quận Thanh Xuân, Hà Nội','phố minh khai, Phường Minh Khai, Quận Hai Bà Trưng, Hà Nội',null,268590.0,0.0,6000.0,1,null,26,null,'2024/11/12');
+    (5,4,'ORDERED_PAYMENT_PENDING',2,3,'Đường Kim Giang, Phường Kim Giang, Quận Thanh Xuân, Hà Nội','phố minh khai, Phường Minh Khai, Quận Hai Bà Trưng, Hà Nội',null,268590.0,36.590,0.0,1,null,null,24,'2024/11/12');
+--     (6,3,'DELIVERED',2,1,'Đường Kim Giang, Phường Kim Giang, Quận Thanh Xuân, Hà Nội','phố minh khai, Phường Minh Khai, Quận Hai Bà Trưng, Hà Nội',null,268590.0,0.0,6000.0,1,null,25,null,'2024/11/12');
+--     (7,3,'PAID_OWNER',2,1,'Đường Kim Giang, Phường Kim Giang, Quận Thanh Xuân, Hà Nội','phố minh khai, Phường Minh Khai, Quận Hai Bà Trưng, Hà Nội',null,268590.0,0.0,6000.0,1,null,26,null,'2024/11/12');
 -- đơn hàng số 7 dữ liệu sai chỉ để test
 
 
 
 
 alter sequence sales_order_id_seq restart with 11;
-
 
 
 drop table if exists sales_order_detail;
@@ -56,15 +55,17 @@ create table sales_order_detail
     price          decimal(10, 2)
 );
 
+
 insert into sales_order_detail (id,title,sale_order_id,listing_id,copy_id,price)
 values
     (1,'To Die for',1,37,13,235480.0),
     (2,'Vanishing Point',2,13,14,175700.0),
     (3,'Vanishing Point',3,13,14,175700.0),
     (4,'Hide and Seek',4,14,15,175700.0),
-    (5,'Foundling',5, 4, 4, 2600.00),
-    (6,'Foundling',6, 4, 4, 2600.00),
-    (7,'Foundling',7, 4, 4, 2600.00);
+    (5,'Foundling',5, 4, 4, 2600.00);
+--     (6,'Foundling',6, 4, 4, 2600.00);
+--     (7,'Foundling',7, 4, 4, 2600.00);
 
 
 alter sequence sales_order_detail_id_seq restart with 11;
+
