@@ -21,7 +21,7 @@ public record CopyDto(
         BigDecimal allow_rent,
         BigDecimal allow_purchase,
         BigDecimal damagePercent,
-        String[] img_review,
+//        String[] img_review,
         LocalDate createdDate,
         LocalDate updatedDate,
         LocalDate deletedDate,

@@ -17,7 +17,7 @@ create table sales_order
     payment_method          integer,            -- 1. COD, 2. VNPAY, 3. BANK_TRANSFER
     sell_payment_id         integer default null, -- id payment người mua trả tiền cho cuốn sách, với đơn hàng xuất phát từ sách đang không có đơn thuê.
     change_payment_id       integer default null, -- id payment tiền thối lại cho người mua chuyển từ đơn hàng thuê qua đơn mua
-    compensate_payment_id   integer default null,            -- id payment tiền trả thêm khi phí cọc không đủ để mua cuốn sách mà user đang thuê
+    compensate_payment_id   integer default null, -- id payment tiền trả thêm khi phí cọc không đủ để mua cuốn sách mà user đang thuê
     created_date            date default now(),
     updated_date            date,
     deleted_date            date
