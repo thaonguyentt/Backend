@@ -10,5 +10,7 @@ public record SaleOrderCreateRequest(
         SellOrderStatus status,
         Long listingId,
         String buyerAddress,
-        PaymentMethod paymentMethod
+        PaymentMethod paymentMethod,
+        Long VoucherShopId,
+        Long VoucherSessionId
 ) {}

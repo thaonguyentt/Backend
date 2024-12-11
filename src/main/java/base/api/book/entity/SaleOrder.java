@@ -80,6 +80,7 @@ public class SaleOrder {
 
     @Column(name = "deleted_date")
     private LocalDate deletedDate;
+
     @OneToMany(mappedBy = "saleOrder", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<SaleOrderDetail> saleOrderDetails = new LinkedHashSet<>();
 

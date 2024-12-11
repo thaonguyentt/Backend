@@ -49,9 +49,9 @@ public class Copy {
   @Column(name = "status")
   private CopyStatus copyStatus;
 
-  @Column(name = "img_review")
-  @Type(StringArrayType.class)
-  private String[] imgReview;
+//  @Column(name = "img_review")
+//  @Type(StringArrayType.class)
+//  private String[] imgReview;
 
   @Column(name = "allow_rent")
   private Long allow_rent;

@@ -121,10 +121,10 @@ public class CopyController {
         return response.getBody();
     }
 
-    @GetMapping(path="/imgLink/{id}")
-    public ResponseEntity<String[]> getImgLink (@PathVariable Long id) {
-        return ResponseEntity.ok(copyService.getImgReview(id));
-    }
+//    @GetMapping(path="/imgLink/{id}")
+//    public ResponseEntity<String[]> getImgLink (@PathVariable Long id) {
+//        return ResponseEntity.ok(copyService.getImgReview(id));
+//    }
 
 
 
