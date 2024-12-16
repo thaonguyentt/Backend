@@ -63,26 +63,35 @@ public class SaleOrderController {
     }
 
     @GetMapping ("/seller/{id}")
-    public ResponseEntity<List<SaleOrderDto>> getSaleOrderBySellerId (@PathVariable Long id) {
+    public ResponseEntity<List<SaleOrderDetailManagementDto>> getSaleOrderBySellerId (@PathVariable Long id) {
         List<SaleOrderDto> saleOrderDto = saleOrderService.getSaleOrderBySellerId(id);
         if (saleOrderDto == null) {return ResponseEntity.notFound().build();}
-//        return ResponseEntity.ok(saleOrderDto.stream().map(dto -> {
-//            UserDto buyer = userService.getUserById(dto.buyerId());
-//            UserDto seller = userService.getUserById(dto.sellerId());
-//            ListingDto listing = listingService.getListingById(dto.listingId());
-//            SaleOrderVoucherShopDto voucherShop = saleOrderVoucherShopService.getSaleOrderVoucherShop(dto.id());
-//            SaleOrderVoucherSessionDto voucherSession = saleOrderVoucherSessionService.getSaleOrderVoucherSessionBySaleOrder(dto.id());
-//            BigDecimal finalPrice = dto.totalPrice();
-//            return new SaleOrderDetailManagementDto (dto,listing,seller, buyer,voucherShop, voucherSession,finalPrice);
-//        }).collect(Collectors.toList()));
-        return ResponseEntity.ok(saleOrderDto);
+        return ResponseEntity.ok(saleOrderDto.stream().map(dto -> {
+            UserDto buyer = userService.getUserById(dto.buyerId());
+            UserDto seller = userService.getUserById(dto.sellerId());
+            ListingDto listing = listingService.getListingById(dto.listingId());
+            SaleOrderVoucherShopDto voucherShop = saleOrderVoucherShopService.getSaleOrderVoucherShop(dto.id());
+            SaleOrderVoucherSessionDto voucherSession = saleOrderVoucherSessionService.getSaleOrderVoucherSessionBySaleOrder(dto.id());
+            BigDecimal finalPrice = dto.totalPrice();
+            return new SaleOrderDetailManagementDto (dto,listing,seller, buyer,voucherShop, voucherSession,finalPrice);
+        }).collect(Collectors.toList()));
+//        return ResponseEntity.ok(saleOrderDto);
     }
 
     @GetMapping ("/buyer/{id}")
-    public ResponseEntity<List<SaleOrderDto>> getSaleOrderByBuyerId (@PathVariable Long id) {
+    public ResponseEntity<List<SaleOrderDetailManagementDto>> getSaleOrderByBuyerId (@PathVariable Long id) {
         List<SaleOrderDto> saleOrderDto = saleOrderService.getSaleOrderByBuyerId(id);
         if (saleOrderDto == null) {return ResponseEntity.notFound().build();}
-        return ResponseEntity.ok(saleOrderDto);
+        return ResponseEntity.ok(saleOrderDto.stream().map(dto -> {
+            UserDto buyer = userService.getUserById(dto.buyerId());
+            UserDto seller = userService.getUserById(dto.sellerId());
+            ListingDto listing = listingService.getListingById(dto.listingId());
+            SaleOrderVoucherShopDto voucherShop = saleOrderVoucherShopService.getSaleOrderVoucherShop(dto.id());
+            SaleOrderVoucherSessionDto voucherSession = saleOrderVoucherSessionService.getSaleOrderVoucherSessionBySaleOrder(dto.id());
+            BigDecimal finalPrice = dto.totalPrice();
+            return new SaleOrderDetailManagementDto (dto,listing,seller, buyer,voucherShop, voucherSession,finalPrice);
+        }).collect(Collectors.toList()));
+//        return ResponseEntity.ok(saleOrderDto);
     }
 
     @GetMapping("/search/BuyerAndStatus")

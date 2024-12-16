@@ -270,97 +270,158 @@ public class SaleOrderService {
         LeaseOrder leaseOrder = leaseOrderRepository.findById(requestDto.LeaseOrderId()).get();
         LeaseOrderStatus status = leaseOrder.getStatus();
 
-
+        // kiểm tra status của lease order, chỉ cho phép lease order có status là DELIVERED với ORDERED_PAYMENT_PENDING
+        // chuyển từ đơn thuê sang đơn mua
         if (status.equals(LeaseOrderStatus.CANCELED) || status.equals(LeaseOrderStatus.RETURNING)
                 || status.equals(LeaseOrderStatus.PAID_OWNER) || status.equals(LeaseOrderStatus.RETURNED)
                 || status.equals(LeaseOrderStatus.DEPOSIT_RETURNED) || status.equals(LeaseOrderStatus.LATE_RETURN)
-                || status.equals(LeaseOrderStatus.ORDERED_PAYMENT_PENDING)) {
+//                || status.equals(LeaseOrderStatus.ORDERED_PAYMENT_PENDING)
+        ) {
             throw new ListingNotAvailableException("Book" + requestDto.listingId() + " is not allow to purchase.");
-        }
+        } else if (status.equals(LeaseOrderStatus.ORDERED_PAYMENT_PENDING)) {
 
-        leaseOrder.setStatus(LeaseOrderStatus.CANCELED);
-        leaseOrderRepository.save(leaseOrder);
+            leaseOrder.setStatus(LeaseOrderStatus.CANCELED);
+            leaseOrderRepository.save(leaseOrder);
 
-        // tính toán chi phí
-        BigDecimal RealTotalLeaseFee = leaseOrder.getTotalPenaltyRate()
-                .multiply(BigDecimal.valueOf(Duration.between(
-                                leaseOrder.getFromDate().atStartOfDay(),
-                                LocalDate.now().atStartOfDay())
-                        .toDays()));
-        BigDecimal totalChange = leaseOrder.getTotalDeposit().subtract(RealTotalLeaseFee)
-                .subtract(listing.getPrice());
-        BigDecimal totalCompensate = BigDecimal.ZERO;
-
-        if (totalChange.compareTo(BigDecimal.ZERO) < 0) {
-            totalChange = BigDecimal.ZERO;
-            totalCompensate = BigDecimal.ZERO.subtract(totalChange);
-        }
+            Long SellerId = listing.getOwner().getId();
+            listing.setListingStatus(ListingStatus.SOLD);
+            Copy copy = listing.getCopy();
+            copy.setCopyStatus(CopyStatus.SOLD);
 
 
-        Long SellerId = listing.getOwner().getId();
-        listing.setListingStatus(ListingStatus.SOLD);
-        Copy copy = listing.getCopy();
-        copy.setCopyStatus(CopyStatus.SOLD);
+            Listing updatedListing = listingRepository.save(listing);
+            Copy updatedCopy = copyRepository.save(copy);
+            Book book = copy.getBook();
 
 
-        Listing updatedListing = listingRepository.save(listing);
-        Copy updatedCopy = copyRepository.save(copy);
-        Book book = copy.getBook();
-
-        PaymentDto newPayment = paymentService.create(
-                identity,
-                PaymentDto.builder()
-                        .amount(listing.getPrice())
-                        .currency("VND")
-                        .paymentStatus(PaymentStatus.PAYMENT_PENDING)
-                        .payerId(userId) // Pay từ userId cho hệ thống
-                        .payeeId(0L) // Pay cho hệ thống tạm cho payeeId = 0
-                        .description("Lease fee and deposit")
-                        .paymentMethod(PaymentMethod.COD)
-                        .build()
-        );
-
-        SaleOrder newSaleOrder = new SaleOrder();
-        newSaleOrder.setListingId(listing.getId());
-        if (totalCompensate.compareTo(BigDecimal.ZERO) > 0) {
+            SaleOrder newSaleOrder = new SaleOrder();
+            newSaleOrder.setListingId(listing.getId());
             newSaleOrder.setStatus(SellOrderStatus.ORDERED_PAYMENT_PENDING);
-            newSaleOrder.setChangePaymentId(newPayment.id());
+            newSaleOrder.setSellerId(listing.getOwner().getId());
+            newSaleOrder.setBuyerId(userId);
+            newSaleOrder.setSellerAddress(listing.getOwner().getAddress());
+            newSaleOrder.setBuyerAddress(requestDto.buyerAddress());
+            newSaleOrder.setTotalPrice(listing.getPrice());
+            newSaleOrder.setTotalChange(BigDecimal.ZERO);
+            newSaleOrder.setTotalCompensate(BigDecimal.ZERO);
+            newSaleOrder.setPaymentMethod(requestDto.paymentMethod());
+            newSaleOrder.setCreatedDate(LocalDate.now());
+            newSaleOrder.setSaleOrderDetails(
+                    Set.of(SaleOrderDetail.builder()
+                            .title(copy.getBook().getTitle())
+                            .saleOrder(newSaleOrder)
+                            .listing(listing)
+                            .copy(listing.getCopy())
+                            .price(listing.getPrice()
+                            ).build()
+                    )
+            );
+
+            // Create Payment
+            PaymentDto newPayment = paymentService.create(
+                    identity,
+                    PaymentDto.builder()
+                            .amount(listing.getPrice())
+                            .currency("VND")
+                            .amount(listing.getPrice())
+                            .payerId(userId) // Pay từ userId cho hệ thống
+                            .payeeId(0L) // Pay cho hệ thống tạm cho payeeId = 0
+                            .description("Lease fee and deposit")
+                            .paymentMethod(PaymentMethod.COD)
+                            .build()
+            );
+            newSaleOrder.setSellPaymentId(newPayment.id());
+
+            SaleOrder createdLO = saleOrderRepository.save(newSaleOrder);
+
+            var newSaleOrderDto = saleOrderMapper.toDto(createdLO);
+            return newSaleOrderDto;
         } else {
-            newSaleOrder.setStatus(SellOrderStatus.DELIVERED);
-            newSaleOrder.setReceiveDate(LocalDate.now());
-            newSaleOrder.setChangePaymentId(newPayment.id());
-            Long paymentId = newPayment.id();
-            Payment payment = paymentRepository.findById(paymentId).get();
-            payment.setPaymentStatus(PaymentStatus.SUCCEEDED);
-            paymentRepository.save(payment);
-        }
+
+            leaseOrder.setStatus(LeaseOrderStatus.CANCELED);
+            leaseOrderRepository.save(leaseOrder);
+
+            // tính toán chi phí
+            BigDecimal RealTotalLeaseFee = leaseOrder.getTotalPenaltyRate()
+                    .multiply(BigDecimal.valueOf(Duration.between(
+                                    leaseOrder.getFromDate().atStartOfDay(),
+                                    LocalDate.now().atStartOfDay())
+                            .toDays()));
+            BigDecimal totalChange = leaseOrder.getTotalDeposit().subtract(RealTotalLeaseFee)
+                    .subtract(listing.getPrice());
+            BigDecimal totalCompensate = BigDecimal.ZERO;
+
+            if (totalChange.compareTo(BigDecimal.ZERO) < 0) {
+                totalChange = BigDecimal.ZERO;
+                totalCompensate = BigDecimal.ZERO.subtract(totalChange);
+            }
+
+            Long SellerId = listing.getOwner().getId();
+            listing.setListingStatus(ListingStatus.SOLD);
+            Copy copy = listing.getCopy();
+            copy.setCopyStatus(CopyStatus.SOLD);
+
+
+            Listing updatedListing = listingRepository.save(listing);
+            Copy updatedCopy = copyRepository.save(copy);
+            Book book = copy.getBook();
+
+            PaymentDto newPayment = paymentService.create(
+                    identity,
+                    PaymentDto.builder()
+                            .amount(listing.getPrice())
+                            .currency("VND")
+                            .paymentStatus(PaymentStatus.PAYMENT_PENDING)
+                            .payerId(userId) // Pay từ userId cho hệ thống
+                            .payeeId(0L) // Pay cho hệ thống tạm cho payeeId = 0
+                            .description("Lease fee and deposit")
+                            .paymentMethod(PaymentMethod.COD)
+                            .build()
+            );
+
+            SaleOrder newSaleOrder = new SaleOrder();
+            newSaleOrder.setListingId(listing.getId());
+            if (totalCompensate.compareTo(BigDecimal.ZERO) > 0) {
+                newSaleOrder.setStatus(SellOrderStatus.ORDERED_PAYMENT_PENDING);
+                newSaleOrder.setChangePaymentId(newPayment.id());
+            } else {
+                newSaleOrder.setStatus(SellOrderStatus.DELIVERED);
+                newSaleOrder.setReceiveDate(LocalDate.now());
+                newSaleOrder.setChangePaymentId(newPayment.id());
+                Long paymentId = newPayment.id();
+                Payment payment = paymentRepository.findById(paymentId).get();
+                payment.setPaymentStatus(PaymentStatus.SUCCEEDED);
+                paymentRepository.save(payment);
+            }
 //        newSaleOrder.setStatus(SellOrderStatus.ORDERED_PAYMENT_PENDING);
-        newSaleOrder.setSellerId(listing.getOwner().getId());
-        newSaleOrder.setBuyerId(userId);
-        newSaleOrder.setSellerAddress(listing.getOwner().getAddress());
-        newSaleOrder.setBuyerAddress(requestDto.buyerAddress());
-        newSaleOrder.setTotalPrice(listing.getPrice());
-        newSaleOrder.setTotalChange(totalChange);
-        newSaleOrder.setTotalCompensate(totalCompensate);
-        newSaleOrder.setPaymentMethod(requestDto.paymentMethod());
-        newSaleOrder.setCreatedDate(LocalDate.now());
-        newSaleOrder.setSaleOrderDetails(
-                Set.of(SaleOrderDetail.builder()
-                        .title(copy.getBook().getTitle())
-                        .saleOrder(newSaleOrder)
-                        .listing(listing)
-                        .copy(listing.getCopy())
-                        .price(listing.getPrice()
-                        ).build()
-                )
-        );
+            newSaleOrder.setSellerId(listing.getOwner().getId());
+            newSaleOrder.setBuyerId(userId);
+            newSaleOrder.setSellerAddress(listing.getOwner().getAddress());
+            newSaleOrder.setBuyerAddress(requestDto.buyerAddress());
+            newSaleOrder.setTotalPrice(listing.getPrice());
+            newSaleOrder.setTotalChange(totalChange);
+            newSaleOrder.setTotalCompensate(totalCompensate);
+            newSaleOrder.setPaymentMethod(requestDto.paymentMethod());
+            newSaleOrder.setCreatedDate(LocalDate.now());
+            newSaleOrder.setSaleOrderDetails(
+                    Set.of(SaleOrderDetail.builder()
+                            .title(copy.getBook().getTitle())
+                            .saleOrder(newSaleOrder)
+                            .listing(listing)
+                            .copy(listing.getCopy())
+                            .price(listing.getPrice()
+                            ).build()
+                    )
+            );
 
-        SaleOrder createdLO = saleOrderRepository.save(newSaleOrder);
 
-        var newSaleOrderDto = saleOrderMapper.toDto(createdLO);
-        // Add more info
+            SaleOrder createdLO = saleOrderRepository.save(newSaleOrder);
 
-        return newSaleOrderDto;
+            var newSaleOrderDto = saleOrderMapper.toDto(createdLO);
+            // Add more info
+
+            return newSaleOrderDto;
+        }
 
 
     }
