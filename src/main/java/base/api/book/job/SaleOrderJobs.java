@@ -18,12 +18,12 @@ public class SaleOrderJobs {
 
 
 
-    @Scheduled(cron = "0 */1 * * * ?")
-    public void cancelLatePaymentOrders() {
-        Identity identity = Identity.SYSTEM;
-        saleOrderService.cancelOrderOnLatePayment(identity);
-        saleOrderService.cancelOrderOnLatePayment(identity);
-    }
+//    @Scheduled(cron = "0 */1 * * * ?")
+//    public void cancelLatePaymentOrders() {
+//        Identity identity = Identity.SYSTEM;
+//        saleOrderService.cancelOrderOnLatePayment(identity);
+//        saleOrderService.cancelOrderOnLatePayment(identity);
+//    }
 
 
 
