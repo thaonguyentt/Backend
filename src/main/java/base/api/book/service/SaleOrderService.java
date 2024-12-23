@@ -508,4 +508,23 @@ public class SaleOrderService {
         payment.setPaymentStatus(PaymentStatus.SUCCEEDED);
         return saleOrderRepository.save(saleOrder);
     }
+
+
+    public void cancelOrderOnLatePayment(Identity identity) {
+        IdentityUtil.requireAuthenticated(identity);
+        IdentityUtil.requireHasAnyRole(identity, "ADMIN", "SYSTEM");
+
+        List<SaleOrder> latePaymentOrders = saleOrderRepository.findLatePaymentSaleOrder();
+        latePaymentOrders.forEach(order -> changeOrderStatusCancel(identity, order));
+        saleOrderRepository.saveAll(latePaymentOrders);
+    }
+
+    public void cancelOrderOnLateDelivery(Identity identity) {
+        IdentityUtil.requireAuthenticated(identity);
+        IdentityUtil.requireHasAnyRole(identity, "ADMIN", "SYSTEM");
+
+        List<SaleOrder> latePaymentOrders = saleOrderRepository.findLatePaymentSaleOrder();
+        latePaymentOrders.forEach(order -> changeOrderStatusCancel(identity, order));
+        saleOrderRepository.saveAll(latePaymentOrders);
+    }
 }
