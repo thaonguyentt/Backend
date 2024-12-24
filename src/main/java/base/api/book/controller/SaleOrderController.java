@@ -2,10 +2,7 @@ package base.api.book.controller;
 
 
 import base.api.book.dto.*;
-import base.api.book.entity.SaleOrder;
-import base.api.book.entity.SaleOrderDetail;
 import base.api.book.entity.SaleOrderVoucherShop;
-import base.api.book.entity.support.LeaseOrderStatus;
 import base.api.book.entity.support.SellOrderStatus;
 import base.api.book.mapper.SaleOrderVoucherShopMapper;
 import base.api.book.service.*;
@@ -49,10 +46,18 @@ public class SaleOrderController {
 //    }
 
     @GetMapping ("")
-    public ResponseEntity<List<SaleOrderDto>> getAllSaleOrder () {
+    public ResponseEntity<List<SaleOrderDetailManagementDto>> getAllSaleOrder () {
         List<SaleOrderDto> saleOrderDto = saleOrderService.getAllSaleOrder();
         if (saleOrderDto == null) {return ResponseEntity.notFound().build();}
-        return ResponseEntity.ok(saleOrderDto);
+        return ResponseEntity.ok(saleOrderDto.stream().map(dto->{
+            UserDto buyer = userService.getUserById(dto.buyerId());
+            UserDto seller = userService.getUserById(dto.sellerId());
+            ListingDto listing = listingService.getListingById(dto.listingId());
+            SaleOrderVoucherShopDto voucherShop = saleOrderVoucherShopService.getSaleOrderVoucherShop(dto.id());
+            SaleOrderVoucherSessionDto voucherSession = saleOrderVoucherSessionService.getSaleOrderVoucherSessionBySaleOrder(dto.id());
+            BigDecimal finalPrice = dto.totalPrice();
+            return new SaleOrderDetailManagementDto(dto, listing, seller, buyer, voucherShop, voucherSession, finalPrice);
+        }).collect(Collectors.toList()));
     }
 
     @GetMapping ("/{id}")
