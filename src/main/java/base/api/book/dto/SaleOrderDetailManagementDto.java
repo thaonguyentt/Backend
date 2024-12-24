@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 public record SaleOrderDetailManagementDto(
     SaleOrderDto saleOrder,
 
-    ListingDto listing,
+    ListingBookDto listing,
     UserDto Seller,
     UserDto Buyer,
     SaleOrderVoucherShopDto voucherShop,

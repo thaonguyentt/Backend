@@ -32,7 +32,11 @@ public class SaleOrderController {
     @Autowired
     UserService userService;
     @Autowired
+    CopyService copyService;
+    @Autowired
     ListingService listingService;
+    @Autowired
+    BookService bookService;
     @Autowired
     SaleOrderVoucherShopService saleOrderVoucherShopService;
 
@@ -45,6 +49,8 @@ public class SaleOrderController {
 //        this.saleOrderDetailService = saleOrderDetailService;
 //    }
 
+
+
     @GetMapping ("")
     public ResponseEntity<List<SaleOrderDetailManagementDto>> getAllSaleOrder () {
         List<SaleOrderDto> saleOrderDto = saleOrderService.getAllSaleOrder();
@@ -56,7 +62,19 @@ public class SaleOrderController {
             SaleOrderVoucherShopDto voucherShop = saleOrderVoucherShopService.getSaleOrderVoucherShop(dto.id());
             SaleOrderVoucherSessionDto voucherSession = saleOrderVoucherSessionService.getSaleOrderVoucherSessionBySaleOrder(dto.id());
             BigDecimal finalPrice = dto.totalPrice();
-            return new SaleOrderDetailManagementDto(dto, listing, seller, buyer, voucherShop, voucherSession, finalPrice);
+
+            CopyDto copy = copyService.getCopyById(listing.copyId());
+            BookDto book = bookService.getBookById(copy.bookId());
+            ListingBookDto listingBook = new ListingBookDto(
+                    listing.id(),
+                    listing.quantity(),
+                    listing.address(),
+                    listing.depositFee(),
+                    listing.description(),
+                    listing.price(),
+                    book
+            );
+            return new SaleOrderDetailManagementDto(dto, listingBook, seller, buyer, voucherShop, voucherSession, finalPrice);
         }).collect(Collectors.toList()));
     }
 
@@ -78,7 +96,18 @@ public class SaleOrderController {
             SaleOrderVoucherShopDto voucherShop = saleOrderVoucherShopService.getSaleOrderVoucherShop(dto.id());
             SaleOrderVoucherSessionDto voucherSession = saleOrderVoucherSessionService.getSaleOrderVoucherSessionBySaleOrder(dto.id());
             BigDecimal finalPrice = dto.totalPrice();
-            return new SaleOrderDetailManagementDto (dto,listing,seller, buyer,voucherShop, voucherSession,finalPrice);
+            CopyDto copy = copyService.getCopyById(listing.copyId());
+            BookDto book = bookService.getBookById(copy.bookId());
+            ListingBookDto listingBook = new ListingBookDto(
+                    listing.id(),
+                    listing.quantity(),
+                    listing.address(),
+                    listing.depositFee(),
+                    listing.description(),
+                    listing.price(),
+                    book
+            );
+            return new SaleOrderDetailManagementDto(dto, listingBook, seller, buyer, voucherShop, voucherSession, finalPrice);
         }).collect(Collectors.toList()));
 //        return ResponseEntity.ok(saleOrderDto);
     }
@@ -94,7 +123,18 @@ public class SaleOrderController {
             SaleOrderVoucherShopDto voucherShop = saleOrderVoucherShopService.getSaleOrderVoucherShop(dto.id());
             SaleOrderVoucherSessionDto voucherSession = saleOrderVoucherSessionService.getSaleOrderVoucherSessionBySaleOrder(dto.id());
             BigDecimal finalPrice = dto.totalPrice();
-            return new SaleOrderDetailManagementDto (dto,listing,seller, buyer,voucherShop, voucherSession,finalPrice);
+            CopyDto copy = copyService.getCopyById(listing.copyId());
+            BookDto book = bookService.getBookById(copy.bookId());
+            ListingBookDto listingBook = new ListingBookDto(
+                    listing.id(),
+                    listing.quantity(),
+                    listing.address(),
+                    listing.depositFee(),
+                    listing.description(),
+                    listing.price(),
+                    book
+            );
+            return new SaleOrderDetailManagementDto(dto, listingBook, seller, buyer, voucherShop, voucherSession, finalPrice);
         }).collect(Collectors.toList()));
 //        return ResponseEntity.ok(saleOrderDto);
     }
@@ -110,7 +150,18 @@ public class SaleOrderController {
             SaleOrderVoucherShopDto voucherShop = saleOrderVoucherShopService.getSaleOrderVoucherShop(dto.id());
             SaleOrderVoucherSessionDto voucherSession = saleOrderVoucherSessionService.getSaleOrderVoucherSessionBySaleOrder(dto.id());
             BigDecimal finalPrice = dto.totalPrice();
-            return new SaleOrderDetailManagementDto (dto,listing,seller, buyer,voucherShop, voucherSession,finalPrice);
+            CopyDto copy = copyService.getCopyById(listing.copyId());
+            BookDto book = bookService.getBookById(copy.bookId());
+            ListingBookDto listingBook = new ListingBookDto(
+                    listing.id(),
+                    listing.quantity(),
+                    listing.address(),
+                    listing.depositFee(),
+                    listing.description(),
+                    listing.price(),
+                    book
+            );
+            return new SaleOrderDetailManagementDto(dto, listingBook, seller, buyer, voucherShop, voucherSession, finalPrice);
         }).collect(Collectors.toList()));
 //        return ResponseEntity.ok(saleOrderDto);
     }
@@ -126,7 +177,18 @@ public class SaleOrderController {
             SaleOrderVoucherShopDto voucherShop = saleOrderVoucherShopService.getSaleOrderVoucherShop(dto.id());
             SaleOrderVoucherSessionDto voucherSession = saleOrderVoucherSessionService.getSaleOrderVoucherSessionBySaleOrder(dto.id());
             BigDecimal finalPrice = dto.totalPrice();
-            return new SaleOrderDetailManagementDto (dto,listing,seller, buyer,voucherShop, voucherSession,finalPrice);
+            CopyDto copy = copyService.getCopyById(listing.copyId());
+            BookDto book = bookService.getBookById(copy.bookId());
+            ListingBookDto listingBook = new ListingBookDto(
+                    listing.id(),
+                    listing.quantity(),
+                    listing.address(),
+                    listing.depositFee(),
+                    listing.description(),
+                    listing.price(),
+                    book
+            );
+            return new SaleOrderDetailManagementDto(dto, listingBook, seller, buyer, voucherShop, voucherSession, finalPrice);
         }).collect(Collectors.toList()));
 //        return ResponseEntity.ok(saleOrderDto);
     }
@@ -160,9 +222,6 @@ public class SaleOrderController {
     }
 
 
-
-
-
     @PostMapping ("/createSaleOrder")
     public ResponseEntity<SaleOrderDetailManagementDto> createLeaseOrder (@RequestBody SaleOrderCreateRequest request) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -173,8 +232,18 @@ public class SaleOrderController {
         SaleOrderVoucherShopDto voucherShop = saleOrderVoucherShopService.getSaleOrderVoucherShop(saleOrderDto.id());
         SaleOrderVoucherSessionDto voucherSession = saleOrderVoucherSessionService.getSaleOrderVoucherSessionBySaleOrder(saleOrderDto.id());
         BigDecimal finalPrice = saleOrderDto.totalPrice();
-
-        return ResponseEntity.ok(new SaleOrderDetailManagementDto (saleOrderDto,listing,seller, buyer,voucherShop, voucherSession,finalPrice));
+        CopyDto copy = copyService.getCopyById(listing.copyId());
+        BookDto book = bookService.getBookById(copy.bookId());
+        ListingBookDto listingBook = new ListingBookDto(
+                listing.id(),
+                listing.quantity(),
+                listing.address(),
+                listing.depositFee(),
+                listing.description(),
+                listing.price(),
+                book
+        );
+        return ResponseEntity.ok(new SaleOrderDetailManagementDto (saleOrderDto,listingBook,seller, buyer,voucherShop, voucherSession,finalPrice));
     }
 
     @PostMapping ("/createSaleOrderFromLease")
@@ -190,13 +259,5 @@ public class SaleOrderController {
         SaleOrderVoucherShopDto t = saleOrderVoucherShopService.create(identity,request);
         return saleOrderVoucherShopMapper.toEntity(t);
     }
-
-
-
-
-
-
-
-
 
 }
