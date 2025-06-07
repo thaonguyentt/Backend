@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +17,10 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-  private static final String JWT_SIGNING_KEY =
-    "6A586E3272357538782F413F4428472D4B6150645367566B5970337336763979";
+  @Value("${jwt.signing.key}")
+  private String JWT_SIGNING_KEY;
 
-  // 1000 miliseconds x 60 seconds x 60 minutes x 24 hours
-  private static final long TOKEN_EXP_TIME_MILLIS = (long) (1000L * 60 * 60 * 24 * 30);
+  private static final long TOKEN_EXP_TIME_MILLIS = 1000L * 60 * 60 * 24 * 30;
 
   private Key getJwtSigningKey() {
     byte[] keyBytes = Decoders.BASE64.decode(JWT_SIGNING_KEY);

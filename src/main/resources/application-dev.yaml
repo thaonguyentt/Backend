@@ -37,3 +37,6 @@ logging:
       stat: DEBUG
       SQL_SLOW: INFO
       cache: DEBUG
+jwt:
+  signing:
+    key: R+gzzzwVCSGby26qay8Ws/r9/2oWNd2ymD/OnKU+IVc=

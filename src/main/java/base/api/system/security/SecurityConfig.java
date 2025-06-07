@@ -1,6 +1,5 @@
 package base.api.system.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,78 +22,80 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebSecurity
 public class SecurityConfig {
 
-  @Autowired
-  private JwtAuthenticationProvider jwtAuthenticationProvider;
+    private final JwtAuthenticationProvider jwtAuthenticationProvider;
 
-  @Bean
-  public JwtAuthenticationFilter jwtAuthenticationFilter(JwtService jwtService, AuthenticationManager authManager) {
-    return new JwtAuthenticationFilter(jwtService, authManager);
-  }
+    public SecurityConfig(JwtAuthenticationProvider jwtAuthenticationProvider) {
+        this.jwtAuthenticationProvider = jwtAuthenticationProvider;
+    }
 
-  @Bean
-  public AuthenticationManager authManager(HttpSecurity http) throws Exception {
-    AuthenticationManagerBuilder authenticationManagerBuilder =
-      http.getSharedObject(AuthenticationManagerBuilder.class);
-    authenticationManagerBuilder.authenticationProvider(jwtAuthenticationProvider);
-    return authenticationManagerBuilder.build();
-  }
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter(JwtService jwtService, AuthenticationManager authManager) {
+        return new JwtAuthenticationFilter(jwtService, authManager);
+    }
 
-  @Bean
-  public WebMvcConfigurer corsConfigurer() {
-    return new WebMvcConfigurer() {
-      @Override
-      public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins("*");
-      }
-    };
-  }
+    @Bean
+    public AuthenticationManager authManager(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder authenticationManagerBuilder =
+                http.getSharedObject(AuthenticationManagerBuilder.class);
+        authenticationManagerBuilder.authenticationProvider(jwtAuthenticationProvider);
+        return authenticationManagerBuilder.build();
+    }
 
-  @Bean
-  SecurityFilterChain filterChain(
-      HttpSecurity http,
-      JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**").allowedOrigins("*");
+            }
+        };
+    }
 
-    http
-      .cors(Customizer.withDefaults()) // FIXME allowing all origins
-      .httpBasic(httpBasic -> httpBasic.disable())
-      .formLogin(httpFormLogin -> httpFormLogin.disable())
+    @Bean
+    SecurityFilterChain filterChain(
+            HttpSecurity http,
+            JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
 
-      .csrf(csrf -> csrf.disable())
-      .sessionManagement(
-        session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-      .authorizeHttpRequests(
-        auth -> {
-          auth
-            // Authorize this endpoint to enable error response of others endpoint
-            // Ref: https://docs.spring.io/spring-boot/docs/3.1.x/reference/htmlsingle/#web.servlet.spring-mvc.error-handling
-            .requestMatchers("/error").permitAll()
-            .requestMatchers("/api/user/hello")
-            .permitAll()
-            .requestMatchers("/api/user/login")
-            .anonymous()
-            .requestMatchers("/api/user/register")
-            .anonymous()
+        http
+                .cors(Customizer.withDefaults()) // FIXME allowing all origins
+                .httpBasic(httpBasic -> httpBasic.disable())
+                .formLogin(httpFormLogin -> httpFormLogin.disable())
+
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(
+                        session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(
+                        auth -> {
+                            auth
+                                    // Authorize this endpoint to enable error response of others endpoint
+                                    // Ref: https://docs.spring.io/spring-boot/docs/3.1.x/reference/htmlsingle/#web.servlet.spring-mvc.error-handling
+                                    .requestMatchers("/error").permitAll()
+                                    .requestMatchers("/api/user/hello")
+                                    .permitAll()
+                                    .requestMatchers("/api/user/login")
+                                    .anonymous()
+                                    .requestMatchers("/api/user/register")
+                                    .anonymous()
 //            .requestMatchers("/api/**")
 //            .authenticated()
-            .requestMatchers("/api/test/**")
-            .permitAll()
-            .requestMatchers("/docs/**").access(
-              new WebExpressionAuthorizationManager("hasIpAddress(\"127.0.0.1\") or hasIpAddress(\"::1\")"))
-            .anyRequest()
-            .permitAll(); // TODO authenticated()
-        })
-      .addFilterBefore(jwtAuthenticationFilter, BasicAuthenticationFilter.class)
-      .exceptionHandling(exceptionHandling
-        -> exceptionHandling.defaultAuthenticationEntryPointFor(
-          new Http403ForbiddenEntryPoint(), new AntPathRequestMatcher("/api/**")
-      ))
-    ;
-    return http.build();
-  }
+                                    .requestMatchers("/api/test/**")
+                                    .permitAll()
+                                    .requestMatchers("/docs/**").access(
+                                            new WebExpressionAuthorizationManager("hasIpAddress(\"127.0.0.1\") or hasIpAddress(\"::1\")"))
+                                    .anyRequest()
+                                    .permitAll(); // TODO authenticated()
+                        })
+                .addFilterBefore(jwtAuthenticationFilter, BasicAuthenticationFilter.class)
+                .exceptionHandling(exceptionHandling
+                        -> exceptionHandling.defaultAuthenticationEntryPointFor(
+                        new Http403ForbiddenEntryPoint(), new AntPathRequestMatcher("/api/**")
+                ))
+        ;
+        return http.build();
+    }
 
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
-
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

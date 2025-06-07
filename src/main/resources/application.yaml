@@ -47,3 +47,7 @@ springdoc:
     version: openapi_3_1
   swagger-ui:
     path: /docs/swagger-ui
+
+jwt:
+  signing:
+    key: R+gzzzwVCSGby26qay8Ws/r9/2oWNd2ymD/OnKU+IVc=

@@ -4,7 +4,7 @@ uploads/
 
 # From https://github.com/github/gitignore/blob/master/Gradle.gitignore
 .gradle
-/build/
+#build
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -23,7 +23,7 @@ gradle-app.setting
 .mtj.tmp/
 
 # Package Files #
-*.jar
+#*.jar
 *.war
 *.ear
 
