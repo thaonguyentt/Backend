@@ -1,15 +1,49 @@
 spring:
+  mvc:
+    problemdetails:
+      enabled: true
   datasource:
-    url: jdbc:postgresql://${POSTGRES_HOST}:5432/${DB_NAME}
-    username: ${POSTGRES_USERNAME}
-    password: ${POSTGRES_PASSWORD}
+    url: jdbc:postgresql://postgres:5432/base
+    username: postgres
+    password: postgres
     driver-class-name: org.postgresql.Driver
-# spring:
-#   datasource:
-#     url: jdbc:postgresql://54.169.153.253:5432/postgres
-#     username: postgres
-#     password: password
-#     driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+  jackson:
+    default-property-inclusion: non_null
+  data:
+    rest:
+      base-path: /api
+
+server:
+  port: 8080
+  error:
+    whitelabel:
+      enabled: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  influx:
+    metrics:
+      export:
+        api-version:
+
+springdoc:
+  api-docs:
+    path: /docs/api-docs
+    version: openapi_3_1
+  swagger-ui:
+    path: /docs/swagger-ui
+
 jwt:
   signing:
     key: R+gzzzwVCSGby26qay8Ws/r9/2oWNd2ymD/OnKU+IVc=

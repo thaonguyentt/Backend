@@ -46,6 +46,7 @@ dependencies {
 	implementation "com.sanctionco.jmail:jmail:${jmailVersion}"
 	implementation 'org.overviewproject:mime-types:2.0.0'
 	implementation "com.googlecode.libphonenumber:libphonenumber:${libphonenumberVersion}"
+	implementation 'io.jsonwebtoken:jjwt:0.12.6'
 	implementation "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
 	implementation "io.jsonwebtoken:jjwt-impl:${jjwtVersion}"
 	implementation "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"
@@ -57,6 +58,8 @@ dependencies {
 
 	annotationProcessor 'org.projectlombok:lombok'
 	annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
 
 	// Test dependencies
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

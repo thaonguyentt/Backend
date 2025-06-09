@@ -10,14 +10,31 @@ services:
     volumes:
       - base-api-postgres-data:/var/lib/postgresql/data
       - ./init-db-scripts:/docker-entrypoint-initdb.d
-#    networks:
-#      - backend
+    networks:
+      - backend
     ports:
       - "5432:5432"
 
-#networks:
-#  backend:
-#  frontend:
+  app:
+    build:
+      context: .
+      dockerfile: dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/base
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
 
 volumes:
   base-api-postgres-data:
