@@ -3,7 +3,7 @@ spring:
     problemdetails:
       enabled: true
   datasource:
-    url: jdbc:postgresql://root:31Oha1Sg9zEeGJzCm0LrC4EDW2fCcE43@dpg-d10qnim3jp1c73997j70-a/base_f6hx
+    url: jdbc:postgresql://dpg-d10qnim3jp1c73997j70-a.singapore-postgres.render.com/base_f6hx
     username: root
     password: 31Oha1Sg9zEeGJzCm0LrC4EDW2fCcE43
     driver-class-name: org.postgresql.Driver
@@ -13,7 +13,7 @@ spring:
     show-sql: false
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgresSQLDialect
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
   jackson:
     default-property-inclusion: non_null

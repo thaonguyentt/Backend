@@ -1,42 +1,51 @@
 spring:
+  mvc:
+    problemdetails:
+      enabled: true
+  profiles:
+    active: dev
   datasource:
-    url: jdbc:postgresql://root:31Oha1Sg9zEeGJzCm0LrC4EDW2fCcE43@dpg-d10qnim3jp1c73997j70-a/base_f6hx
+    url: jdbc:postgresql://dpg-d10qnim3jp1c73997j70-a.singapore-postgres.render.com/base_f6hx
     username: root
     password: 31Oha1Sg9zEeGJzCm0LrC4EDW2fCcE43
     driver-class-name: org.postgresql.Driver
-
   jpa:
-    #open-in-view: false
     hibernate:
       ddl-auto: none
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
-        "[format_sql]": true
-# ci/cd
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+  jackson:
+    default-property-inclusion: non_null
+  data:
+    rest:
+      base-path: /api
+
 server:
+  port: 8080
   error:
     whitelabel:
-      enabled: true
+      enabled: false
 
 management:
   endpoints:
     web:
       exposure:
         include: "*"
+  influx:
+    metrics:
+      export:
+        api-version:
 
-logging:
-  level:
-    #      springframework:
-    #        security: TRACE
-    hibernate:
-      #        SQL: DEBUG
-      orm:
-        jdbc:
-          bind: TRACE
-      stat: DEBUG
-      SQL_SLOW: INFO
-      cache: DEBUG
+springdoc:
+  api-docs:
+    path: /docs/api-docs
+    version: openapi_3_1
+  swagger-ui:
+    path: /docs/swagger-ui
+
 jwt:
   signing:
     key: R+gzzzwVCSGby26qay8Ws/r9/2oWNd2ymD/OnKU+IVc=
