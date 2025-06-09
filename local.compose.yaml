@@ -21,9 +21,9 @@ services:
       dockerfile: dockerfile
     environment:
       - SPRING_PROFILES_ACTIVE=prod
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/base
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dpg-d10qnim3jp1c73997j70-a.singapore-postgres.render.com
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=31Oha1Sg9zEeGJzCm0LrC4EDW2fCcE43
       - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.PostgresSQLDialect
     ports:
       - "8080:8080"
