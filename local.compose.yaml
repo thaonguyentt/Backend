@@ -1,21 +1,23 @@
-
+version: "3.8"
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: dockerfile
+  postgres:
+    image: postgres:16.1
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://dpg-d10qnim3jp1c73997j70-a.singapore-postgres.render.com/base_f6hx
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=31Oha1Sg9zEeGJzCm0LrC4EDW2fCcE43
-      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: base
+    volumes:
+      - base-api-postgres-data:/var/lib/postgresql/data
+      - ./init-db-scripts:/docker-entrypoint-initdb.d
+    #    networks:
+    #      - backend
     ports:
-      - "8080:8080"
-    networks:
-      - backend
+      - "5432:5432"
 
-networks:
-  backend:
-    driver: bridge
+#networks:
+#  backend:
+#  frontend:
+
+volumes:
+  base-api-postgres-data:
