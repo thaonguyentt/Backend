@@ -5,9 +5,9 @@ spring:
   profiles:
     active: dev
   datasource:
-    url: jdbc:postgresql://dpg-d10qnim3jp1c73997j70-a.singapore-postgres.render.com/base_f6hx
-    username: root
-    password: 31Oha1Sg9zEeGJzCm0LrC4EDW2fCcE43
+    url: jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres
+    username: postgres.wrqbmpjmjelhazjayzre
+    password: TheFlyingBookstore@2023
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
